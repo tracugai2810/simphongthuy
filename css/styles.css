@@ -1,6 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET
    Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
+   Tối ưu Mobile First cho Khách Hàng Đại Chúng
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -111,7 +112,7 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
-/* Khung Đánh Giá SIM Đang Dùng (Tối ưu rộng rãi theo Ảnh 3) */
+/* Khung Đánh Giá SIM Đang Dùng */
 .current-sim-group {
     border: 1px dashed rgba(243, 198, 105, 0.4);
     padding: 14px 18px;
@@ -350,14 +351,15 @@ select.form-control option, select.prefix-select option {
 
 .sim-reasons-list {
     list-style: none;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     color: #cbd5e1;
 }
 
 .sim-reasons-list li {
     position: relative;
-    padding-left: 16px;
-    margin-bottom: 3px;
+    padding-left: 18px;
+    margin-bottom: 4px;
+    line-height: 1.5;
 }
 
 .sim-reasons-list li::before {
@@ -434,10 +436,7 @@ select.form-control option, select.prefix-select option {
     opacity: 1;
 }
 
-/* ==========================================================================
-   KHUNG XEM LÁ QUẺ LỤC HÀO - CHỐNG CẮT LỀ TRÁI/PHẢI KHI TẠO ẢNH
-   ========================================================================== */
-
+/* Modal Overlay & Content */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -462,7 +461,7 @@ select.form-control option, select.prefix-select option {
 }
 
 .modal-content {
-    background: #fefee5; /* Màu giấy cổ đặc trưng web cũ */
+    background: #fefee5;
     color: #000000;
     border: 2px solid #888;
     border-radius: 12px;
@@ -499,7 +498,6 @@ select.form-control option, select.prefix-select option {
     padding-bottom: 5px;
 }
 
-/* Hiển thị Ảnh lá quẻ thật cho Máy tính */
 .hex-native-img {
     max-width: 100%;
     height: auto;
@@ -521,7 +519,7 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
-/* Layout Lá quẻ chuẩn web cũ */
+/* Layout Lá quẻ */
 .hex-card-view {
     background-color: #fefee5;
     color: #000000;
@@ -687,12 +685,13 @@ select.form-control option, select.prefix-select option {
     font-weight: 700;
 }
 
+/* Đánh Giá Cát Tường - Giao diện thân thiện Khách Hàng */
 .eval-box {
     margin-top: 15px;
     background: #ffffff;
-    border: 1px solid #c0392b;
+    border: 1.5px solid #c0392b;
     border-radius: 10px;
-    padding: 15px 22px;
+    padding: 14px 18px;
     box-sizing: border-box;
 }
 
@@ -700,16 +699,18 @@ select.form-control option, select.prefix-select option {
     color: #c0392b;
     margin-bottom: 8px;
     font-size: 1.05rem;
+    font-weight: 700;
 }
 
 .eval-box ul {
-    padding-left: 20px;
+    padding-left: 18px;
     color: #2d3748;
 }
 
 .eval-box li {
     margin-bottom: 4px;
-    line-height: 1.5;
+    line-height: 1.55;
+    font-size: 0.95rem;
     word-break: break-word;
 }
 
@@ -766,6 +767,14 @@ select.form-control option, select.prefix-select option {
 
     .btn-action {
         flex: 1;
+    }
+
+    .eval-box {
+        padding: 12px 14px;
+    }
+
+    .eval-box li {
+        font-size: 0.88rem;
     }
 
     .modal-content {
