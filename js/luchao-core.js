@@ -77,6 +77,80 @@ const TEN_QUE = [
     ['Thiên Địa Bĩ', 'Thiên Sơn Độn', 'Thiên Thủy Tụng', 'Thiên Phong Cấu', 'Thiên Lôi Vô Vọng', 'Thiên Hỏa Đồng Nhân', 'Thiên Trạch Lý', 'Bát Thuần Càn']
 ];
 
+const LUC_XUNG_LIST = ['Thiên Lôi Vô Vọng', 'Lôi Thiên Đại Tráng'];
+const LUC_HOP_LIST = [
+    'Thiên Địa Bĩ', 'Địa Thiên Thái',
+    'Thủy Trạch Tiết', 'Trạch Thủy Khốn',
+    'Sơn Hỏa Bí', 'Hỏa Sơn Lữ',
+    'Địa Lôi Phục', 'Lôi Địa Dự'
+];
+
+function getHexAttribute(hexName, type) {
+    if (type === 'Du Hồn') return 'Du Hồn';
+    if (type === 'Quy Hồn') return 'Quy Hồn';
+    if (type === 'Bát Thuần' || LUC_XUNG_LIST.includes(hexName)) return 'Lục Xung';
+    if (LUC_HOP_LIST.includes(hexName)) return 'Lục Hợp';
+    return '';
+}
+
+const PHAN_NGAM_PAIRS = { 7: 3, 3: 7, 5: 2, 2: 5, 4: 6, 6: 4, 1: 0, 0: 1 };
+const PHUC_NGAM_PAIRS = { 7: 4, 4: 7 };
+
+function checkNgam(mainInIdx, mainOutIdx, changedInIdx, changedOutIdx) {
+    let noiResult = '';
+    let ngoaiResult = '';
+
+    if (mainInIdx !== changedInIdx) {
+        if (PHUC_NGAM_PAIRS[mainInIdx] === changedInIdx) noiResult = 'phuc';
+        else if (PHAN_NGAM_PAIRS[mainInIdx] === changedInIdx) noiResult = 'phan';
+    }
+    if (mainOutIdx !== changedOutIdx) {
+        if (PHUC_NGAM_PAIRS[mainOutIdx] === changedOutIdx) ngoaiResult = 'phuc';
+        else if (PHAN_NGAM_PAIRS[mainOutIdx] === changedOutIdx) ngoaiResult = 'phan';
+    }
+
+    const results = [];
+    if (noiResult && ngoaiResult && noiResult === ngoaiResult) {
+        if (noiResult === 'phan') results.push('Toàn Quẻ Phản Ngâm');
+        else results.push('Toàn Quẻ Phục Ngâm');
+        return results;
+    }
+
+    if (ngoaiResult === 'phan') results.push('Ngoại Quái Phản Ngâm');
+    else if (ngoaiResult === 'phuc') results.push('Ngoại Quái Phục Ngâm');
+
+    if (noiResult === 'phan') results.push('Nội Quái Phản Ngâm');
+    else if (noiResult === 'phuc') results.push('Nội Quái Phục Ngâm');
+
+    return results;
+}
+
+function calculateHoData(mBits) {
+    const hoInBin = `${mBits[1]}${mBits[2]}${mBits[3]}`;
+    const hoOutBin = `${mBits[2]}${mBits[3]}${mBits[4]}`;
+
+    const hoInIdx = QUAI_SO.findIndex(q => q.bin === hoInBin);
+    const hoOutIdx = QUAI_SO.findIndex(q => q.bin === hoOutBin);
+
+    const hexID = (hoOutIdx << 3) | hoInIdx;
+    const info = HEX_MAP[hexID] || { p: 0, shi: 1, type: '' };
+
+    const name = TEN_QUE[hoOutIdx][hoInIdx];
+    const palaceName = QUAI_SO[info.p].name;
+    const attr = getHexAttribute(name, info.type);
+
+    const lines = [
+        mBits[1] === '1' ? 1 : 2,
+        mBits[2] === '1' ? 1 : 2,
+        mBits[3] === '1' ? 1 : 2,
+        mBits[2] === '1' ? 1 : 2,
+        mBits[3] === '1' ? 1 : 2,
+        mBits[4] === '1' ? 1 : 2
+    ];
+
+    return { name, palaceName, attr, lines };
+}
+
 // HEX_MAP tra Họ quái & Thế hào
 const HEX_MAP = {};
 (function initHexMap() {
@@ -268,8 +342,6 @@ function calculateSimHexagram(simStr, cal) {
     const nums = simStr.replace(/[^0-9]/g, '').split('').map(Number);
     if (nums.length < 9) return null;
 
-    // Tách Thượng Quái & Hạ Quái
-    // 9 số: 4 đầu, 5 sau. 10 số: 5 đầu, 5 sau.
     const mid = Math.floor(nums.length / 2);
     const topSum = nums.slice(0, mid).reduce((a, b) => a + b, 0);
     const botSum = nums.slice(mid).reduce((a, b) => a + b, 0);
@@ -278,11 +350,9 @@ function calculateSimHexagram(simStr, cal) {
     const botMod = botSum % 8 || 8;
     const move = (topSum + botSum) % 6 || 6;
 
-    // Bit Dương=1, Âm=2 từ Mai Hoa
     const rawLines = [...MAI_HOA_BITS[botMod], ...MAI_HOA_BITS[topMod]];
     const idx = move - 1;
 
-    // Chuyển sang dạng hào Lục Hào: 0=Lão Âm (Động), 1=Thiếu Dương, 2=Thiếu Âm, 3=Lão Dương (Động)
     const lines = rawLines.map((val, i) => {
         if (i === idx) {
             return (val === 1) ? 3 : 0; // Động
@@ -305,6 +375,7 @@ function calculateHexagramData(lines, cal, methodText) {
     const mainName = TEN_QUE[mOutIdx][mInIdx];
     const palaceName = QUAI_SO[info.p].name;
     const palaceEl = NGU_HANH_QUAI[palaceName];
+    const mainAttr = getHexAttribute(mainName, info.type);
 
     const cBits = lines.map(v => getBit(v, true));
     const cInIdx = QUAI_SO.findIndex(q => q.bin === cBits.slice(0, 3).join(''));
@@ -314,6 +385,10 @@ function calculateHexagramData(lines, cal, methodText) {
     const infoChanged = HEX_MAP[hexIDChanged] || { p: 0, shi: 1, type: '' };
     const changedName = TEN_QUE[cOutIdx][cInIdx];
     const changedPalaceName = QUAI_SO[infoChanged.p].name;
+    const changedAttr = getHexAttribute(changedName, infoChanged.type);
+
+    const ngamResult = checkNgam(mInIdx, mOutIdx, cInIdx, cOutIdx);
+    const hoData = calculateHoData(mBits);
 
     const lucThuList = LUC_THU[cal.ngay.can];
 
@@ -392,11 +467,15 @@ function calculateHexagramData(lines, cal, methodText) {
         changedName,
         palaceName,
         palaceEl,
+        mainAttr,
         changedPalaceName,
+        changedAttr,
         info,
         lines,
         linesData,
         movingLines,
+        hoData,
+        ngamResult,
         methodText,
         dateInfo: {
             fullCanChi: `Giờ ${cal.gio.can} ${cal.gio.chi}, Ngày ${cal.ngay.can} ${cal.ngay.chi}, Tháng ${cal.thang.can} ${cal.thang.chi}, Năm ${cal.nam.can} ${cal.nam.chi}`,

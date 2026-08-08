@@ -1,9 +1,9 @@
 /* ==========================================================================
    MAIN UI CONTROLLER - Website Sim Phong Thủy
+   Giao diện Lá Quẻ Render Chuẩn Y Hệt Web Cũ (luchao.io.vn)
    ========================================================================== */
 
 let currentResults = [];
-let activeModalHexData = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initFormDefaults();
@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Khoảng ngày mặc định
 function initFormDefaults() {
     const now = new Date();
-    // UTC offset adjustment for datetime-local picker
     const offset = now.getTimezoneOffset() * 60000;
     const localISOTime = (new Date(now.getTime() - offset)).toISOString().slice(0, 16);
 
@@ -30,21 +29,18 @@ function setupDigitBoxes() {
     const boxes = Array.from(document.querySelectorAll('.digit-box:not(.fixed-zero)'));
 
     boxes.forEach((box, idx) => {
-        // Gõ phím số -> Tự sang ô tiếp theo
         box.addEventListener('input', (e) => {
             const val = e.target.value;
-            // Chỉ giữ lại chữ số
             e.target.value = val.replace(/[^0-9]/g, '');
 
             if (e.target.value.length >= 1) {
-                e.target.value = e.target.value.slice(-1); // chỉ giữ 1 ký tự
+                e.target.value = e.target.value.slice(-1);
                 if (idx < boxes.length - 1) {
                     boxes[idx + 1].focus();
                 }
             }
         });
 
-        // Nhấn Backspace -> Tự quay về ô trước
         box.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace' && !e.target.value) {
                 if (idx > 0) {
@@ -53,22 +49,17 @@ function setupDigitBoxes() {
             }
         });
 
-        // Tự bôi đen khi focus
         box.addEventListener('focus', (e) => {
             e.target.select();
         });
     });
 
-    // Sự kiện đổi đầu số nhanh
     const prefixSelect = document.getElementById('prefixSelect');
     if (prefixSelect) {
         prefixSelect.addEventListener('change', (e) => {
             const prefix = e.target.value;
             if (!prefix) return;
 
-            // Điền chữ số từ đầu số vào các ô
-            // Chữ số 1 = '0' (cố định)
-            // Chữ số 2 & 3: điền theo prefix
             const digit2 = document.getElementById('digit-2');
             const digit3 = document.getElementById('digit-3');
 
@@ -99,7 +90,6 @@ function processSearch() {
     const gender = document.querySelector('input[name="gender"]:checked').value;
     const purpose = document.getElementById('purposeSelect').value;
 
-    // Gộp pattern từ các ô chữ số
     let pattern = '0';
     for (let i = 2; i <= 10; i++) {
         const el = document.getElementById(`digit-${i}`);
@@ -107,7 +97,6 @@ function processSearch() {
         pattern += val ? val : '*';
     }
 
-    // Hiển thị trạng thái đang tính toán
     const resultsContainer = document.getElementById('resultsContainer');
     resultsContainer.innerHTML = `
         <div style="text-align: center; padding: 40px; color: var(--gold-primary);">
@@ -183,7 +172,6 @@ function renderResults(results) {
     resultsContainer.innerHTML = html;
 }
 
-// Định dạng số điện thoại đẹp (ví dụ: 098.765.4321)
 function formatSimNumber(sim) {
     if (sim.length === 10) {
         return `${sim.slice(0, 4)}.${sim.slice(4, 7)}.${sim.slice(7)}`;
@@ -191,12 +179,25 @@ function formatSimNumber(sim) {
     return sim;
 }
 
-// Hiển thị Modal lá quẻ Lục Hào chi tiết
+// Vẽ hình Hào Âm / Hào Dương / Hào Động (Giống Web cũ)
+function renderHexVisual(lines, isChanged) {
+    const bits = lines.map(v => getBit(v, isChanged));
+    let html = '';
+
+    for (let i = 5; i >= 0; i--) {
+        const isMoving = (lines[i] === 0 || lines[i] === 3);
+        const moveClass = isMoving ? 'moving' : '';
+        html += `<div class="gua-line ${bits[i] === '1' ? 'yang' : 'yin'} ${moveClass}"></div>`;
+    }
+
+    return `<div class="gua-container">${html}</div>`;
+}
+
+// Hiển thị Modal lá quẻ Lục Hào CỰC CHUẨN Y HỆT WEB CŨ
 function openHexModal(index) {
     const item = currentResults[index];
     if (!item) return;
 
-    activeModalHexData = item.hexData;
     const { hexData, sim, evaluation } = item;
     const modal = document.getElementById('hexModal');
     const modalBody = document.getElementById('modalBody');
@@ -204,74 +205,108 @@ function openHexModal(index) {
     let rowsHtml = '';
     for (let i = 5; i >= 0; i--) {
         const line = hexData.linesData[i];
+        const rowClass = line.isMoving ? 'row-moving' : 'row-static';
+
         let sym = (line.val === 1) ? '—' : (line.val === 2) ? '--' : (line.val === 3) ? 'O' : 'X';
+
         let sy = '';
         if (line.isShi) sy = `<span class="marker-the">Thế</span>`;
         if (line.isYing) sy = `<span class="marker-ung">Ứng</span>`;
 
         let phucHtml = '-';
         if (line.phucThan) {
-            phucHtml = `<span style="color:#ffd700;">${line.phucThan.rel} (${line.phucThan.branch})</span>`;
+            phucHtml = `<span class="phuc-than">${line.phucThan.rel} - ${line.phucThan.branch}</span>`;
         }
 
-        const isTK = line.isTK ? '<span style="color:#f87171;">Không</span>' : '-';
+        const isTK = line.isTK ? 'K' : '-';
+        const isCTK = line.isCTK ? 'K' : '-';
 
         rowsHtml += `
-            <tr>
-                <td><strong>Hào ${i + 1}</strong></td>
+            <tr class="${rowClass}">
                 <td>${sym}</td>
                 <td>${sy}</td>
-                <td style="color:#f3c669; font-weight:bold;">${line.relation}</td>
-                <td>${line.chi} (${line.hanh})</td>
+                <td>${line.relation}</td>
+                <td>${line.chi}-${line.hanh}</td>
                 <td>${phucHtml}</td>
                 <td>${isTK}</td>
-                <td style="color:#60a5fa;">${line.changed.relation}</td>
-                <td>${line.changed.branch} (${line.changed.hanh})</td>
+                <td class="sep-col">${line.changed.relation}</td>
+                <td>${line.changed.branch}-${line.changed.hanh}</td>
                 <td>${line.lucThu}</td>
+                <td>${isCTK}</td>
                 <td>${line.tsNgay}</td>
+                <td>${line.tsThang}</td>
             </tr>
         `;
     }
 
+    const purposeSelect = document.getElementById('purposeSelect');
+    const purposeText = purposeSelect ? purposeSelect.options[purposeSelect.selectedIndex].text : '';
+
     modalBody.innerHTML = `
-        <h2 style="color:var(--gold-primary); font-family:var(--font-title); font-size:2rem; margin-bottom:5px;">
-            Lá Quẻ Lục Hào: ${formatSimNumber(sim)}
-        </h2>
-        <p style="color:var(--text-muted); margin-bottom:15px;">${hexData.dateInfo.fullCanChi}</p>
+        <div class="hex-card-view">
+            <div class="info-header">
+                <div class="info-content">
+                    <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span> &nbsp;&nbsp;&nbsp;&nbsp; <strong>Phương pháp:</strong> Mai Hoa Dịch Số</div>
+                    <div class="info-line"><strong>Can chi:</strong> ${hexData.dateInfo.fullCanChi}</div>
+                    <div class="info-line"><strong>Mục đích cầu:</strong> ${purposeText}</div>
+                    <div class="info-line"><strong>Tuần Không:</strong> <span class="highlight">${hexData.dateInfo.tuanKhong}</span></div>
+                    <div class="info-line"><strong>Nhật Thần:</strong> <span class="highlight">${hexData.dateInfo.nhatThan}</span> &nbsp;&nbsp;&nbsp;&nbsp; <strong>Nguyệt Lệnh:</strong> <span class="highlight">${hexData.dateInfo.nguyetLenh}</span></div>
+                </div>
+            </div>
 
-        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:20px; border-left:4px solid var(--gold-primary);">
-            <p><strong>Quẻ Chủ:</strong> ${hexData.mainName} (Họ ${hexData.palaceName})</p>
-            <p><strong>Quẻ Biến:</strong> ${hexData.changedName} (Họ ${hexData.changedPalaceName})</p>
-            <p><strong>Nhật Thần:</strong> ${hexData.dateInfo.nhatThan} &nbsp;|&nbsp; <strong>Nguyệt Lệnh:</strong> ${hexData.dateInfo.nguyetLenh}</p>
-            <p><strong>Tuần Không:</strong> ${hexData.dateInfo.tuanKhong}</p>
-        </div>
+            <!-- 3 Cột vẽ hình Hào Quẻ Chủ - Quẻ Hỗ - Quẻ Biến -->
+            <div class="hex-visual-section">
+                <div class="hex-box">
+                    <div class="hex-title">${hexData.mainName}</div>
+                    ${renderHexVisual(hexData.lines, false)}
+                    <div class="hex-family">Họ ${hexData.palaceName}${hexData.mainAttr ? ' - ' + hexData.mainAttr : ''}</div>
+                </div>
 
-        <table class="hex-table">
-            <thead>
-                <tr>
-                    <th>Hào</th>
-                    <th>Tượng</th>
-                    <th>T/Ứng</th>
-                    <th>Lục Thân</th>
-                    <th>Can Chi</th>
-                    <th>Phục Thần</th>
-                    <th>T.Không</th>
-                    <th>Quẻ Biến</th>
-                    <th>Biến Chi</th>
-                    <th>Lục Thú</th>
-                    <th>Trường Sinh</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rowsHtml}
-            </tbody>
-        </table>
+                ${hexData.hoData ? `
+                <div class="hex-box">
+                    <div class="hex-title">${hexData.hoData.name}</div>
+                    ${renderHexVisual(hexData.hoData.lines, false)}
+                    <div class="hex-family">Họ ${hexData.hoData.palaceName}${hexData.hoData.attr ? ' - ' + hexData.hoData.attr : ''}</div>
+                    ${hexData.ngamResult && hexData.ngamResult.length > 0 ? `<div style="font-size:14px; font-weight:bold; margin-top:4px;">${hexData.ngamResult.join(', ')}</div>` : ''}
+                </div>` : ''}
 
-        <div style="margin-top:20px; background:rgba(46,204,113,0.1); padding:15px; border-radius:10px; border:1px solid #2ecc71;">
-            <h4 style="color:#2ecc71; margin-bottom:5px;">Đánh giá Phong Thủy: ${evaluation.score}/100 - ${evaluation.grade}</h4>
-            <ul style="padding-left:20px; color:#e2e8f0;">
-                ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
-            </ul>
+                <div class="hex-box">
+                    <div class="hex-title">${hexData.changedName}</div>
+                    ${renderHexVisual(hexData.lines, true)}
+                    <div class="hex-family">Họ ${hexData.changedPalaceName}${hexData.changedAttr ? ' - ' + hexData.changedAttr : ''}</div>
+                </div>
+            </div>
+
+            <!-- Bảng Lục Hào 12 Cột -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hào</th>
+                        <th>T/Ư</th>
+                        <th>Lục Thân</th>
+                        <th>Can Chi</th>
+                        <th>P.Thần</th>
+                        <th>TK</th>
+                        <th class="sep-col">Lục Thân</th>
+                        <th>Can Chi</th>
+                        <th>Lục Thú</th>
+                        <th>TK</th>
+                        <th>TS Ngày</th>
+                        <th>TS Tháng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHtml}
+                </tbody>
+            </table>
+
+            <!-- Đánh giá Phong Thủy -->
+            <div class="eval-box">
+                <h4>🎯 Đánh giá Cát Tường: ${evaluation.score}/100 - ${evaluation.grade}</h4>
+                <ul>
+                    ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
+                </ul>
+            </div>
         </div>
     `;
 

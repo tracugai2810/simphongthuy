@@ -1,6 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET
    Aesthetics: Luxury Obsidian & Antique Gold (Dark Gold Glassmorphism Theme)
+   Kế thừa 100% Font chữ & Khung Lá Quẻ Lục Hào từ Web gốc
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -262,11 +263,6 @@ h1.app-title {
     margin-bottom: 20px;
 }
 
-.results-count {
-    color: var(--gold-primary);
-    font-weight: 600;
-}
-
 .sim-list {
     display: flex;
     flex-direction: column;
@@ -393,7 +389,10 @@ h1.app-title {
     color: #ffffff;
 }
 
-/* Modal Lá Quẻ Chi Tiết */
+/* ==========================================================================
+   KHUNG XEM LÁ QUẺ LỤC HÀO - GIỐNG Y HỆT WEB CŨ (luchao.io.vn)
+   ========================================================================== */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -409,7 +408,7 @@ h1.app-title {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    padding: 20px;
+    padding: 15px;
 }
 
 .modal-overlay.active {
@@ -418,59 +417,216 @@ h1.app-title {
 }
 
 .modal-content {
-    background: #141b26;
-    border: 1px solid var(--gold-primary);
-    border-radius: 16px;
-    max-width: 850px;
+    background: #fefee5; /* Màu giấy cổ đặc trưng web cũ */
+    color: #000000;
+    border: 2px solid #888;
+    border-radius: 12px;
+    max-width: 950px;
     width: 100%;
-    max-height: 90vh;
+    max-height: 95vh;
     overflow-y: auto;
-    padding: 30px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+    padding: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
     position: relative;
+    font-family: 'Inter', sans-serif;
 }
 
 .modal-close {
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 1.8rem;
-    color: var(--text-muted);
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    color: #333;
     cursor: pointer;
+    font-weight: bold;
+    line-height: 1;
 }
 
 .modal-close:hover {
-    color: var(--gold-primary);
+    color: #e60000;
 }
 
-/* Hexagram Table (Same layout style as luchao.io.vn) */
-.hex-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 0.9rem;
+/* Layout Lá quẻ chuẩn web cũ */
+.hex-card-view {
+    background-color: #fefee5;
+    color: #000000;
+    font-size: 16px;
 }
 
-.hex-table th, .hex-table td {
-    border: 1px solid rgba(243, 198, 105, 0.2);
-    padding: 8px 12px;
-    text-align: center;
+.hex-card-view .info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #888;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.hex-table th {
-    background: rgba(243, 198, 105, 0.15);
-    color: var(--gold-primary);
+.hex-card-view .info-line {
+    margin-bottom: 6px;
+    line-height: 1.6;
+    color: #000000;
+    font-size: 16px;
+}
+
+.hex-card-view .info-line strong {
+    color: #000000;
+}
+
+.hex-card-view .highlight {
+    color: #e60000;
     font-weight: 700;
 }
 
-.marker-the {
-    color: #ff4757;
-    font-weight: bold;
+/* 3 Cột hiển thị hình vẽ Hào */
+.hex-card-view .hex-visual-section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 15px 0;
+    border-bottom: 2px solid #888;
+    margin-bottom: 15px;
 }
 
-.marker-ung {
-    color: #2ed573;
-    font-weight: bold;
+.hex-card-view .hex-box {
+    text-align: center;
+    min-width: 180px;
+}
+
+.hex-card-view .hex-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #c41e3a;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.hex-card-view .hex-family {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.hex-card-view .gua-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 110px;
+    margin: 0 auto;
+}
+
+.hex-card-view .gua-line {
+    height: 16px;
+    width: 100%;
+}
+
+.hex-card-view .yang {
+    background-color: #1a1a1a;
+}
+
+.hex-card-view .yin {
+    display: flex;
+    justify-content: space-between;
+}
+
+.hex-card-view .yin::before,
+.hex-card-view .yin::after {
+    content: '';
+    display: block;
+    width: 42%;
+    background-color: #1a1a1a;
+    height: 100%;
+}
+
+.hex-card-view .yang.moving {
+    background-color: #e60000;
+}
+
+.hex-card-view .yin.moving::before,
+.hex-card-view .yin.moving::after {
+    background-color: #e60000;
+}
+
+/* Bảng Lá Quẻ 12 Cột y hệt Web cũ */
+.hex-card-view table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    background: #fefee5;
+    margin-bottom: 15px;
+}
+
+.hex-card-view th,
+.hex-card-view td {
+    border: none;
+    border-bottom: 1px solid #d0c8b8;
+    padding: 8px 5px;
+    text-align: center;
+    white-space: nowrap;
+    color: #000000;
+}
+
+.hex-card-view th {
+    background: #e2e2cc;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 15px;
+    padding: 10px 4px;
+    border-bottom: 1px solid #bbb;
+    text-transform: uppercase;
+}
+
+.hex-card-view .sep-col {
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.hex-card-view .row-moving td {
+    color: #e60000;
+    font-weight: 700;
+}
+
+.hex-card-view .marker-the,
+.hex-card-view .marker-ung {
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+.hex-card-view .row-moving .marker-the,
+.hex-card-view .row-moving .marker-ung {
+    color: #e60000;
+}
+
+.hex-card-view .phuc-than {
+    color: #1a1a1a;
+}
+
+.hex-card-view .row-moving .phuc-than {
+    color: #e60000;
+    font-weight: 700;
+}
+
+/* Khung Đánh giá Phong Thủy */
+.eval-box {
+    margin-top: 15px;
+    background: #ffffff;
+    border: 1px solid #c0392b;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.eval-box h4 {
+    color: #c0392b;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.eval-box ul {
+    padding-left: 20px;
+    color: #2d3748;
 }
 
 /* Responsive */
@@ -479,4 +635,6 @@ h1.app-title {
     .sim-card { grid-template-columns: 1fr; }
     .sim-actions { flex-direction: row; }
     .digit-box { width: 34px; height: 44px; font-size: 1.2rem; }
+    .hex-card-view { font-size: 13px; }
+    .hex-card-view table { font-size: 12px; }
 }
