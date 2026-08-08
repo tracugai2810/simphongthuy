@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu & Gợi Ý SIM Phong Thủy Lục Hào - Kinh Dịch</title>
+    <meta name="description" content="Hệ thống tự động lập quẻ Lục Hào, tính Can Chi ngày sinh và gợi ý danh sách số điện thoại đại cát phù hợp theo từng mục đích cầu tài, cầu quan, sức khỏe, tình duyên.">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-badge">☯ HỌC VIỆN DỊCH HỌC & PHONG THỦY</div>
+        <h1 class="app-title">SIM PHONG THỦY LỤC HÀO</h1>
+        <p class="app-subtitle">Thuật toán lập quẻ Dịch học tính toán danh sách số điện thoại Đại Cát Tường theo Ngày Tháng Năm Sinh & Nhu Cầu</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Form Nhập Thông Tin Khách Hàng -->
+        <div class="form-card">
+            <div class="section-title">
+                <span>📌</span> 1. Thông Tin Khách Hàng & Nhu Cầu
+            </div>
+
+            <form id="simForm">
+                <div class="form-grid">
+                    <!-- Ngày tháng năm sinh -->
+                    <div class="form-group">
+                        <label for="birthDate">📅 Ngày & Giờ sinh (Dương lịch):</label>
+                        <input type="datetime-local" id="birthDate" class="form-control" required>
+                    </div>
+
+                    <!-- Giới tính -->
+                    <div class="form-group">
+                        <label>👤 Giới tính:</label>
+                        <div style="display: flex; gap: 20px; padding-top: 10px;">
+                            <label style="cursor: pointer; font-weight: normal;">
+                                <input type="radio" name="gender" value="male" checked> Nam
+                            </label>
+                            <label style="cursor: pointer; font-weight: normal;">
+                                <input type="radio" name="gender" value="female"> Nữ
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Nhu cầu chọn SIM -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="purposeSelect">🎯 Việc muốn cầu (Mong muốn lớn nhất):</label>
+                        <select id="purposeSelect" class="form-control">
+                            <option value="cautai">💰 Cầu Tài Lộc (Kinh doanh, Lộc tài, Buôn bán)</option>
+                            <option value="cauquan">💼 Cầu Công Danh / Sự Nghiệp (Thăng quan, Chức quyền)</option>
+                            <option value="suckhoe">🏥 Cầu Sức Khỏe & Bình An (Bình an, Trường thọ)</option>
+                            <option value="concai">👶 Cầu Con Cái & Gia Đạo (Tử tức, Hòa thuận)</option>
+                            <option value="honnhan">❤️ Cầu Hôn Nhân & Tình Duyên (Hợp duyên, Gia đình)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Khung Chọn Đầu Số & Điền Chữ Số Mong Muốn (UI theo Ảnh 1) -->
+                <div class="digit-section">
+                    <div class="digit-section-title">Nhập số thuê bao mong muốn</div>
+
+                    <!-- Đầu số nhanh -->
+                    <div class="prefix-selector-group">
+                        <label for="prefixSelect">Chọn nhanh đầu số:</label>
+                        <select id="prefixSelect" class="prefix-select">
+                            <option value="">-- Tự chọn --</option>
+                            <option value="098">098 (Viettel)</option>
+                            <option value="097">097 (Viettel)</option>
+                            <option value="086">086 (Viettel)</option>
+                            <option value="039">039 (Viettel)</option>
+                            <option value="090">090 (Mobifone)</option>
+                            <option value="093">093 (Mobifone)</option>
+                            <option value="079">079 (Mobifone)</option>
+                            <option value="091">091 (Vinaphone)</option>
+                            <option value="088">088 (Vinaphone)</option>
+                            <option value="087">087 (Wintel)</option>
+                        </select>
+                    </div>
+
+                    <!-- Dãy 10 Ô Vuông Điền Chữ Số -->
+                    <div class="digit-boxes-container">
+                        <!-- Ô 1: Số 0 cố định -->
+                        <input type="text" value="0" class="digit-box fixed-zero" readonly>
+
+                        <!-- Ô 2 đến Ô 10 -->
+                        <input type="text" id="digit-2" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-3" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-4" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-5" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-6" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-7" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-8" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-9" maxlength="1" class="digit-box" placeholder="*">
+                        <input type="text" id="digit-10" maxlength="1" class="digit-box" placeholder="*">
+                    </div>
+
+                    <div class="digit-help-text">
+                        Điền các chữ số cố định bạn muốn có vào các ô trống. Những ô bỏ trống (hoặc có dấu *) hệ thống sẽ tự động tính toán phối số Đại Cát cho bạn.
+                    </div>
+                </div>
+
+                <!-- Nút Submit -->
+                <button type="submit" class="btn-submit">
+                    🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC
+                </button>
+            </form>
+        </div>
+
+        <!-- Khung Kết Quả -->
+        <div id="resultsHeader" class="results-header" style="display: none;">
+            <div class="section-title" style="border: none; margin: 0;">
+                <span>✨</span> Danh Sách SIM Phù Hợp Đã Lập Quẻ
+            </div>
+            <div id="resultCount" class="sim-badge-group"></div>
+        </div>
+
+        <div id="resultsContainer"></div>
+
+    </div>
+
+    <!-- Modal Lá Quẻ Lục Hào Chi Tiết -->
+    <div id="hexModal" class="modal-overlay">
+        <div class="modal-content">
+            <span id="modalClose" class="modal-close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/luchao-core.js"></script>
+    <script src="js/sim-engine.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

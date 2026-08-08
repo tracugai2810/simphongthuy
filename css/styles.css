@@ -1,0 +1,482 @@
+/* ==========================================================================
+   SIM PHONG THỦY LỤC HÀO - STYLESHEET
+   Aesthetics: Luxury Obsidian & Antique Gold (Dark Gold Glassmorphism Theme)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #0f141c;
+    --bg-card: rgba(22, 30, 44, 0.85);
+    --bg-card-hover: rgba(30, 41, 59, 0.95);
+    --gold-primary: #f3c669;
+    --gold-glow: #ffd700;
+    --gold-dark: #b8860b;
+    --crimson-red: #c0392b;
+    --crimson-light: #e74c3c;
+    --emerald-green: #2ecc71;
+    --text-light: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-gold: rgba(243, 198, 105, 0.3);
+    --border-gold-bright: rgba(255, 215, 0, 0.7);
+    --shadow-gold: 0 0 20px rgba(243, 198, 105, 0.15);
+    --font-title: 'Charm', cursive, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: radial-gradient(circle at top center, #1b263b 0%, #0f141c 70%, #080b10 100%);
+    background-attachment: fixed;
+    color: var(--text-light);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+/* Header & Banner */
+header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(180deg, rgba(192, 57, 43, 0.3) 0%, rgba(15, 20, 28, 0) 100%);
+    border-bottom: 1px solid var(--border-gold);
+}
+
+.logo-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(192, 57, 43, 0.2);
+    border: 1px solid var(--crimson-light);
+    border-radius: 20px;
+    color: #ff7675;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+h1.app-title {
+    font-family: var(--font-title);
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--gold-primary);
+    text-shadow: 0 2px 10px rgba(243, 198, 105, 0.4);
+    margin-bottom: 8px;
+}
+
+.app-subtitle {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+/* Main Container */
+.container {
+    max-width: 960px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* Glassmorphism Form Card */
+.form-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-gold);
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    color: var(--gold-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(243, 198, 105, 0.15);
+    padding-bottom: 10px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.form-control {
+    background: rgba(15, 20, 28, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 12px 15px;
+    color: var(--text-light);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 10px rgba(243, 198, 105, 0.3);
+}
+
+/* Custom Digit Input Box Section (Like Image 1) */
+.digit-section {
+    background: linear-gradient(135deg, rgba(192, 57, 43, 0.85) 0%, rgba(142, 36, 17, 0.95) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 16px;
+    padding: 25px 20px;
+    text-align: center;
+    margin: 25px 0;
+    box-shadow: 0 8px 25px rgba(192, 57, 43, 0.3);
+}
+
+.digit-section-title {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.prefix-selector-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.prefix-selector-group label {
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.prefix-select {
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffd700;
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.digit-boxes-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.digit-box {
+    width: 44px;
+    height: 52px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.digit-box.fixed-zero {
+    background: #f1f5f9;
+    color: #b91c1c;
+    border-color: #fca5a5;
+    cursor: not-allowed;
+}
+
+.digit-box:focus {
+    border-color: var(--gold-primary);
+    transform: scale(1.08);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.digit-help-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+    color: #0f141c;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(243, 198, 105, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #ffe082 0%, #c59b27 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(243, 198, 105, 0.6);
+}
+
+/* Results Section */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.results-count {
+    color: var(--gold-primary);
+    font-weight: 600;
+}
+
+.sim-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* SIM Card Item */
+.sim-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+}
+
+.sim-card:hover {
+    border-color: var(--border-gold-bright);
+    background: var(--bg-card-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(243, 198, 105, 0.2);
+}
+
+.sim-number-display {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.sim-number-display span.highlight {
+    color: var(--gold-primary);
+}
+
+.sim-badge-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-score {
+    background: linear-gradient(135deg, #27ae60 0%, #2ec771 100%);
+    color: #ffffff;
+}
+
+.badge-hex {
+    background: rgba(243, 198, 105, 0.15);
+    border: 1px solid var(--gold-primary);
+    color: var(--gold-primary);
+}
+
+.sim-reasons-list {
+    list-style: none;
+    font-size: 0.95rem;
+    color: #cbd5e1;
+}
+
+.sim-reasons-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 4px;
+}
+
+.sim-reasons-list li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    color: var(--gold-primary);
+}
+
+.sim-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 160px;
+}
+
+.btn-action {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-view-hex {
+    background: rgba(243, 198, 105, 0.2);
+    color: var(--gold-primary);
+    border: 1px solid var(--gold-primary);
+}
+
+.btn-view-hex:hover {
+    background: var(--gold-primary);
+    color: #0f141c;
+}
+
+.btn-copy-info {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-copy-info:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* Modal Lá Quẻ Chi Tiết */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #141b26;
+    border: 1px solid var(--gold-primary);
+    border-radius: 16px;
+    max-width: 850px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--gold-primary);
+}
+
+/* Hexagram Table (Same layout style as luchao.io.vn) */
+.hex-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+.hex-table th, .hex-table td {
+    border: 1px solid rgba(243, 198, 105, 0.2);
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.hex-table th {
+    background: rgba(243, 198, 105, 0.15);
+    color: var(--gold-primary);
+    font-weight: 700;
+}
+
+.marker-the {
+    color: #ff4757;
+    font-weight: bold;
+}
+
+.marker-ung {
+    color: #2ed573;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    h1.app-title { font-size: 2rem; }
+    .sim-card { grid-template-columns: 1fr; }
+    .sim-actions { flex-direction: row; }
+    .digit-box { width: 34px; height: 44px; font-size: 1.2rem; }
+}
