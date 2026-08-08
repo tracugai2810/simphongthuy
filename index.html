@@ -8,15 +8,11 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
+
+    <!-- html2canvas cho xuất & tải ảnh quẻ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-
-    <!-- Header -->
-    <header>
-        <div class="logo-badge">☯ HỌC VIỆN DỊCH HỌC & PHONG THỦY</div>
-        <h1 class="app-title">SIM PHONG THỦY LỤC HÀO</h1>
-        <p class="app-subtitle">Thuật toán lập quẻ Dịch học tính toán danh sách số điện thoại Đại Cát Tường theo Ngày Tháng Năm Sinh & Nhu Cầu</p>
-    </header>
 
     <div class="container">
 
@@ -123,13 +119,26 @@
 
     </div>
 
-    <!-- Modal Lá Quẻ Lục Hào Chi Tiết -->
+    <!-- Modal Lá Quẻ Lục Hào Chi Tiết (Có tính năng Xuất / Tải Ảnh) -->
     <div id="hexModal" class="modal-overlay">
         <div class="modal-content">
             <span id="modalClose" class="modal-close">&times;</span>
+            
             <div id="modalBody"></div>
+
+            <div class="modal-actions" style="margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
+                <button id="downloadImgBtn" class="btn-action btn-submit" style="width: auto; padding: 10px 24px;">
+                    📥 Tải Ảnh Quẻ
+                </button>
+                <button id="copyImgBtn" class="btn-action btn-view-hex" style="padding: 10px 24px;">
+                    🖼️ Sao Chép Ảnh Quẻ
+                </button>
+            </div>
         </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-notification"></div>
 
     <!-- Scripts -->
     <script src="js/luchao-core.js"></script>

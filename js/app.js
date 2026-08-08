@@ -1,9 +1,12 @@
 /* ==========================================================================
    MAIN UI CONTROLLER - Website Sim Phong Thủy
-   Giao diện Lá Quẻ Render Chuẩn Y Hệt Web Cũ (luchao.io.vn)
+   - Tự động nhảy focus 10 ô vuông điền SĐT
+   - Nút Sao chép SĐT kèm thông báo Toast
+   - Khung Lá Quẻ render y hệt Web cũ + Xuất/Tải Ảnh Quẻ (html2canvas)
    ========================================================================== */
 
 let currentResults = [];
+let currentActiveIndex = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initFormDefaults();
@@ -12,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModalEvents();
 });
 
-// Khoảng ngày mặc định
+// Thiết lập khoảng ngày mặc định
 function initFormDefaults() {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
@@ -160,7 +163,7 @@ function renderResults(results) {
                     <button class="btn-action btn-view-hex" onclick="openHexModal(${index})">
                         🔍 Xem Lá Quẻ
                     </button>
-                    <button class="btn-action btn-copy-info" onclick="copySimAnalysis(${index})">
+                    <button class="btn-action btn-copy-info" onclick="copySimNumberOnly('${formattedSim}')">
                         📋 Sao Chép
                     </button>
                 </div>
@@ -179,6 +182,40 @@ function formatSimNumber(sim) {
     return sim;
 }
 
+// CHỈ SAO CHÉP SĐT + HIỂN THỊ TOAST THÔNG BÁO (Theo Yêu cầu Ảnh 3)
+function copySimNumberOnly(simStr) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(simStr).then(() => {
+            showToast(`Đã sao chép SĐT: ${simStr}`);
+        }).catch(() => fallbackCopy(simStr));
+    } else {
+        fallbackCopy(simStr);
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast(`Đã sao chép SĐT: ${text}`);
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (!toast) {
+        alert(message);
+        return;
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2500);
+}
+
 // Vẽ hình Hào Âm / Hào Dương / Hào Động (Giống Web cũ)
 function renderHexVisual(lines, isChanged) {
     const bits = lines.map(v => getBit(v, isChanged));
@@ -193,11 +230,12 @@ function renderHexVisual(lines, isChanged) {
     return `<div class="gua-container">${html}</div>`;
 }
 
-// Hiển thị Modal lá quẻ Lục Hào CỰC CHUẨN Y HỆT WEB CŨ
+// Hiển thị Modal lá quẻ Lục Hào CHUẨN Y HỆT WEB CŨ (Bỏ các dòng bị gạch theo Ảnh 4)
 function openHexModal(index) {
     const item = currentResults[index];
     if (!item) return;
 
+    currentActiveIndex = index;
     const { hexData, sim, evaluation } = item;
     const modal = document.getElementById('hexModal');
     const modalBody = document.getElementById('modalBody');
@@ -243,14 +281,17 @@ function openHexModal(index) {
     const purposeText = purposeSelect ? purposeSelect.options[purposeSelect.selectedIndex].text : '';
 
     modalBody.innerHTML = `
-        <div class="hex-card-view">
+        <div id="hexCardCapture" class="hex-card-view">
+            <!-- Header Thông Tin (Bỏ dòng Phương pháp & Can chi theo Ảnh 4) -->
             <div class="info-header">
                 <div class="info-content">
-                    <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span> &nbsp;&nbsp;&nbsp;&nbsp; <strong>Phương pháp:</strong> Mai Hoa Dịch Số</div>
-                    <div class="info-line"><strong>Can chi:</strong> ${hexData.dateInfo.fullCanChi}</div>
+                    <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span></div>
                     <div class="info-line"><strong>Mục đích cầu:</strong> ${purposeText}</div>
                     <div class="info-line"><strong>Tuần Không:</strong> <span class="highlight">${hexData.dateInfo.tuanKhong}</span></div>
-                    <div class="info-line"><strong>Nhật Thần:</strong> <span class="highlight">${hexData.dateInfo.nhatThan}</span> &nbsp;&nbsp;&nbsp;&nbsp; <strong>Nguyệt Lệnh:</strong> <span class="highlight">${hexData.dateInfo.nguyetLenh}</span></div>
+                    <div class="info-line">
+                        <strong>Nhật Thần:</strong> <span class="highlight">${hexData.dateInfo.nhatThan}</span> &nbsp;&nbsp;&nbsp;&nbsp; 
+                        <strong>Nguyệt Lệnh:</strong> <span class="highlight">${hexData.dateInfo.nguyetLenh}</span>
+                    </div>
                 </div>
             </div>
 
@@ -326,38 +367,62 @@ function setupModalEvents() {
             if (e.target === modal) modal.classList.remove('active');
         });
     }
-}
 
-// Sao chép văn bản phân tích để gửi khách Zalo
-function copySimAnalysis(index) {
-    const item = currentResults[index];
-    if (!item) return;
+    // Nút Tải Ảnh Quẻ (Dùng html2canvas như web cũ)
+    const downloadImgBtn = document.getElementById('downloadImgBtn');
+    if (downloadImgBtn) {
+        downloadImgBtn.addEventListener('click', () => downloadHexImage());
+    }
 
-    const { sim, hexData, evaluation } = item;
-    let text = `📱 PHÂN TÍCH SIM PHONG THỦY: ${formatSimNumber(sim)}\n`;
-    text += `🎯 Điểm Cát Tường: ${evaluation.score}/100 - ${evaluation.grade}\n`;
-    text += `☯️ Quẻ Lục Hào: ${hexData.mainName} ➔ ${hexData.changedName}\n`;
-    text += `📅 Ngày giờ lập quẻ: ${hexData.dateInfo.fullCanChi}\n`;
-    text += `✨ Đánh giá Cát Tường:\n`;
-    evaluation.reasons.forEach(r => {
-        text += `- ${r}\n`;
-    });
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert(`Đã sao chép phân tích SIM ${formatSimNumber(sim)}! Bạn có thể dán (Paste) vào Zalo tư vấn cho khách.`);
-        }).catch(() => fallbackCopy(text));
-    } else {
-        fallbackCopy(text);
+    // Nút Sao Chép Ảnh Quẻ
+    const copyImgBtn = document.getElementById('copyImgBtn');
+    if (copyImgBtn) {
+        copyImgBtn.addEventListener('click', () => copyHexImage());
     }
 }
 
-function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    alert("Đã sao chép nội dung phân tích thành công!");
+// Tải Ảnh Quẻ PNG
+function downloadHexImage() {
+    const target = document.getElementById('hexCardCapture');
+    if (!target || typeof html2canvas === 'undefined') {
+        alert("Đang tải thư viện tạo ảnh, vui lòng thử lại!");
+        return;
+    }
+
+    html2canvas(target, { scale: 2, useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `la-que-sim-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast("Đã tải ảnh lá quẻ về máy thành công!");
+    }).catch(err => {
+        console.error('html2canvas error:', err);
+        alert("Có lỗi khi tạo ảnh lá quẻ.");
+    });
+}
+
+// Sao chép Ảnh Quẻ vào Clipboard
+function copyHexImage() {
+    const target = document.getElementById('hexCardCapture');
+    if (!target || typeof html2canvas === 'undefined') {
+        alert("Đang tải thư viện tạo ảnh, vui lòng thử lại!");
+        return;
+    }
+
+    html2canvas(target, { scale: 2, useCORS: true }).then(canvas => {
+        canvas.toBlob(blob => {
+            if (navigator.clipboard && navigator.clipboard.write) {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(() => {
+                    showToast("Đã sao chép ảnh lá quẻ thành công!");
+                }).catch(() => {
+                    alert("Trình duyệt không hỗ trợ copy ảnh trực tiếp.");
+                });
+            } else {
+                alert("Trình duyệt không hỗ trợ copy ảnh trực tiếp.");
+            }
+        });
+    }).catch(err => {
+        console.error('html2canvas error:', err);
+    });
 }
