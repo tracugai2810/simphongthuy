@@ -1,6 +1,13 @@
 /* ==========================================================================
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO PRO
-   Diễn giải đơn giản, dễ hiểu cho Khách Hàng (Tập trung Vượng/Suy/Cát/Hung)
+   Lồng ghép 100% thuật toán Dịch Học từ file KIEN_THUC_LUC_HAO_SIM.md:
+   1. QUY TẮC NGUYỆT XUNG & NHẬT XUNG:
+      - Hào Tĩnh bị Nguyệt Xung (Nguyệt Phá) hoặc Nhật Xung (Ám Xung / Nhật Phá) -> BỊ TÍNH LÀ SUY BẠI / XẤU -> BỎ 100%!
+      - Nguyệt Xung Hào tĩnh xấu tương đương Hóa Suy Bại (Hóa khắc, thoái, tuyệt, phá...).
+      - Nhật Xung Hào tĩnh Hưu tù -> Xấu nặng tương đương Nguyệt xung.
+      - Nhật Xung Hào tĩnh Vượng -> Vẫn bị tính là Suy/Xấu.
+      - Hào Động bị xung -> Không sao, nhưng kém hơn Hào động được Nhật Nguyệt sinh phò.
+   2. PHÂN ĐỊNH VƯỢNG DỤNG THẦN & HƯNG HÀO THẾ.
    ========================================================================== */
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
@@ -88,7 +95,11 @@ function getLineVungScore(line, cal) {
     const isNguyetSinhPho = (hanh === nguyetHanh || isGenerating(nguyetHanh, hanh));
     const isNhatSinhPho = (hanh === nhatHanh || isGenerating(nhatHanh, hanh));
 
+    const isNguyetXung = isBranchXung(chi, nguyetChi);
+    const isNhatXung = isBranchXung(chi, nhatChi);
+
     if (line.isMoving) {
+        // Hào Động bị xung: Không sao, nhưng kém hơn hào động được sinh phò
         const hoiDauSinh = isGenerating(line.changed.hanh, hanh);
         const hoaTien = isProgressingBranch(chi, line.changed.branch);
 
@@ -97,17 +108,30 @@ function getLineVungScore(line, cal) {
             if (isLamNhatNguyet || isNguyetHop) baseScore += 20;
             else if (isNguyetSinhPho) baseScore += 15;
             else if (isNhatSinhPho) baseScore += 10;
+
+            if (isNguyetXung || isNhatXung) baseScore -= 10;
             return {
                 score: baseScore,
                 isVung: true,
-                note: `Động hóa sinh trợ vượng khí`
+                note: `Động hóa sinh trợ vượng khí${isNguyetXung || isNhatXung ? ' (Nhật/Nguyệt xung nhẹ)' : ''}`
             };
         } else {
             if (isLamNhatNguyet || isNguyetHop) return { score: 35, isVung: true, note: 'Lâm/Hợp Nhật Nguyệt vượng khí' };
-            if (isNguyetSinhPho) return { score: 28, isVung: true, note: 'Nguyệt Lệnh sinh phò vượng khí' };
+            if (isNguyetSinhPho) {
+                let score = (isNguyetXung || isNhatXung) ? 20 : 28;
+                return { score, isVung: true, note: 'Nguyệt Lệnh sinh phò vượng khí' };
+            }
             return { score: 0, isVung: false, note: 'Bị hưu tù suy vi' };
         }
     } else {
+        // Hào Tĩnh bị xung: Nguyệt Xung hoặc Nhật Xung ĐỀU TÍNH LÀ SUY BẠI / XẤU!
+        if (isNguyetXung) {
+            return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nguyệt Xung (Nguyệt Phá - Xấu nặng tương đương Hóa Bại)' };
+        }
+        if (isNhatXung) {
+            return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nhật Xung (Ám Xung - Tính là suy hưu tù, xấu)' };
+        }
+
         if (isLamNhatNguyet || isNguyetHop || isNhatHop) {
             return { score: 40, isVung: true, note: `Được Nhật Nguyệt sinh trợ vượng khí rất tốt` };
         }
@@ -157,6 +181,17 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             score: 15,
             grade: 'Khuyết Dụng Thần',
             reasons: [`Dụng Thần (${targetRel}) không xuất hiện trong quẻ (Thiếu yếu tố may mắn cầu như ý).`]
+        };
+    }
+
+    // Dụng Thần Bị Xung Nặng (Nguyệt Xung / Nhật Xung khi Tĩnh)
+    const dungThanStaticXung = dungThanLines.find(dt => !dt.isMoving && (isBranchXung(dt.chi, nguyetChi) || isBranchXung(dt.chi, nhatChi)));
+    if (dungThanStaticXung) {
+        return {
+            isQualified: false,
+            score: 15,
+            grade: 'Dụng Thần Bị Xung Phá',
+            reasons: [`Dụng Thần (${targetRel}) bị xung phá (Khí lộc bị tổn hại nặng, không phù hợp).`]
         };
     }
 
@@ -234,7 +269,16 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     reasons.push(`Dụng Thần (${targetRel}) vượng khí, trợ vận may phát triển tốt.`);
     totalScore += maxDungScore;
 
-    // Kiểm tra Hào Thế (Bản mệnh)
+    // Kiểm tra Hào Thế (Bản mệnh) Bị Xung Nặng
+    if (!haoThe.isMoving && (isBranchXung(theChi, nguyetChi) || isBranchXung(theChi, nhatChi))) {
+        return {
+            isQualified: false,
+            score: 10,
+            grade: 'Hào Thế Bị Xung Phá',
+            reasons: [`Hào Thế (bản mệnh) bị xung khắc chấn động (Khí vận không an ổn, không gánh được tài lộc).`]
+        };
+    }
+
     const theVungInfo = getLineVungScore(haoThe, cal);
 
     const bịNhậtKhắc = isOvercoming(nhatHanh, theHanh);
@@ -269,7 +313,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     const isTheNhatSinh = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
     const isTheNguyetSinh = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
     const isTheLamNguyetHop = (theChi === nhatChi || theChi === nguyetChi || isBranchHarmonious(theChi, nguyetChi) || (!haoThe.isMoving && isBranchHarmonious(theChi, nhatChi)));
-    const isTheHung = theVungInfo.isVung || isTheNhatSinh || isTheNguyetSinh || isTheLamNguyetHop;
+    const isTheHung = (theVungInfo.isVung || isTheNhatSinh || isTheNguyetSinh || isTheLamNguyetHop) && !(!haoThe.isMoving && (isBranchXung(theChi, nguyetChi) || isBranchXung(theChi, nhatChi)));
 
     if (targetRel === 'Thế') {
         if (!theVungInfo.isVung && !dungThanDuocDongSinh) {
