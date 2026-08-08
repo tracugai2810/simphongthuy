@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <!-- Khung Chọn Đầu Số & Điền Chữ Số Mong Muốn (UI theo Ảnh 1) -->
+                <!-- Khung Chọn Đầu Số & Điền Chữ Số Mong Muốn -->
                 <div class="digit-section">
                     <div class="digit-section-title">Nhập số thuê bao mong muốn</div>
 
@@ -130,24 +130,16 @@
 
     </div>
 
-    <!-- Modal Lá Quẻ Lục Hào Chi Tiết -->
+    <!-- Modal Lá Quẻ Lục Hào (Dành riêng cho Máy tính - Xem ảnh & Chuột phải sao chép) -->
     <div id="hexModal" class="modal-overlay">
         <div class="modal-content">
             <span id="modalClose" class="modal-close">&times;</span>
-            
             <div id="modalBody"></div>
-
-            <!-- Thanh Nút Bấm Tải & Sao Chép Ảnh Màu Nổi Bật -->
-            <div class="modal-actions-bar">
-                <button id="downloadImgBtn" class="btn-modal-green">
-                    📥 Tải Ảnh Quẻ
-                </button>
-                <button id="copyImgBtn" class="btn-modal-blue">
-                    🖼️ Sao Chép Ảnh Quẻ
-                </button>
-            </div>
         </div>
     </div>
+
+    <!-- Container ẩn dùng để render html2canvas khi tải ảnh trên Mobile -->
+    <div id="hiddenRenderArea" style="position: absolute; left: -9999px; top: -9999px;"></div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast-notification"></div>

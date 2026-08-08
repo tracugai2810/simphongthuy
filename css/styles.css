@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET
    Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
-   Tối ưu Mobile First & Khung Tải Ảnh Lá Quẻ Không Bị Mất Góc
+   Tối ưu Mobile First & Phân định Thao tác Máy tính vs Điện thoại
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -112,7 +112,7 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
-/* Custom Digit Input Box Section (Like Image 1) */
+/* Custom Digit Input Box Section */
 .digit-section {
     background: linear-gradient(135deg, #6b1a1a 0%, #8b2525 50%, #6b1a1a 100%);
     border: 1px solid rgba(255, 215, 0, 0.3);
@@ -361,7 +361,7 @@ select.form-control option, select.prefix-select option {
     color: #ffffff;
 }
 
-/* Toast Notification (Hiển thị khi Copy SĐT) */
+/* Toast Notification (Hiển thị khi Copy SĐT / Tải ảnh) */
 .toast-notification {
     position: fixed;
     bottom: 30px;
@@ -386,7 +386,7 @@ select.form-control option, select.prefix-select option {
 }
 
 /* ==========================================================================
-   KHUNG XEM LÁ QUẺ LỤC HÀO - TỐI ƯU MÀU NÚT & CHỐNG CẮT LỀ TRÁI
+   KHUNG XEM LÁ QUẺ LỤC HÀO - DÀNH CHO MÁY TÍNH (HỖ TRỢ CHUỘT PHẢI COPY ÁNH)
    ========================================================================== */
 
 .modal-overlay {
@@ -417,11 +417,11 @@ select.form-control option, select.prefix-select option {
     color: #000000;
     border: 2px solid #888;
     border-radius: 12px;
-    max-width: 960px;
+    max-width: 900px;
     width: 100%;
     max-height: 95vh;
     overflow-y: auto;
-    padding: 16px;
+    padding: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
     position: relative;
     font-family: 'Inter', sans-serif;
@@ -443,7 +443,6 @@ select.form-control option, select.prefix-select option {
     color: #e60000;
 }
 
-/* Scroll Wrapper để Mobile xem cuộn mượt mà không vỡ layout */
 .hex-card-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -451,12 +450,34 @@ select.form-control option, select.prefix-select option {
     padding-bottom: 5px;
 }
 
-/* Layout Lá quẻ chuẩn web cũ - Thêm Padding lề trái 25px an toàn */
+/* Hiển thị Ảnh lá quẻ thật cho Máy tính -> Cho phép Nhấp chuột phải Sao chép / Lưu ảnh */
+.hex-native-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.desktop-img-hint {
+    text-align: center;
+    color: #4b5563;
+    font-size: 0.92rem;
+    margin-top: 14px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Layout Lá quẻ chuẩn web cũ */
 .hex-card-view {
     background-color: #fefee5;
     color: #000000;
     font-size: 16px;
-    min-width: 780px; /* Đảm bảo kích thước tối thiểu khi xuất ảnh html2canvas */
+    min-width: 780px;
     padding: 20px 25px;
     box-sizing: border-box;
 }
@@ -487,7 +508,6 @@ select.form-control option, select.prefix-select option {
     font-weight: 700;
 }
 
-/* 3 Cột hiển thị hình vẽ Hào */
 .hex-card-view .hex-visual-section {
     display: flex;
     justify-content: center;
@@ -638,49 +658,6 @@ select.form-control option, select.prefix-select option {
     color: #2d3748;
 }
 
-/* Nút bấm trong Modal */
-.modal-actions-bar {
-    margin-top: 18px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.btn-modal-green {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    padding: 12px 28px !important;
-    border-radius: 8px !important;
-    border: none !important;
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4) !important;
-    cursor: pointer;
-    font-size: 1rem !important;
-}
-
-.btn-modal-green:hover {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
-    transform: translateY(-2px);
-}
-
-.btn-modal-blue {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    padding: 12px 28px !important;
-    border-radius: 8px !important;
-    border: none !important;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
-    cursor: pointer;
-    font-size: 1rem !important;
-}
-
-.btn-modal-blue:hover {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-    transform: translateY(-2px);
-}
-
 /* ==========================================================================
    MOBILE FIRST OPTIMIZATIONS (Cho Điện Thoại)
    ========================================================================== */
@@ -729,15 +706,5 @@ select.form-control option, select.prefix-select option {
 
     .modal-content {
         padding: 12px;
-    }
-
-    /* TRÊN ĐIỆN THOẠI: Ẩn nút "Sao chép ảnh", Chỉ giữ nút "Tải ảnh về" theo Yêu cầu */
-    #copyImgBtn {
-        display: none !important;
-    }
-
-    .btn-modal-green {
-        width: 100% !important;
-        padding: 14px !important;
     }
 }
