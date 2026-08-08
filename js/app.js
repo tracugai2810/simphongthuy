@@ -2,11 +2,10 @@
    MAIN UI CONTROLLER - Website Sim Phong Thủy
    - Tự động nhảy focus 10 ô vuông điền SĐT
    - Nút Sao chép SĐT kèm thông báo Toast
-   - Khung Lá Quẻ render y hệt Web cũ + Xuất/Tải Ảnh Quẻ (html2canvas)
+   - Khung Lá Quẻ render y hệt Web cũ + Xuất/Tải Ảnh Quẻ (html2canvas không mất góc)
    ========================================================================== */
 
 let currentResults = [];
-let currentActiveIndex = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initFormDefaults();
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModalEvents();
 });
 
-// Thiết lập khoảng ngày mặc định
 function initFormDefaults() {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
@@ -27,7 +25,6 @@ function initFormDefaults() {
     }
 }
 
-// Thiết lập chuyển focus tự động giữa các ô vuông điền số (Như Ảnh 1)
 function setupDigitBoxes() {
     const boxes = Array.from(document.querySelectorAll('.digit-box:not(.fixed-zero)'));
 
@@ -72,7 +69,6 @@ function setupDigitBoxes() {
     }
 }
 
-// Xử lý nộp form sinh SIM
 function setupFormEvents() {
     const form = document.getElementById('simForm');
     if (!form) return;
@@ -114,7 +110,6 @@ function processSearch() {
     }, 150);
 }
 
-// Render kết quả danh sách SIM
 function renderResults(results) {
     const resultsContainer = document.getElementById('resultsContainer');
     const resultsHeader = document.getElementById('resultsHeader');
@@ -216,7 +211,6 @@ function showToast(message) {
     }, 2500);
 }
 
-// Vẽ hình Hào Âm / Hào Dương / Hào Động (Giống Web cũ)
 function renderHexVisual(lines, isChanged) {
     const bits = lines.map(v => getBit(v, isChanged));
     let html = '';
@@ -230,12 +224,11 @@ function renderHexVisual(lines, isChanged) {
     return `<div class="gua-container">${html}</div>`;
 }
 
-// Hiển thị Modal lá quẻ Lục Hào CHUẨN Y HỆT WEB CŨ (Bỏ các dòng bị gạch theo Ảnh 4)
+// Hiển thị Modal lá quẻ Lục Hào CHUẨN Y HỆT WEB CŨ
 function openHexModal(index) {
     const item = currentResults[index];
     if (!item) return;
 
-    currentActiveIndex = index;
     const { hexData, sim, evaluation } = item;
     const modal = document.getElementById('hexModal');
     const modalBody = document.getElementById('modalBody');
@@ -281,72 +274,74 @@ function openHexModal(index) {
     const purposeText = purposeSelect ? purposeSelect.options[purposeSelect.selectedIndex].text : '';
 
     modalBody.innerHTML = `
-        <div id="hexCardCapture" class="hex-card-view">
-            <!-- Header Thông Tin (Bỏ dòng Phương pháp & Can chi theo Ảnh 4) -->
-            <div class="info-header">
-                <div class="info-content">
-                    <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span></div>
-                    <div class="info-line"><strong>Mục đích cầu:</strong> ${purposeText}</div>
-                    <div class="info-line"><strong>Tuần Không:</strong> <span class="highlight">${hexData.dateInfo.tuanKhong}</span></div>
-                    <div class="info-line">
-                        <strong>Nhật Thần:</strong> <span class="highlight">${hexData.dateInfo.nhatThan}</span> &nbsp;&nbsp;&nbsp;&nbsp; 
-                        <strong>Nguyệt Lệnh:</strong> <span class="highlight">${hexData.dateInfo.nguyetLenh}</span>
+        <div class="hex-card-scroll-wrapper">
+            <div id="hexCardCapture" class="hex-card-view">
+                <!-- Header Thông Tin (Định dạng Nhật Thần: Dần - Mộc theo Ảnh 1) -->
+                <div class="info-header">
+                    <div class="info-content">
+                        <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span></div>
+                        <div class="info-line"><strong>Mục đích cầu:</strong> ${purposeText}</div>
+                        <div class="info-line"><strong>Tuần Không:</strong> <span class="highlight">${hexData.dateInfo.tuanKhong}</span></div>
+                        <div class="info-line">
+                            <strong>Nhật Thần:</strong> <span class="highlight">${hexData.dateInfo.nhatThan}</span> &nbsp;&nbsp;&nbsp;&nbsp; 
+                            <strong>Nguyệt Lệnh:</strong> <span class="highlight">${hexData.dateInfo.nguyetLenh}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 3 Cột vẽ hình Hào Quẻ Chủ - Quẻ Hỗ - Quẻ Biến -->
-            <div class="hex-visual-section">
-                <div class="hex-box">
-                    <div class="hex-title">${hexData.mainName}</div>
-                    ${renderHexVisual(hexData.lines, false)}
-                    <div class="hex-family">Họ ${hexData.palaceName}${hexData.mainAttr ? ' - ' + hexData.mainAttr : ''}</div>
+                <!-- 3 Cột vẽ hình Hào Quẻ Chủ - Quẻ Hỗ - Quẻ Biến -->
+                <div class="hex-visual-section">
+                    <div class="hex-box">
+                        <div class="hex-title">${hexData.mainName}</div>
+                        ${renderHexVisual(hexData.lines, false)}
+                        <div class="hex-family">Họ ${hexData.palaceName}${hexData.mainAttr ? ' - ' + hexData.mainAttr : ''}</div>
+                    </div>
+
+                    ${hexData.hoData ? `
+                    <div class="hex-box">
+                        <div class="hex-title">${hexData.hoData.name}</div>
+                        ${renderHexVisual(hexData.hoData.lines, false)}
+                        <div class="hex-family">Họ ${hexData.hoData.palaceName}${hexData.hoData.attr ? ' - ' + hexData.hoData.attr : ''}</div>
+                        ${hexData.ngamResult && hexData.ngamResult.length > 0 ? `<div style="font-size:14px; font-weight:bold; margin-top:4px;">${hexData.ngamResult.join(', ')}</div>` : ''}
+                    </div>` : ''}
+
+                    <div class="hex-box">
+                        <div class="hex-title">${hexData.changedName}</div>
+                        ${renderHexVisual(hexData.lines, true)}
+                        <div class="hex-family">Họ ${hexData.changedPalaceName}${hexData.changedAttr ? ' - ' + hexData.changedAttr : ''}</div>
+                    </div>
                 </div>
 
-                ${hexData.hoData ? `
-                <div class="hex-box">
-                    <div class="hex-title">${hexData.hoData.name}</div>
-                    ${renderHexVisual(hexData.hoData.lines, false)}
-                    <div class="hex-family">Họ ${hexData.hoData.palaceName}${hexData.hoData.attr ? ' - ' + hexData.hoData.attr : ''}</div>
-                    ${hexData.ngamResult && hexData.ngamResult.length > 0 ? `<div style="font-size:14px; font-weight:bold; margin-top:4px;">${hexData.ngamResult.join(', ')}</div>` : ''}
-                </div>` : ''}
+                <!-- Bảng Lục Hào 12 Cột -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hào</th>
+                            <th>T/Ư</th>
+                            <th>Lục Thân</th>
+                            <th>Can Chi</th>
+                            <th>P.Thần</th>
+                            <th>TK</th>
+                            <th class="sep-col">Lục Thân</th>
+                            <th>Can Chi</th>
+                            <th>Lục Thú</th>
+                            <th>TK</th>
+                            <th>TS Ngày</th>
+                            <th>TS Tháng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                </table>
 
-                <div class="hex-box">
-                    <div class="hex-title">${hexData.changedName}</div>
-                    ${renderHexVisual(hexData.lines, true)}
-                    <div class="hex-family">Họ ${hexData.changedPalaceName}${hexData.changedAttr ? ' - ' + hexData.changedAttr : ''}</div>
+                <!-- Đánh giá Phong Thủy Chi Tiết -->
+                <div class="eval-box">
+                    <h4>🎯 Đánh giá Cát Tường: ${evaluation.score}/100 - ${evaluation.grade}</h4>
+                    <ul>
+                        ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
                 </div>
-            </div>
-
-            <!-- Bảng Lục Hào 12 Cột -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hào</th>
-                        <th>T/Ư</th>
-                        <th>Lục Thân</th>
-                        <th>Can Chi</th>
-                        <th>P.Thần</th>
-                        <th>TK</th>
-                        <th class="sep-col">Lục Thân</th>
-                        <th>Can Chi</th>
-                        <th>Lục Thú</th>
-                        <th>TK</th>
-                        <th>TS Ngày</th>
-                        <th>TS Tháng</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rowsHtml}
-                </tbody>
-            </table>
-
-            <!-- Đánh giá Phong Thủy -->
-            <div class="eval-box">
-                <h4>🎯 Đánh giá Cát Tường: ${evaluation.score}/100 - ${evaluation.grade}</h4>
-                <ul>
-                    ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
-                </ul>
             </div>
         </div>
     `;
@@ -368,20 +363,18 @@ function setupModalEvents() {
         });
     }
 
-    // Nút Tải Ảnh Quẻ (Dùng html2canvas như web cũ)
     const downloadImgBtn = document.getElementById('downloadImgBtn');
     if (downloadImgBtn) {
         downloadImgBtn.addEventListener('click', () => downloadHexImage());
     }
 
-    // Nút Sao Chép Ảnh Quẻ
     const copyImgBtn = document.getElementById('copyImgBtn');
     if (copyImgBtn) {
         copyImgBtn.addEventListener('click', () => copyHexImage());
     }
 }
 
-// Tải Ảnh Quẻ PNG
+// Tải Ảnh Quẻ PNG (Không bị mất góc bên trái)
 function downloadHexImage() {
     const target = document.getElementById('hexCardCapture');
     if (!target || typeof html2canvas === 'undefined') {
@@ -389,7 +382,13 @@ function downloadHexImage() {
         return;
     }
 
-    html2canvas(target, { scale: 2, useCORS: true }).then(canvas => {
+    html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 900
+    }).then(canvas => {
         const link = document.createElement('a');
         link.download = `la-que-sim-${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
@@ -409,7 +408,13 @@ function copyHexImage() {
         return;
     }
 
-    html2canvas(target, { scale: 2, useCORS: true }).then(canvas => {
+    html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 900
+    }).then(canvas => {
         canvas.toBlob(blob => {
             if (navigator.clipboard && navigator.clipboard.write) {
                 const item = new ClipboardItem({ 'image/png': blob });

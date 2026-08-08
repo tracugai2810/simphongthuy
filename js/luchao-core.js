@@ -480,8 +480,9 @@ function calculateHexagramData(lines, cal, methodText) {
         dateInfo: {
             fullCanChi: `Giờ ${cal.gio.can} ${cal.gio.chi}, Ngày ${cal.ngay.can} ${cal.ngay.chi}, Tháng ${cal.thang.can} ${cal.thang.chi}, Năm ${cal.nam.can} ${cal.nam.chi}`,
             tuanKhong: cal.tuanKhong.join(', '),
-            nhatThan: `${cal.ngay.chi} (${cal.ngay.hanh})`,
-            nguyetLenh: `${cal.thang.chi} (${cal.thang.hanh})`
+            // Định dạng hiển thị dạng: Dần - Mộc (Theo Yêu cầu Ảnh 1)
+            nhatThan: `${cal.ngay.chi} - ${cal.ngay.hanh}`,
+            nguyetLenh: `${cal.thang.chi} - ${cal.thang.hanh}`
         }
     };
 }

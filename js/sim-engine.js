@@ -1,6 +1,6 @@
 /* ==========================================================================
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO
-   Đánh giá theo đúng thứ tự ưu tiên:
+   Đánh giá theo đúng thứ tự ưu tiên & Cấp độ Cát Hung:
    1. Hào Thế (Hưng / Vượng, không bị Nhật/Nguyệt khắc, không bị suy bại: hóa khắc, hóa thoái, hóa tuyệt)
    2. Dụng Thần (Vượng tại Nhật/Nguyệt, Hóa tiến thần, Hóa hồi đầu sinh)
    3. Tương tác Dụng Thần & Hào Thế (Dụng thần động sinh Thế = Tốt nhất; Tài lai khắc Thế = Bắt buộc Thế vượng cả Nhật lẫn Nguyệt)
@@ -8,14 +8,12 @@
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
 
-// Element A generates Element B?
 function isGenerating(elA, elB) {
     const idxA = ELEMENTS.indexOf(elA);
     const idxB = ELEMENTS.indexOf(elB);
     return (idxA + 1) % 5 === idxB;
 }
 
-// Element A overcomes / counters Element B?
 function isOvercoming(elA, elB) {
     const idxA = ELEMENTS.indexOf(elA);
     const idxB = ELEMENTS.indexOf(elB);
@@ -49,7 +47,6 @@ function isRegressingBranch(bMain, bChanged) {
     return reg[bMain] === bChanged;
 }
 
-// Tên 5 nhu cầu
 const PURPOSE_NAMES = {
     'cautai': 'Cầu Tài Lộc',
     'cauquan': 'Cầu Công Danh / Sự Nghiệp',
@@ -58,7 +55,6 @@ const PURPOSE_NAMES = {
     'honnhan': 'Cầu Hôn Nhân & Tình Duyên'
 };
 
-// Xác định Dụng Thần theo Nhu cầu & Giới tính
 function getTargetRelation(purpose, gender) {
     switch (purpose) {
         case 'cautai':
@@ -76,19 +72,19 @@ function getTargetRelation(purpose, gender) {
     }
 }
 
-// Đánh giá quẻ SIM nghiêm ngặt theo đúng thuật toán Lục Hào
+// Đánh giá quẻ SIM nghiêm ngặt theo đúng phân cấp logic Dịch Học
 function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     if (!hexData) return { isQualified: false, score: 0, grade: 'Không hợp lệ', reasons: ['Không thể lập quẻ.'] };
 
     const reasons = [];
-    let score = 40; // Điểm cơ sở
+    let score = 40;
 
     const nhatChi = cal.ngay.chi;
     const nhatHanh = cal.ngay.hanh;
     const nguyetChi = cal.thang.chi;
     const nguyetHanh = cal.thang.hanh;
 
-    // --- 1. ĐÁNH GIÁ HÀO THẾ (Yếu tố cốt lõi số 1) ---
+    // --- 1. ĐÁNH GIÁ HÀO THẾ (Hưng / Vượng & An Toàn) ---
     const haoThe = hexData.linesData.find(l => l.isShi);
     if (!haoThe) {
         return { isQualified: false, score: 0, grade: 'Khắc', reasons: ['Không tìm thấy Hào Thế.'] };
@@ -97,7 +93,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     const theHanh = haoThe.hanh;
     const theChi = haoThe.chi;
 
-    // A. Kiểm tra SUY BẠI của Hào Thế -> BẮT BUỘC LOẠI BỎ NẾU XẤU
+    // Kiểm tra SUY BẠI -> LOẠI BỎ NGAY
     const bịNhậtKhắc = isOvercoming(nhatHanh, theHanh);
     const bịNguyệtKhắc = isOvercoming(nguyetHanh, theHanh);
 
@@ -105,70 +101,66 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         return {
             isQualified: false,
             score: 10,
-            grade: 'Hung',
+            grade: 'Hung (Thế Bị Khắc)',
             reasons: ['Hào Thế bị Nhật Thần hoặc Nguyệt Lệnh tương khắc (Suy vi, bỏ).']
         };
     }
 
-    // Nếu Hào Thế ĐỘNG: Kiểm tra Hóa Khắc, Hóa Thoái, Hóa Tuyệt
     if (haoThe.isMoving) {
         const hoiDauKhac = isOvercoming(haoThe.changed.hanh, theHanh);
         const hoaThoai = isRegressingBranch(theChi, haoThe.changed.branch);
         const hoaTuyet = (getLifeStage(theHanh, haoThe.changed.branch) === 'Tuyệt');
 
         if (hoiDauKhac || hoaThoai || hoaTuyet) {
-            let reasonText = "Hào Thế động ";
-            if (hoiDauKhac) reasonText += "hóa Hồi Đầu Khắc.";
-            else if (hoaThoai) reasonText += "hóa Thoái Thần.";
-            else reasonText += "hóa Tuyệt.";
+            let note = hoiDauKhac ? 'Hóa Hồi Đầu Khắc' : hoaThoai ? 'Hóa Thoái Thần' : 'Hóa Tuyệt';
             return {
                 isQualified: false,
                 score: 15,
                 grade: 'Suy Bại',
-                reasons: [reasonText + " (Thuộc thế suy bại, bắt buộc loại bỏ)."]
+                reasons: [`Hào Thế động ${note} (Thế suy bại, loại bỏ).`]
             };
         }
     }
 
-    // B. Kiểm tra "THẾ HƯNG" (Hào Thế Vượng / Hưng)
+    // Đánh giá cấp độ HƯNG / VƯỢNG của Hào Thế
     const isLamNhatNguyet = (theChi === nhatChi || theChi === nguyetChi);
     const isNguyetHop = isBranchHarmonious(theChi, nguyetChi);
-    const isNhatHop = !haoThe.isMoving && isBranchHarmonious(theChi, nhatChi); // Nhật hợp chỉ tính khi Thế tĩnh
+    const isNhatHop = !haoThe.isMoving && isBranchHarmonious(theChi, nhatChi);
     const isNguyetSinhPho = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
     const isNhatSinhPho = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
 
     let theScore = 0;
 
     if (haoThe.isMoving) {
-        // Hào Thế ĐỘNG: Hóa Hồi Đầu Sinh hoặc Hóa Tiến Thần -> TỐT NHẤT
+        // Hào Thế ĐỘNG
         const hoiDauSinh = isGenerating(haoThe.changed.hanh, theHanh);
         const hoaTien = isProgressingBranch(theChi, haoThe.changed.branch);
 
         if (hoiDauSinh || hoaTien) {
+            let detail = hoaTien ? 'Hóa Tiến Thần' : 'Hóa Hồi Đầu Sinh';
             if (isLamNhatNguyet || isNguyetHop) {
                 theScore = 40;
-                reasons.push(`Hào Thế (${theChi}) Lâm/Hợp Nhật Nguyệt lại Động hóa ${hoaTien ? 'Tiến Thần' : 'Hồi Đầu Sinh'} (Tối Đại Cát).`);
+                reasons.push(`Hào Thế Động (${theChi}) Lâm/Hợp Nhật Nguyệt lại Động ${detail} - Đạt Cấp Cát Tường Tối Cao (Tốt hơn vượng tại Nhật Nguyệt).`);
             } else if (isNguyetSinhPho) {
                 theScore = 35;
-                reasons.push(`Hào Thế (${theChi}) được Nguyệt Lệnh sinh phò, Động hóa ${hoaTien ? 'Tiến Thần' : 'Hồi Đầu Sinh'}.`);
+                reasons.push(`Hào Thế Động (${theChi}) được Nguyệt Lệnh sinh phò lại Động ${detail} (Cát Tường Bậc Cao).`);
             } else if (isNhatSinhPho) {
                 theScore = 30;
-                reasons.push(`Hào Thế (${theChi}) được Nhật Thần sinh phò, Động hóa ${hoaTien ? 'Tiến Thần' : 'Hồi Đầu Sinh'}.`);
+                reasons.push(`Hào Thế Động (${theChi}) được Nhật Thần sinh phò lại Động ${detail} (Cát Tường Bậc Cao).`);
             } else {
                 theScore = 25;
-                reasons.push(`Hào Thế (${theChi}) Động hóa ${hoaTien ? 'Tiến Thần' : 'Hồi Đầu Sinh'} (Thế Hưng).`);
+                reasons.push(`Hào Thế Động (${theChi}) ${detail} (Đạt Thế Hưng).`);
             }
         } else {
-            // Động nhưng không hóa sinh/tiến -> Xét theo Nhật Nguyệt
             if (isLamNhatNguyet || isNguyetHop) {
                 theScore = 30;
-                reasons.push(`Hào Thế (${theChi}) Lâm/Hợp Nhật Nguyệt vượng thế.`);
+                reasons.push(`Hào Thế Động (${theChi}) Lâm/Hợp Nhật Nguyệt vượng thế.`);
             } else if (isNguyetSinhPho) {
                 theScore = 25;
-                reasons.push(`Hào Thế (${theChi}) được Nguyệt Lệnh (${nguyetChi}) vượng sinh/phò.`);
+                reasons.push(`Hào Thế Động (${theChi}) được Nguyệt Lệnh (${nguyetChi}) sinh phò.`);
             } else if (isNhatSinhPho) {
                 theScore = 20;
-                reasons.push(`Hào Thế (${theChi}) được Nhật Thần (${nhatChi}) vượng sinh/phò.`);
+                reasons.push(`Hào Thế Động (${theChi}) được Nhật Thần (${nhatChi}) sinh phò.`);
             }
         }
     } else {
@@ -176,15 +168,14 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         if (isLamNhatNguyet || isNguyetHop || isNhatHop) {
             theScore = 35;
             let note = isLamNhatNguyet ? 'Lâm Nhật/Nguyệt' : isNguyetHop ? 'Nguyệt Hợp' : 'Nhật Hợp';
-            reasons.push(`Hào Thế Tĩnh (${theChi}) được ${note} (Thế Vượng Hưng).`);
+            reasons.push(`Hào Thế Tĩnh (${theChi}) được ${note} (Thế Hưng - Cấp 1).`);
         } else if (isNguyetSinhPho) {
             theScore = 25;
-            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nguyệt Lệnh (${nguyetChi}) sinh phò.`);
+            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nguyệt Lệnh (${nguyetChi}) sinh phò (Thế Hưng - Cấp 2).`);
         } else if (isNhatSinhPho) {
             theScore = 20;
-            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nhật Thần (${nhatChi}) sinh phò.`);
+            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nhật Thần (${nhatChi}) sinh phò (Thế Hưng - Cấp 3).`);
         } else {
-            // Hào Thế tĩnh không vượng không sinh -> Bỏ
             return {
                 isQualified: false,
                 score: 30,
@@ -196,7 +187,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
 
     score += theScore;
 
-    // --- 2. ĐÁNH GIÁ DỤNG THẦN (Yếu tố quan trọng số 2) ---
+    // --- 2. ĐÁNH GIÁ DỤNG THẦN ---
     const targetRel = getTargetRelation(purpose, gender);
     let dungThanLines = [];
 
@@ -211,7 +202,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             isQualified: false,
             score: 20,
             grade: 'Khuyết Dụng Thần',
-            reasons: [`Dụng Thần ${targetRel} không xuất hiện trong quẻ (Loại bỏ).`]
+            reasons: [`Dụng Thần ${targetRel} không xuất hiện trong quẻ (Bỏ).`]
         };
     }
 
@@ -227,18 +218,14 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         if (dt.isMoving) {
             if (isGenerating(dtHanh, theHanh)) {
                 dungThanDongSinhThe = true;
-                reasons.push(`🔥 Dụng Thần ${targetRel} (${dtChi}) ĐỘNG SINH HÀO THẾ (${theChi}) - Thượng Cát Tường!`);
+                reasons.push(`🔥 Dụng Thần ${targetRel} (${dtChi}) ĐỘNG SINH HÀO THẾ (${theChi}) - Mẫu quẻ Cát Tường Bậc Nhất!`);
             }
 
-            // Trường hợp CẦU TÀI: Dụng thần Thê Tài ĐỘNG KHẮC Hào Thế ("Tài Lai Khắc Thế")
+            // CẦU TÀI: Dụng thần Thê Tài ĐỘNG KHẮC Hào Thế ("Tài Lai Khắc Thế")
             if (purpose === 'cautai' && isOvercoming(dtHanh, theHanh)) {
-                // BẮT BUỘC Hào Thế phải VƯỢNG Ở CẢ NHẬT LẪN NGUYỆT
                 if (isNhatSinhPho && isNguyetSinhPho) {
                     dungThanKhacTheHopLe = true;
-                    reasons.push(`Dụng Thần Thê Tài Động Khắc Hào Thế (Tài Lai Khắc Thế), Hào Thế vượng cả Nhật lẫn Nguyệt nên Nhận Được Tài.`);
-                } else {
-                    // Nếu Thế không vượng cả 2 -> Loại bỏ lập tức
-                    return;
+                    reasons.push(`Dụng Thần Thê Tài Động Khắc Hào Thế (Tài Lai Khắc Thế), Hào Thế Song Vượng (được cả Nhật Nguyệt sinh/phò) ➔ Nhận Được Đại Tài Lộc.`);
                 }
             }
         }
@@ -255,23 +242,37 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             const dtHoaTien = isProgressingBranch(dtChi, dt.changed.branch);
 
             if (dtHoiDauSinh || dtHoaTien) {
-                if (dtLamNhatNguyet || dtNguyetHop) dungScore += 35;
-                else if (dtNguyetSinh) dungScore += 30;
-                else dungScore += 25;
-                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng tại Nhật/Nguyệt lại Động hóa ${dtHoaTien ? 'Tiến Thần' : 'Hồi Đầu Sinh'}.`);
+                let note = dtHoaTien ? 'Hóa Tiến Thần' : 'Hóa Hồi Đầu Sinh';
+                if (dtLamNhatNguyet || dtNguyetHop) {
+                    dungScore += 35;
+                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng Lâm/Hợp Nhật Nguyệt lại Động ${note} (Đại Cát).`);
+                } else if (dtNguyetSinh) {
+                    dungScore += 30;
+                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng Nguyệt Lệnh lại Động ${note}.`);
+                } else {
+                    dungScore += 25;
+                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) Động ${note}.`);
+                }
             } else {
                 if (dtLamNhatNguyet || dtNguyetHop) dungScore += 25;
                 else if (dtNguyetSinh) dungScore += 20;
             }
         } else {
             // Tĩnh
-            if (dtLamNhatNguyet || dtNguyetHop || dtNhatHop) dungScore += 30;
-            else if (dtNguyetSinh) dungScore += 20;
-            else if (dtNhatSinh) dungScore += 15;
+            if (dtLamNhatNguyet || dtNguyetHop || dtNhatHop) {
+                dungScore += 30;
+                let note = dtLamNhatNguyet ? 'Lâm Nhật/Nguyệt' : dtNguyetHop ? 'Nguyệt Hợp' : 'Nhật Hợp';
+                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) đạt thế Vượng Tướng (${note} - Cấp 1).`);
+            } else if (dtNguyetSinh) {
+                dungScore += 20;
+                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) được Nguyệt Lệnh (${nguyetChi}) vượng sinh (Cấp 2).`);
+            } else if (dtNhatSinh) {
+                dungScore += 15;
+                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) được Nhật Thần (${nhatChi}) vượng sinh (Cấp 3).`);
+            }
         }
     });
 
-    // Nếu Cầu Tài rơi vào trường hợp Dụng Thần Khắc Thế nhưng Thế KHÔNG vượng cả Nhật Nguyệt -> Không hợp lệ
     if (purpose === 'cautai') {
         const hasDtKhac = dungThanLines.some(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
         if (hasDtKhac && !dungThanKhacTheHopLe) {
@@ -279,7 +280,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
                 isQualified: false,
                 score: 25,
                 grade: 'Tài Khắc Thế Suy',
-                reasons: ['Tài lai khắc Thế nhưng Hào Thế không vượng ở cả Nhật lẫn Nguyệt (Bỏ).']
+                reasons: ['Tài lai khắc Thế nhưng Hào Thế không vượng ở cả Nhật lẫn Nguyệt (Loại bỏ).']
             };
         }
     }
@@ -287,7 +288,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     score += dungScore;
     if (dungThanDongSinhThe) score += 20;
 
-    // --- 3. ĐẶC TÍNH QUẺ CÁT ---
     const mainName = hexData.mainName;
     if (mainName.includes('Thái') || mainName.includes('Trung Phu') || mainName.includes('Đại Hữu') || mainName.includes('Gia Nhân') || mainName.includes('Ích') || mainName.includes('Tụy')) {
         score += 10;
@@ -310,7 +310,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     };
 }
 
-// Thuật toán Sinh & Xếp Hạng SIM từ Mẫu số nhập vào
 function generateMatchingSims(pattern, dateInput, gender, purpose, maxCount = 15) {
     const cal = calculateCanChi(dateInput);
     if (!cal) return [];
