@@ -2,8 +2,9 @@
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO
    Đánh giá theo đúng thứ tự ưu tiên & Cấp độ Cát Hung:
    1. Hào Thế (Hưng / Vượng, không bị Nhật/Nguyệt khắc, không bị suy bại: hóa khắc, hóa thoái, hóa tuyệt)
-   2. Dụng Thần (Vượng tại Nhật/Nguyệt, Hóa tiến thần, Hóa hồi đầu sinh)
-   3. Tương tác Dụng Thần & Hào Thế (Dụng thần động sinh Thế = Tốt nhất; Tài lai khắc Thế = Bắt buộc Thế vượng cả Nhật lẫn Nguyệt)
+   2. Hào Thế LÀ Dụng Thần (Cầu sức khỏe/bình an): Hào động vượng tới sinh là TỐT NHẤT (mức vượng hào động phân cấp theo Nhật Nguyệt)
+   3. Dụng Thần (Vượng tại Nhật/Nguyệt, Hóa tiến thần, Hóa hồi đầu sinh)
+   4. Tương tác Dụng Thần & Hào Thế (Dụng thần động sinh Thế = Tốt nhất; Tài lai khắc Thế = Bắt buộc Thế vượng cả Nhật lẫn Nguyệt)
    ========================================================================== */
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
@@ -171,10 +172,10 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             reasons.push(`Hào Thế Tĩnh (${theChi}) được ${note} (Thế Hưng - Cấp 1).`);
         } else if (isNguyetSinhPho) {
             theScore = 25;
-            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nguyệt Lệnh (${nguyetChi}) sinh phò (Thế Hưng - Cấp 2).`);
+            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nguyệt Lệnh (${nguyetChi}) vượng sinh/phò (Thế Hưng - Cấp 2).`);
         } else if (isNhatSinhPho) {
             theScore = 20;
-            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nhật Thần (${nhatChi}) sinh phò (Thế Hưng - Cấp 3).`);
+            reasons.push(`Hào Thế Tĩnh (${theChi}) được Nhật Thần (${nhatChi}) vượng sinh/phò (Thế Hưng - Cấp 3).`);
         } else {
             return {
                 isQualified: false,
@@ -187,107 +188,141 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
 
     score += theScore;
 
-    // --- 2. ĐÁNH GIÁ DỤNG THẦN ---
+    // --- 2. TRƯỜNG HỢP HÀO THẾ CŨNG LÀ DỤNG THẦN (Cầu Sức Khỏe / Thể Chất) ---
     const targetRel = getTargetRelation(purpose, gender);
-    let dungThanLines = [];
 
     if (targetRel === 'Thế') {
-        dungThanLines = [haoThe];
-    } else {
-        dungThanLines = hexData.linesData.filter(l => l.relation.startsWith(targetRel));
-    }
+        // Hào Thế làm Dụng Thần: Hào Động Vượng Tới Sinh là TỐT NHẤT
+        let hasGeneratingDynamicLine = false;
 
-    if (dungThanLines.length === 0 && targetRel !== 'Thế') {
-        return {
-            isQualified: false,
-            score: 20,
-            grade: 'Khuyết Dụng Thần',
-            reasons: [`Dụng Thần ${targetRel} không xuất hiện trong quẻ (Bỏ).`]
-        };
-    }
+        hexData.linesData.forEach(dLine => {
+            if (dLine.isMoving && !dLine.isShi && isGenerating(dLine.hanh, theHanh)) {
+                hasGeneratingDynamicLine = true;
+                const dChi = dLine.chi;
+                const dHanh = dLine.hanh;
+                const isDongLamNhatNguyet = (dChi === nhatChi || dChi === nguyetChi);
+                const isDongNguyetHop = isBranchHarmonious(dChi, nguyetChi);
+                const isDongHoaTien = isProgressingBranch(dChi, dLine.changed.branch);
+                const isDongHoiDauSinh = isGenerating(dLine.changed.hanh, dHanh);
+                const isDongNguyetSinh = (dHanh === nguyetHanh || isGenerating(nguyetHanh, dHanh));
+                const isDongNhatSinh = (dHanh === nhatHanh || isGenerating(nhatHanh, dHanh));
 
-    let dungScore = 0;
-    let dungThanDongSinhThe = false;
-    let dungThanKhacTheHopLe = false;
-
-    dungThanLines.forEach(dt => {
-        const dtHanh = dt.hanh;
-        const dtChi = dt.chi;
-
-        // A. Tương tác Dụng Thần -> Hào Thế
-        if (dt.isMoving) {
-            if (isGenerating(dtHanh, theHanh)) {
-                dungThanDongSinhThe = true;
-                reasons.push(`🔥 Dụng Thần ${targetRel} (${dtChi}) ĐỘNG SINH HÀO THẾ (${theChi}) - Mẫu quẻ Cát Tường Bậc Nhất!`);
-            }
-
-            // CẦU TÀI: Dụng thần Thê Tài ĐỘNG KHẮC Hào Thế ("Tài Lai Khắc Thế")
-            if (purpose === 'cautai' && isOvercoming(dtHanh, theHanh)) {
-                if (isNhatSinhPho && isNguyetSinhPho) {
-                    dungThanKhacTheHopLe = true;
-                    reasons.push(`Dụng Thần Thê Tài Động Khắc Hào Thế (Tài Lai Khắc Thế), Hào Thế Song Vượng (được cả Nhật Nguyệt sinh/phò) ➔ Nhận Được Đại Tài Lộc.`);
-                }
-            }
-        }
-
-        // B. Thứ tự Vượng của Dụng Thần
-        const dtLamNhatNguyet = (dtChi === nhatChi || dtChi === nguyetChi);
-        const dtNguyetHop = isBranchHarmonious(dtChi, nguyetChi);
-        const dtNhatHop = !dt.isMoving && isBranchHarmonious(dtChi, nhatChi);
-        const dtNguyetSinh = (dtHanh === nguyetHanh || isGenerating(nguyetHanh, dtHanh));
-        const dtNhatSinh = (dtHanh === nhatHanh || isGenerating(nhatHanh, dtHanh));
-
-        if (dt.isMoving) {
-            const dtHoiDauSinh = isGenerating(dt.changed.hanh, dtHanh);
-            const dtHoaTien = isProgressingBranch(dtChi, dt.changed.branch);
-
-            if (dtHoiDauSinh || dtHoaTien) {
-                let note = dtHoaTien ? 'Hóa Tiến Thần' : 'Hóa Hồi Đầu Sinh';
-                if (dtLamNhatNguyet || dtNguyetHop) {
-                    dungScore += 35;
-                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng Lâm/Hợp Nhật Nguyệt lại Động ${note} (Đại Cát).`);
-                } else if (dtNguyetSinh) {
-                    dungScore += 30;
-                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng Nguyệt Lệnh lại Động ${note}.`);
+                if (isDongLamNhatNguyet || isDongNguyetHop || isDongHoaTien || isDongHoiDauSinh) {
+                    score += 35;
+                    reasons.push(`🔥 Hào Động (${dChi} - ${dHanh}) Vượng Tướng tại Nhật/Nguyệt (${isDongHoaTien ? 'Hóa Tiến Thần' : 'Lâm/Hợp Nhật Nguyệt'}) Sinh Hào Thế Dụng Thần (${theChi}) - Mẫu Quẻ Cát Tường Tối Cao cho Sức Khỏe & Bình An!`);
+                } else if (isDongNguyetSinh) {
+                    score += 28;
+                    reasons.push(`🔥 Hào Động (${dChi} - ${dHanh}) được Nguyệt Lệnh sinh phò, Động Sinh Hào Thế Dụng Thần (${theChi}) - Đạt Cát Tường Bậc Cao.`);
+                } else if (isDongNhatSinh) {
+                    score += 22;
+                    reasons.push(`🔥 Hào Động (${dChi} - ${dHanh}) được Nhật Thần sinh phò, Động Sinh Hào Thế Dụng Thần (${theChi}) - Đạt Cát Tường.`);
                 } else {
-                    dungScore += 25;
-                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) Động ${note}.`);
+                    score += 15;
+                    reasons.push(`Hào Động (${dChi} - ${dHanh}) tương sinh Hào Thế Dụng Thần (${theChi}).`);
                 }
-            } else {
-                if (dtLamNhatNguyet || dtNguyetHop) dungScore += 25;
-                else if (dtNguyetSinh) dungScore += 20;
             }
-        } else {
-            // Tĩnh
-            if (dtLamNhatNguyet || dtNguyetHop || dtNhatHop) {
-                dungScore += 30;
-                let note = dtLamNhatNguyet ? 'Lâm Nhật/Nguyệt' : dtNguyetHop ? 'Nguyệt Hợp' : 'Nhật Hợp';
-                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) đạt thế Vượng Tướng (${note} - Cấp 1).`);
-            } else if (dtNguyetSinh) {
-                dungScore += 20;
-                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) được Nguyệt Lệnh (${nguyetChi}) vượng sinh (Cấp 2).`);
-            } else if (dtNhatSinh) {
-                dungScore += 15;
-                reasons.push(`Dụng Thần ${targetRel} (${dtChi}) được Nhật Thần (${nhatChi}) vượng sinh (Cấp 3).`);
-            }
-        }
-    });
+        });
 
-    if (purpose === 'cautai') {
-        const hasDtKhac = dungThanLines.some(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
-        if (hasDtKhac && !dungThanKhacTheHopLe) {
+        if (!hasGeneratingDynamicLine && !haoThe.isMoving) {
+            reasons.push(`Hào Thế Dụng Thần (${theChi}) Tĩnh đạt thế Vượng Hưng tại Nhật/Nguyệt.`);
+        }
+    } else {
+        // --- 3. ĐÁNH GIÁ DỤNG THẦN KHÁC (Thê Tài, Quan Quỷ, Tử Tôn) ---
+        const dungThanLines = hexData.linesData.filter(l => l.relation.startsWith(targetRel));
+
+        if (dungThanLines.length === 0) {
             return {
                 isQualified: false,
-                score: 25,
-                grade: 'Tài Khắc Thế Suy',
-                reasons: ['Tài lai khắc Thế nhưng Hào Thế không vượng ở cả Nhật lẫn Nguyệt (Loại bỏ).']
+                score: 20,
+                grade: 'Khuyết Dụng Thần',
+                reasons: [`Dụng Thần ${targetRel} không xuất hiện trong quẻ (Bỏ).`]
             };
         }
+
+        let dungScore = 0;
+        let dungThanDongSinhThe = false;
+        let dungThanKhacTheHopLe = false;
+
+        dungThanLines.forEach(dt => {
+            const dtHanh = dt.hanh;
+            const dtChi = dt.chi;
+
+            // A. Tương tác Dụng Thần -> Hào Thế
+            if (dt.isMoving) {
+                if (isGenerating(dtHanh, theHanh)) {
+                    dungThanDongSinhThe = true;
+                    reasons.push(`🔥 Dụng Thần ${targetRel} (${dtChi}) ĐỘNG SINH HÀO THẾ (${theChi}) - Mẫu quẻ Cát Tường Bậc Nhất!`);
+                }
+
+                // CẦU TÀI: Dụng thần Thê Tài ĐỘNG KHẮC Hào Thế ("Tài Lai Khắc Thế")
+                if (purpose === 'cautai' && isOvercoming(dtHanh, theHanh)) {
+                    if (isNhatSinhPho && isNguyetSinhPho) {
+                        dungThanKhacTheHopLe = true;
+                        reasons.push(`Dụng Thần Thê Tài Động Khắc Hào Thế (Tài Lai Khắc Thế), Hào Thế Song Vượng (được cả Nhật Nguyệt sinh/phò) ➔ Nhận Được Đại Tài Lộc.`);
+                    }
+                }
+            }
+
+            // B. Thứ tự Vượng của Dụng Thần
+            const dtLamNhatNguyet = (dtChi === nhatChi || dtChi === nguyetChi);
+            const dtNguyetHop = isBranchHarmonious(dtChi, nguyetChi);
+            const dtNhatHop = !dt.isMoving && isBranchHarmonious(dtChi, nhatChi);
+            const dtNguyetSinh = (dtHanh === nguyetHanh || isGenerating(nguyetHanh, dtHanh));
+            const dtNhatSinh = (dtHanh === nhatHanh || isGenerating(nhatHanh, dtHanh));
+
+            if (dt.isMoving) {
+                const dtHoiDauSinh = isGenerating(dt.changed.hanh, dtHanh);
+                const dtHoaTien = isProgressingBranch(dtChi, dt.changed.branch);
+
+                if (dtHoiDauSinh || dtHoaTien) {
+                    let note = dtHoaTien ? 'Hóa Tiến Thần' : 'Hóa Hồi Đầu Sinh';
+                    if (dtLamNhatNguyet || dtNguyetHop) {
+                        dungScore += 35;
+                        reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng Lâm/Hợp Nhật Nguyệt lại Động ${note} (Đại Cát).`);
+                    } else if (dtNguyetSinh) {
+                        dungScore += 30;
+                        reasons.push(`Dụng Thần ${targetRel} (${dtChi}) vượng Nguyệt Lệnh lại Động ${note}.`);
+                    } else {
+                        dungScore += 25;
+                        reasons.push(`Dụng Thần ${targetRel} (${dtChi}) Động ${note}.`);
+                    }
+                } else {
+                    if (dtLamNhatNguyet || dtNguyetHop) dungScore += 25;
+                    else if (dtNguyetSinh) dungScore += 20;
+                }
+            } else {
+                // Tĩnh
+                if (dtLamNhatNguyet || dtNguyetHop || dtNhatHop) {
+                    dungScore += 30;
+                    let note = dtLamNhatNguyet ? 'Lâm Nhật/Nguyệt' : dtNguyetHop ? 'Nguyệt Hợp' : 'Nhật Hợp';
+                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) đạt thế Vượng Tướng (${note} - Cấp 1).`);
+                } else if (dtNguyetSinh) {
+                    dungScore += 20;
+                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) được Nguyệt Lệnh (${nguyetChi}) vượng sinh (Cấp 2).`);
+                } else if (dtNhatSinh) {
+                    dungScore += 15;
+                    reasons.push(`Dụng Thần ${targetRel} (${dtChi}) được Nhật Thần (${nhatChi}) vượng sinh (Cấp 3).`);
+                }
+            }
+        });
+
+        if (purpose === 'cautai') {
+            const hasDtKhac = dungThanLines.some(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
+            if (hasDtKhac && !dungThanKhacTheHopLe) {
+                return {
+                    isQualified: false,
+                    score: 25,
+                    grade: 'Tài Khắc Thế Suy',
+                    reasons: ['Tài lai khắc Thế nhưng Hào Thế không vượng ở cả Nhật lẫn Nguyệt (Loại bỏ).']
+                };
+            }
+        }
+
+        score += dungScore;
+        if (dungThanDongSinhThe) score += 20;
     }
 
-    score += dungScore;
-    if (dungThanDongSinhThe) score += 20;
-
+    // Đơn giản hóa lý do Quẻ Chủ
     const mainName = hexData.mainName;
     if (mainName.includes('Thái') || mainName.includes('Trung Phu') || mainName.includes('Đại Hữu') || mainName.includes('Gia Nhân') || mainName.includes('Ích') || mainName.includes('Tụy')) {
         score += 10;
