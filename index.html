@@ -44,7 +44,7 @@
                     </div>
 
                     <!-- Nhu cầu chọn SIM -->
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group">
                         <label for="purposeSelect">🎯 Việc muốn cầu (Mong muốn lớn nhất):</label>
                         <select id="purposeSelect" class="form-control">
                             <option value="cautai">💰 Cầu Tài Lộc (Kinh doanh, Lộc tài, Buôn bán)</option>
@@ -52,6 +52,17 @@
                             <option value="suckhoe">🏥 Cầu Sức Khỏe & Bình An (Bình an, Trường thọ)</option>
                             <option value="concai">👶 Cầu Con Cái & Gia Đạo (Tử tức, Hòa thuận)</option>
                             <option value="honnhan">❤️ Cầu Hôn Nhân & Tình Duyên (Hợp duyên, Gia đình)</option>
+                        </select>
+                    </div>
+
+                    <!-- Số lượng SIM muốn hiển thị -->
+                    <div class="form-group">
+                        <label for="limitSelect">🔢 Số lượng SIM cần tìm:</label>
+                        <select id="limitSelect" class="form-control">
+                            <option value="15" selected>Top 15 SIM Đại Cát (Mặc định)</option>
+                            <option value="20">Top 20 SIM Đại Cát</option>
+                            <option value="30">Top 30 SIM Đại Cát</option>
+                            <option value="50">Top 50 SIM Đại Cát</option>
                         </select>
                     </div>
                 </div>
@@ -126,7 +137,7 @@
             
             <div id="modalBody"></div>
 
-            <!-- Thanh Nút Bấm Tải & Sao Chép Ảnh Màu Nổi Bật (Xanh Lá & Xanh Dương theo Ảnh 2) -->
+            <!-- Thanh Nút Bấm Tải & Sao Chép Ảnh Màu Nổi Bật -->
             <div class="modal-actions-bar">
                 <button id="downloadImgBtn" class="btn-modal-green">
                     📥 Tải Ảnh Quẻ

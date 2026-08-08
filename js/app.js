@@ -88,6 +88,7 @@ function processSearch() {
 
     const gender = document.querySelector('input[name="gender"]:checked').value;
     const purpose = document.getElementById('purposeSelect').value;
+    const limitVal = parseInt(document.getElementById('limitSelect').value) || 15;
 
     let pattern = '0';
     for (let i = 2; i <= 10; i++) {
@@ -100,12 +101,12 @@ function processSearch() {
     resultsContainer.innerHTML = `
         <div style="text-align: center; padding: 40px; color: var(--gold-primary);">
             <div class="spinner" style="font-size: 2rem; margin-bottom: 10px;">🔮</div>
-            <p style="font-size: 1.1rem; font-weight: 600;">Đang lập quẻ Lục Hào & Tính toán danh sách SIM Cát Tường...</p>
+            <p style="font-size: 1.1rem; font-weight: 600;">Đang lập quẻ Lục Hào & Tính toán Top ${limitVal} SIM Cát Tường...</p>
         </div>
     `;
 
     setTimeout(() => {
-        currentResults = generateMatchingSims(pattern, birthDateVal, gender, purpose, 15);
+        currentResults = generateMatchingSims(pattern, birthDateVal, gender, purpose, limitVal);
         renderResults(currentResults);
     }, 150);
 }
@@ -374,7 +375,6 @@ function setupModalEvents() {
     }
 }
 
-// Tải Ảnh Quẻ PNG (Không bị mất góc bên trái)
 function downloadHexImage() {
     const target = document.getElementById('hexCardCapture');
     if (!target || typeof html2canvas === 'undefined') {
@@ -400,7 +400,6 @@ function downloadHexImage() {
     });
 }
 
-// Sao chép Ảnh Quẻ vào Clipboard
 function copyHexImage() {
     const target = document.getElementById('hexCardCapture');
     if (!target || typeof html2canvas === 'undefined') {
