@@ -161,7 +161,6 @@ function renderResults(results) {
                 </div>
 
                 <div class="sim-actions">
-                    <!-- Đổi tên nút thành "Xem Chi Tiết" theo Yêu cầu -->
                     <button class="btn-action btn-view-hex" onclick="handleDetailClick(${index})">
                         🔍 Xem Chi Tiết
                     </button>
@@ -230,18 +229,14 @@ function renderHexVisual(lines, isChanged) {
     return `<div class="gua-container">${html}</div>`;
 }
 
-// XỬ LÝ SỰ KIỆN NÚT "XEM CHI TIẾT" (Phân định Máy Tính & Điện Thoại)
 function handleDetailClick(index) {
     if (isMobileDevice()) {
-        // TRÊN ĐIỆN THOẠI: Tải ngay ảnh lá quẻ về máy (Chuẩn thao tác web cũ, không bật modal)
         downloadHexImageForMobile(index);
     } else {
-        // TRÊN MÁY TÍNH: Mở Modal hiển thị ảnh lá quẻ có thể Nhấp chuột phải sao chép / lưu ảnh
         openHexModalDesktop(index);
     }
 }
 
-// Render HTML lá quẻ chuẩn 100% chi tiết
 function buildHexCardHTML(item) {
     const { hexData, sim, evaluation } = item;
 
@@ -287,7 +282,7 @@ function buildHexCardHTML(item) {
 
     return `
         <div id="hexCardCapture" class="hex-card-view">
-            <!-- Header Thông Tin (Định dạng Nhật Thần: Dần - Mộc theo Yêu cầu) -->
+            <!-- Header Thông Tin -->
             <div class="info-header">
                 <div class="info-content">
                     <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span></div>
@@ -357,7 +352,7 @@ function buildHexCardHTML(item) {
     `;
 }
 
-// MỞ MODAL XEM ẢNH LÁ QUẺ TRÊN MÁY TÍNH (Chuột phải Sao chép / Lưu ảnh trực tiếp - Không nút bấm)
+// MỞ MODAL XEM ẢNH LÁ QUẺ TRÊN MÁY TÍNH (Chuột phải Sao chép / Lưu ảnh trực tiếp - Không bị cắt góc phải)
 function openHexModalDesktop(index) {
     const item = currentResults[index];
     if (!item) return;
@@ -373,11 +368,10 @@ function openHexModalDesktop(index) {
     `;
     modal.classList.add('active');
 
-    // Tạo HTML lá quẻ tạm thời để html2canvas chụp thành hình <img> thật
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'absolute';
     tempContainer.style.left = '-9999px';
-    tempContainer.style.width = '820px';
+    tempContainer.style.width = '900px';
     tempContainer.innerHTML = buildHexCardHTML(item);
     document.body.appendChild(tempContainer);
 
@@ -388,12 +382,11 @@ function openHexModalDesktop(index) {
             useCORS: true,
             scrollX: 0,
             scrollY: 0,
-            windowWidth: 850
+            windowWidth: 960
         }).then(canvas => {
             const dataUrl = canvas.toDataURL('image/png');
             document.body.removeChild(tempContainer);
 
-            // Render thẻ <img> thật để người dùng nhấp chuột phải Sao Chép / Lưu Ảnh trực tiếp
             modalBody.innerHTML = `
                 <div class="hex-card-scroll-wrapper">
                     <img src="${dataUrl}" class="hex-native-img" alt="Lá quẻ SIM ${item.sim}" title="Nhấp chuột phải để sao chép hoặc lưu ảnh" />
@@ -410,7 +403,7 @@ function openHexModalDesktop(index) {
     }, 100);
 }
 
-// TẢI ẢNH LÁ QUẺ TRỰC TIẾP TRÊN ĐIỆN THOẠI (Không hiển thị modal popup - Chuẩn y web cũ)
+// TẢI ẢNH LÁ QUẺ TRỰC TIẾP TRÊN ĐIỆN THOẠI (Chống cắt lề phải)
 function downloadHexImageForMobile(index) {
     const item = currentResults[index];
     if (!item) return;
@@ -418,6 +411,7 @@ function downloadHexImageForMobile(index) {
     showToast("Đang khởi tạo ảnh lá quẻ...");
 
     const hiddenArea = document.getElementById('hiddenRenderArea');
+    hiddenArea.style.width = '900px';
     hiddenArea.innerHTML = buildHexCardHTML(item);
 
     setTimeout(() => {
@@ -427,7 +421,7 @@ function downloadHexImageForMobile(index) {
             useCORS: true,
             scrollX: 0,
             scrollY: 0,
-            windowWidth: 850
+            windowWidth: 960
         }).then(canvas => {
             const link = document.createElement('a');
             link.download = `la-que-sim-${item.sim}-${Date.now()}.png`;

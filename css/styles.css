@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET
    Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
-   Tối ưu Mobile First & Phân định Thao tác Máy tính vs Điện thoại
+   Tối ưu Mobile First & Khung Ảnh Lá Quẻ Không Bị Cắt Lề Trái/Phải
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -386,7 +386,7 @@ select.form-control option, select.prefix-select option {
 }
 
 /* ==========================================================================
-   KHUNG XEM LÁ QUẺ LỤC HÀO - DÀNH CHO MÁY TÍNH (HỖ TRỢ CHUỘT PHẢI COPY ÁNH)
+   KHUNG XEM LÁ QUẺ LỤC HÀO - CHỐNG CẮT LỀ TRÁI/PHẢI KHI TẠO ẢNH
    ========================================================================== */
 
 .modal-overlay {
@@ -417,7 +417,7 @@ select.form-control option, select.prefix-select option {
     color: #000000;
     border: 2px solid #888;
     border-radius: 12px;
-    max-width: 900px;
+    max-width: 940px;
     width: 100%;
     max-height: 95vh;
     overflow-y: auto;
@@ -472,13 +472,13 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
-/* Layout Lá quẻ chuẩn web cũ */
+/* Layout Lá quẻ chuẩn web cũ - Thêm Lề Trái/Phải 32px An Toàn Tối Đa Không Cắt Cột */
 .hex-card-view {
     background-color: #fefee5;
     color: #000000;
-    font-size: 16px;
-    min-width: 780px;
-    padding: 20px 25px;
+    font-size: 15px;
+    min-width: 860px; /* Đảm bảo đủ độ rộng cho 12 cột không bị đè chữ */
+    padding: 25px 32px; /* Lề trái & phải 32px chống cắt chữ TS THÁNG */
     box-sizing: border-box;
 }
 
@@ -496,7 +496,7 @@ select.form-control option, select.prefix-select option {
     margin-bottom: 6px;
     line-height: 1.6;
     color: #000000;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .hex-card-view .info-line strong {
@@ -524,7 +524,7 @@ select.form-control option, select.prefix-select option {
 }
 
 .hex-card-view .hex-title {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 700;
     color: #c41e3a;
     text-transform: uppercase;
@@ -533,7 +533,7 @@ select.form-control option, select.prefix-select option {
 }
 
 .hex-card-view .hex-family {
-    font-size: 16px;
+    font-size: 15px;
     color: #333;
     font-weight: 600;
     margin-top: 10px;
@@ -580,20 +580,21 @@ select.form-control option, select.prefix-select option {
     background-color: #e60000;
 }
 
-/* Bảng Lá Quẻ 12 Cột y hệt Web cũ */
+/* Bảng Lá Quẻ 12 Cột - Tối ưu font & padding tiêu đề không bị vỡ cột */
 .hex-card-view table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    font-size: 15px;
     background: #fefee5;
     margin-bottom: 15px;
+    table-layout: auto;
 }
 
 .hex-card-view th,
 .hex-card-view td {
     border: none;
     border-bottom: 1px solid #d0c8b8;
-    padding: 8px 5px;
+    padding: 8px 4px;
     text-align: center;
     white-space: nowrap;
     color: #000000;
@@ -603,8 +604,8 @@ select.form-control option, select.prefix-select option {
     background: #e2e2cc;
     font-weight: 700;
     color: #1a1a1a;
-    font-size: 15px;
-    padding: 10px 4px;
+    font-size: 13.5px;
+    padding: 9px 3px;
     border-bottom: 1px solid #bbb;
     text-transform: uppercase;
 }
@@ -644,18 +645,25 @@ select.form-control option, select.prefix-select option {
     background: #ffffff;
     border: 1px solid #c0392b;
     border-radius: 10px;
-    padding: 15px 20px;
+    padding: 15px 22px;
+    box-sizing: border-box;
 }
 
 .eval-box h4 {
     color: #c0392b;
     margin-bottom: 8px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
 }
 
 .eval-box ul {
     padding-left: 20px;
     color: #2d3748;
+}
+
+.eval-box li {
+    margin-bottom: 4px;
+    line-height: 1.5;
+    word-break: break-word;
 }
 
 /* ==========================================================================

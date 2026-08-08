@@ -1,10 +1,10 @@
 /* ==========================================================================
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO PRO
    Lồng ghép 100% thuật toán Dịch Học từ file KIEN_THUC_LUC_HAO_SIM.md:
-   1. Phân cấp Vượng Suy Hào Tĩnh & Hào Động (Nhật hợp chỉ tính cho Hào Tĩnh)
-   2. BẮT BUỘC: Dụng Thần vượng thì Hào Thế vượng mới có tác dụng (Dụng thần suy = Bỏ ngay)
-   3. Hào Thế Hóa Cát vs Hào Thế Bại (Bại = Bỏ 100%)
-   4. Thứ tự ưu tiên tác dụng Hào Động: Dụng Thần trước -> Nguyên/Kỵ Thần -> Hào Thế
+   1. Hào Động khắc Dụng Thần -> Dụng Thần Suy -> Bỏ 100%
+   2. Hào Thế bị suy, bị khắc -> ĐỀU BỎ HẾT (Cho dù Dụng Thần Vượng)
+   3. Hào Động/Dụng Thần khắc Hào Thế -> Bỏ (Trừ ngoại lệ Tài Lai Khắc Thế với Hào Thế Song Vượng)
+   4. Phân cấp Vượng Suy Hào Tĩnh & Hào Động (Nhật hợp chỉ tính cho Hào Tĩnh)
    ========================================================================== */
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
@@ -127,7 +127,7 @@ function getLineVungScore(line, cal) {
 }
 
 /* ==========================================================================
-   HÀM ĐÁNH GIÁ PHONG THỦY SIM (LỒNG 100% KIẾN THỨC TỪ KIEN_THUC_LUC_HAO_SIM.MD)
+   HÀM ĐÁNH GIÁ PHONG THỦY SIM (LỒNG 100% KIẾN THỨC CỦA BẠN VÀO ENGINE)
    ========================================================================== */
 function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     if (!hexData) return { isQualified: false, score: 0, grade: 'Không hợp lệ', reasons: ['Không thể lập quẻ.'] };
@@ -157,13 +157,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         dungThanLines = hexData.linesData.filter(l => l.relation.startsWith(targetRel));
     }
 
-    // --- 2. KIỂM TRA BẮT BUỘC: DỤNG THẦN PHẢI VƯỢNG (MỤC 3.3 KIẾN THỨC) ---
-    // "Dụng thần suy ➔ Hào Thế vượng mấy cũng HUNG / BỎ NGAY"
-    let maxDungScore = 0;
-    let maxDungNote = '';
-    let dungThanBestLine = null;
-    let dungThanDuocDongSinh = false;
-
     if (dungThanLines.length === 0 && targetRel !== 'Thế') {
         return {
             isQualified: false,
@@ -173,6 +166,23 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
+    // --- 2. QUY TẮC: HÀO ĐỘNG KHẮC DỤNG THẦN ➔ DỤNG THẦN SUY ➔ BỎ 100% ---
+    const dongKhacDung = hexData.linesData.find(dL => dL.isMoving && dungThanLines.some(dt => isOvercoming(dL.hanh, dt.hanh)));
+    if (dongKhacDung) {
+        return {
+            isQualified: false,
+            score: 15,
+            grade: 'Dụng Thần Bị Khắc',
+            reasons: [`Hào Động (${dongKhacDung.chi} - ${dongKhacDung.hanh}) tương khắc Dụng Thần ${targetRel} ➔ Dụng Thần bị tổn hại suy vi (Bắt buộc loại bỏ 100%).`]
+        };
+    }
+
+    // --- 3. KIỂM TRA BẮT BUỘC: DỤNG THẦN PHẢI VƯỢNG ---
+    let maxDungScore = 0;
+    let maxDungNote = '';
+    let dungThanBestLine = null;
+    let dungThanDuocDongSinh = false;
+
     dungThanLines.forEach(dt => {
         const vInfo = getLineVungScore(dt, cal);
         if (vInfo.score > maxDungScore) {
@@ -181,7 +191,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             dungThanBestLine = dt;
         }
 
-        // Ưu tiên tác dụng Hào Động sinh Dụng Thần (Mục 3.2: Hào động sinh Dụng thần tốt hơn Nhật Nguyệt)
+        // Ưu tiên tác dụng Hào Động sinh Dụng Thần (Hào động sinh Dụng thần tốt hơn Nhật Nguyệt)
         hexData.linesData.forEach(dL => {
             if (dL.isMoving && isGenerating(dL.hanh, dt.hanh)) {
                 dungThanDuocDongSinh = true;
@@ -205,19 +215,35 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     }
     totalScore += maxDungScore;
 
-    // --- 3. KIỂM TRA HÀO THẾ BẠI (MỤC 2.3 KIẾN THỨC - BẮT BUỘC LOẠI BỎ 100%) ---
+    // --- 4. QUY TẮC: HÀO THẾ BỊ SUY HOẶC BỊ KHẮC ➔ BỎ HẾT (CHO DÙ DỤNG THẦN VƯỢNG!) ---
+    const theVungInfo = getLineVungScore(haoThe, cal);
+
+    // Kiểm tra Hào Thế Bị Khắc (bởi Nhật, Nguyệt, Hào Động, Hồi đầu khắc)
     const bịNhậtKhắc = isOvercoming(nhatHanh, theHanh);
     const bịNguyệtKhắc = isOvercoming(nguyetHanh, theHanh);
+    const bịĐộngKhắc = hexData.linesData.find(dL => dL.isMoving && !dL.isShi && isOvercoming(dL.hanh, theHanh));
 
-    if (bịNhậtKhắc || bịNguyệtKhắc) {
+    if (bịNhậtKhắc || bịNguyệtKhắc || bịĐộngKhắc) {
+        let note = bịNhậtKhắc ? 'Nhật Thần' : bịNguyệtKhắc ? 'Nguyệt Lệnh' : `Hào Động (${bịĐộngKhắc.chi})`;
         return {
             isQualified: false,
             score: 10,
-            grade: 'Hung (Thế Bị Khắc)',
-            reasons: ['Hào Thế bị Nhật Thần hoặc Nguyệt Lệnh tương khắc (Suy vi, bỏ).']
+            grade: 'Hào Thế Bị Khắc',
+            reasons: [`Hào Thế (${theChi}) bị ${note} tương khắc (Hào Thế bị khắc thì dù Dụng Thần vượng cũng HUNG, bắt buộc loại bỏ 100%).`]
         };
     }
 
+    // Kiểm tra Hào Thế Bị Suy (không đạt thế vượng tại Nhật/Nguyệt)
+    if (theVungInfo.score <= 0) {
+        return {
+            isQualified: false,
+            score: 15,
+            grade: 'Hào Thế Suy',
+            reasons: [`Hào Thế (${theChi}) bị suy vi tại Nhật Nguyệt (Hào Thế suy thì dù Dụng Thần vượng cũng KHÔNG CÓ TÁC DỤNG, bắt buộc loại bỏ 100%).`]
+        };
+    }
+
+    // Kiểm tra Hào Thế động Hóa Bại
     if (haoThe.isMoving) {
         const hoiDauKhac = isOvercoming(haoThe.changed.hanh, theHanh);
         const hoaThoai = isRegressingBranch(theChi, haoThe.changed.branch);
@@ -235,12 +261,38 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         }
     }
 
-    // --- 4. ĐÁNH GIÁ VƯỢNG SUY & HÓA CÁT CỦA HÀO THẾ (MỤC 2.2 KIẾN THỨC) ---
-    const theVungInfo = getLineVungScore(haoThe, cal);
+    // --- 5. TƯƠNG TÁC HÀO ĐỘNG / DỤNG THẦN KHẮC HÀO THẾ ---
+    const dungKhacThe = dungThanLines.find(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
+    if (dungKhacThe) {
+        if (purpose === 'cautai') {
+            const theNhatSinh = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
+            const theNguyetSinh = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
+
+            if (theNhatSinh && theNguyetSinh) {
+                totalScore += 20;
+                reasons.push(`Dụng Thần Thê Tài Động Khắc Hào Thế (Tài Lai Khắc Thế), Hào Thế Song Vượng ở cả Nhật lẫn Nguyệt ➔ Nhận Được Đại Tài Lộc.`);
+            } else {
+                return {
+                    isQualified: false,
+                    score: 20,
+                    grade: 'Tài Khắc Thế Suy',
+                    reasons: ['Tài lai khắc Thế nhưng Hào Thế không vượng ở CẢ Nhật lẫn Nguyệt (Bắt buộc loại bỏ).']
+                };
+            }
+        } else {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Dụng Thần Khắc Thế',
+                reasons: [`Dụng Thần ${targetRel} tương khắc Hào Thế (${theChi}) ➔ Hào Thế bị thương hại (Bắt buộc loại bỏ).`]
+            };
+        }
+    }
+
+    // --- 6. ĐÁNH GIÁ HÓA CÁT CỦA HÀO THẾ (KHI THẾ ĐÃ AN TOÀN & VƯỢNG) ---
     totalScore += theVungInfo.score;
 
     if (haoThe.isMoving) {
-        // Hào Thế ĐỘNG HÓA CÁT
         const hoiDauSinhDung = dungThanLines.some(dt => haoThe.changed.relation.startsWith(dt.relation.split(' ')[0]) && isGenerating(haoThe.changed.hanh, theHanh));
         const hoaTien = isProgressingBranch(theChi, haoThe.changed.branch);
         const hoaDungThan = dungThanLines.some(dt => haoThe.changed.relation.startsWith(dt.relation.split(' ')[0]));
@@ -261,9 +313,8 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         reasons.push(`Hào Thế Tĩnh (${theChi}) Vượng Hưng: ${theVungInfo.note}.`);
     }
 
-    // --- 5. TƯƠNG TÁC HÀO ĐỘNG VỚI HÀO THẾ & NGUYÊN/KỴ THẦN (MỤC 3.2 KIẾN THỨC) ---
+    // --- 7. TƯƠNG TÁC HÀO ĐỘNG VỚI HÀO THẾ & NGUYÊN/KỴ THẦN ---
     if (targetRel === 'Thế') {
-        // Hào Thế LÀ Dụng Thần (Cầu sức khỏe/bình an)
         let hasGenDynamic = false;
         hexData.linesData.forEach(dL => {
             if (dL.isMoving && !dL.isShi && isGenerating(dL.hanh, theHanh)) {
@@ -277,7 +328,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             reasons.push(`Hào Thế Dụng Thần (${theChi}) Động Hóa Cát Tường.`);
         }
     } else {
-        // Dụng Thần khác Hào Thế
         let dungThanDongSinhThe = false;
 
         hexData.linesData.forEach(dL => {
@@ -296,30 +346,9 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
                 }
             }
         });
-
-        // Xử lý CẦU TÀI: Thê Tài Động Khắc Thế (Tài Lai Khắc Thế)
-        if (purpose === 'cautai') {
-            const dtKhacThe = dungThanLines.find(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
-            if (dtKhacThe) {
-                const theNhatSinh = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
-                const theNguyetSinh = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
-
-                if (theNhatSinh && theNguyetSinh) {
-                    totalScore += 20;
-                    reasons.push(`Dụng Thần Thê Tài Động Khắc Hào Thế (Tài Lai Khắc Thế), Hào Thế Song Vượng ở cả Nhật lẫn Nguyệt ➔ Nhận Được Đại Tài Lộc.`);
-                } else {
-                    return {
-                        isQualified: false,
-                        score: 20,
-                        grade: 'Tài Khắc Thế Suy',
-                        reasons: ['Tài lai khắc Thế nhưng Hào Thế không vượng ở cả Nhật lẫn Nguyệt (Bỏ).']
-                    };
-                }
-            }
-        }
     }
 
-    // Đơn giản hóa lý do Quẻ Chủ
+    // Quẻ Chủ Cát Tường
     const mainName = hexData.mainName;
     if (mainName.includes('Thái') || mainName.includes('Trung Phu') || mainName.includes('Đại Hữu') || mainName.includes('Gia Nhân') || mainName.includes('Ích') || mainName.includes('Tụy')) {
         totalScore += 10;
