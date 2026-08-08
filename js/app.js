@@ -8,6 +8,7 @@
    ========================================================================== */
 
 let currentResults = [];
+let currentSimEvalItem = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initFormDefaults();
@@ -121,14 +122,14 @@ function setupCurrentSimEval() {
 
         const currentSimBox = document.getElementById('currentSimResultBox');
         const formattedSim = formatSimNumber(rawSim);
-        const item = { sim: rawSim, hexData, evaluation };
+        currentSimEvalItem = { sim: rawSim, hexData, evaluation };
 
         currentSimBox.style.display = 'block';
         currentSimBox.innerHTML = `
-            <div class="sim-card" style="border: 2px solid var(--gold-dark); background: #1a2438; margin-bottom: 15px;">
+            <div class="sim-card" style="border: 2px solid var(--gold-dark); background: #1a2438;">
                 <div class="sim-info">
                     <div style="font-size: 0.95rem; color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;">
-                        📲 KẾT QUẢ ĐÁNH GIÁ SIM HẠN ĐANG DÙNG:
+                        📲 KẾT QUẢ ĐÁNH GIÁ SIM ĐANG DÙNG:
                     </div>
                     <div class="sim-number-display" style="font-size: 1.8rem;">
                         <span class="highlight">${formattedSim}</span>
@@ -145,25 +146,25 @@ function setupCurrentSimEval() {
                 </div>
 
                 <div class="sim-actions">
-                    <button class="btn-action btn-view-hex" onclick="openCurrentSimCardVisual()">
-                        📜 Xem & Tải Lá Quẻ SIM Này
+                    <button class="btn-action btn-view-hex" onclick="handleCurrentSimDetail()">
+                        🔍 Xem Chi Tiết
                     </button>
                 </div>
-            </div>
-
-            <div id="currentSimCardContainer" class="hex-card-scroll-wrapper" style="margin-top: 15px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);">
-                ${buildHexCardHTML(item)}
-            </div>
-
-            <div style="text-align: center; margin-top: 14px;">
-                <button class="btn-modal-green" onclick="downloadCurrentSimHexImage('${formattedSim}')">
-                    📥 Tải / Chia Sẻ Ảnh Quẻ SIM Đang Dùng (Dành Cho iPhone & ĐT)
-                </button>
             </div>
         `;
 
         currentSimBox.scrollIntoView({ behavior: 'smooth' });
     });
+}
+
+function handleCurrentSimDetail() {
+    if (!currentSimEvalItem) return;
+
+    if (isMobileDevice()) {
+        downloadHexImageForObject(currentSimEvalItem);
+    } else {
+        openHexModalDesktopObject(currentSimEvalItem);
+    }
 }
 
 function processSearch() {
@@ -312,10 +313,13 @@ function renderHexVisual(lines, isChanged) {
 }
 
 function handleDetailClick(index) {
+    const item = currentResults[index];
+    if (!item) return;
+
     if (isMobileDevice()) {
-        downloadHexImageForMobile(index);
+        downloadHexImageForObject(item);
     } else {
-        openHexModalDesktop(index);
+        openHexModalDesktopObject(item);
     }
 }
 
@@ -423,7 +427,7 @@ function buildHexCardHTML(item) {
                 </tbody>
             </table>
 
-            <!-- Đánh giá Phong Thủy Chi Tiết -->
+            <!-- Đánh giá Phong Thủy Chi Tiết Lồng ghép 100% Lý do Cát Tường -->
             <div class="eval-box">
                 <h4>🎯 Đánh giá Cát Tường: ${evaluation.score}/100 - ${evaluation.grade}</h4>
                 <ul>
@@ -434,9 +438,8 @@ function buildHexCardHTML(item) {
     `;
 }
 
-// MỞ MODAL XEM ẢNH LÁ QUẺ TRÊN MÁY TÍNH
-function openHexModalDesktop(index) {
-    const item = currentResults[index];
+// MỞ MODAL XEM ẢNH LÁ QUẺ TRÊN MÁY TÍNH (Cho mọi quẻ)
+function openHexModalDesktopObject(item) {
     if (!item) return;
 
     const modal = document.getElementById('hexModal');
@@ -529,9 +532,8 @@ function fallbackDownloadBlob(blob, filename) {
     showToast(`Đã tải ảnh lá quẻ về máy thành công!`);
 }
 
-// TẢI ẢNH TRÊN MOBILE CHO SIM GỢI Ý
-function downloadHexImageForMobile(index) {
-    const item = currentResults[index];
+// TẢI / CHIA SẺ ẢNH TRÊN MOBILE (iPhone/Android) CHO BẤT KỲ SIM NÀO
+function downloadHexImageForObject(item) {
     if (!item) return;
 
     showToast("Đang tạo ảnh lá quẻ...");
@@ -557,30 +559,6 @@ function downloadHexImageForMobile(index) {
             alert("Có lỗi khi tạo ảnh lá quẻ trên điện thoại.");
         });
     }, 150);
-}
-
-// TẢI ẢNH CHO SIM ĐANG DÙNG
-function downloadCurrentSimHexImage(simFormatted) {
-    const cardElem = document.querySelector('#currentSimCardContainer #hexCardCapture');
-    if (!cardElem) {
-        alert("Vui lòng thực hiện đánh giá SIM trước!");
-        return;
-    }
-
-    showToast("Đang xử lý ảnh lá quẻ...");
-
-    html2canvas(cardElem, {
-        scale: 2,
-        useCORS: true,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: 960
-    }).then(canvas => {
-        exportOrShareHexImage(canvas, simFormatted);
-    }).catch(err => {
-        console.error('html2canvas eval error:', err);
-        alert("Có lỗi khi tải ảnh lá quẻ SIM đang dùng.");
-    });
 }
 
 function setupModalEvents() {
