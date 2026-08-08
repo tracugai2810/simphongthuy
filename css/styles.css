@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET
    Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
-   Tối ưu Mobile First & Khung Ảnh Lá Quẻ Không Bị Cắt Lề Trái/Phải
+   Tối ưu Mobile First & Phân định Thao tác Máy tính vs Điện thoại (Chia sẻ iOS)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -110,6 +110,45 @@ select.form-control option, select.prefix-select option {
     color: #f3c669 !important;
     padding: 8px 12px;
     font-weight: 500;
+}
+
+/* Khung Đánh Giá SIM Đang Dùng */
+.current-sim-group {
+    border: 1px dashed rgba(243, 198, 105, 0.4);
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(217, 119, 6, 0.08);
+}
+
+.current-sim-group label {
+    color: #ffd700 !important;
+}
+
+.current-sim-input-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.current-sim-input-wrapper input {
+    flex: 1;
+}
+
+.btn-eval-current {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.btn-eval-current:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    transform: translateY(-1px);
 }
 
 /* Custom Digit Input Box Section */
@@ -361,7 +400,7 @@ select.form-control option, select.prefix-select option {
     color: #ffffff;
 }
 
-/* Toast Notification (Hiển thị khi Copy SĐT / Tải ảnh) */
+/* Toast Notification */
 .toast-notification {
     position: fixed;
     bottom: 30px;
@@ -450,7 +489,7 @@ select.form-control option, select.prefix-select option {
     padding-bottom: 5px;
 }
 
-/* Hiển thị Ảnh lá quẻ thật cho Máy tính -> Cho phép Nhấp chuột phải Sao chép / Lưu ảnh */
+/* Hiển thị Ảnh lá quẻ thật cho Máy tính */
 .hex-native-img {
     max-width: 100%;
     height: auto;
@@ -472,13 +511,13 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
-/* Layout Lá quẻ chuẩn web cũ - Thêm Lề Trái/Phải 32px An Toàn Tối Đa Không Cắt Cột */
+/* Layout Lá quẻ chuẩn web cũ - Thêm Lề Trái/Phải 32px An Toàn Tối Đa */
 .hex-card-view {
     background-color: #fefee5;
     color: #000000;
     font-size: 15px;
-    min-width: 860px; /* Đảm bảo đủ độ rộng cho 12 cột không bị đè chữ */
-    padding: 25px 32px; /* Lề trái & phải 32px chống cắt chữ TS THÁNG */
+    min-width: 860px;
+    padding: 25px 32px;
     box-sizing: border-box;
 }
 
@@ -580,7 +619,6 @@ select.form-control option, select.prefix-select option {
     background-color: #e60000;
 }
 
-/* Bảng Lá Quẻ 12 Cột - Tối ưu font & padding tiêu đề không bị vỡ cột */
 .hex-card-view table {
     width: 100%;
     border-collapse: collapse;
@@ -639,7 +677,6 @@ select.form-control option, select.prefix-select option {
     font-weight: 700;
 }
 
-/* Khung Đánh giá Phong Thủy */
 .eval-box {
     margin-top: 15px;
     background: #ffffff;
@@ -675,7 +712,6 @@ select.form-control option, select.prefix-select option {
     .container { padding: 0 10px; }
     .form-card { padding: 16px; }
 
-    /* Co nhỏ 10 ô vuông trên ĐT để nằm đúng 1 hàng */
     .digit-boxes-container {
         gap: 3px;
         justify-content: space-between;
@@ -691,6 +727,15 @@ select.form-control option, select.prefix-select option {
     .prefix-selector-group {
         flex-direction: column;
         gap: 6px;
+    }
+
+    .current-sim-input-wrapper {
+        flex-direction: column;
+    }
+
+    .btn-eval-current {
+        padding: 10px;
+        width: 100%;
     }
 
     .sim-card {

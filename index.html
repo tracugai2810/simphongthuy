@@ -65,6 +65,17 @@
                             <option value="50">Top 50 SIM Đại Cát</option>
                         </select>
                     </div>
+
+                    <!-- KHUNG MỚI: Đánh Giá SIM Đang Dùng (Nằm kế bên Số lượng SIM) -->
+                    <div class="form-group current-sim-group">
+                        <label for="evalCurrentSim">📲 Đánh Giá SIM Đang Dùng (Hiện tại):</label>
+                        <div class="current-sim-input-wrapper">
+                            <input type="text" id="evalCurrentSim" class="form-control" placeholder="Nhập SĐT đang dùng (ví dụ: 0987154018)...">
+                            <button type="button" id="btnEvalCurrentSim" class="btn-eval-current">
+                                🔍 Đánh Giá SIM
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Khung Chọn Đầu Số & Điền Chữ Số Mong Muốn -->
@@ -111,14 +122,17 @@
                     </div>
                 </div>
 
-                <!-- Nút Submit -->
+                <!-- Nút Submit Tìm SIM Mới -->
                 <button type="submit" class="btn-submit">
                     🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC
                 </button>
             </form>
         </div>
 
-        <!-- Khung Kết Quả -->
+        <!-- Khung Hiển Thị Kết Quả Đánh Giá SIM Đang Dùng -->
+        <div id="currentSimResultBox" style="display: none; margin-bottom: 30px;"></div>
+
+        <!-- Khung Kết Quả Gợi Ý SIM Mới -->
         <div id="resultsHeader" class="results-header" style="display: none;">
             <div class="section-title" style="border: none; margin: 0;">
                 <span>✨</span> Danh Sách SIM Phù Hợp Đã Lập Quẻ
@@ -130,7 +144,7 @@
 
     </div>
 
-    <!-- Modal Lá Quẻ Lục Hào (Dành riêng cho Máy tính - Xem ảnh & Chuột phải sao chép) -->
+    <!-- Modal Lá Quẻ Lục Hào (Dành cho Máy tính) -->
     <div id="hexModal" class="modal-overlay">
         <div class="modal-content">
             <span id="modalClose" class="modal-close">&times;</span>
@@ -138,7 +152,7 @@
         </div>
     </div>
 
-    <!-- Container ẩn dùng để render html2canvas khi tải ảnh trên Mobile -->
+    <!-- Container ẩn dùng để render html2canvas -->
     <div id="hiddenRenderArea" style="position: absolute; left: -9999px; top: -9999px;"></div>
 
     <!-- Toast Notification -->

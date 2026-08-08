@@ -1,10 +1,12 @@
 /* ==========================================================================
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO PRO
    Lồng ghép 100% thuật toán Dịch Học từ file KIEN_THUC_LUC_HAO_SIM.md:
-   1. Dụng thần động Hóa Thoái, Hóa Hồi Đầu Khắc, Hóa Tuyệt, Hóa Phá -> Bỏ 100%
-   2. Dụng thần khắc Thế -> Bỏ 100% (Trừ Tài Lai Khắc Thế với Hào Thế Song Vượng)
-   3. Dụng thần Xung/Hợp Hào Thế: Nếu Hào Thế Suy -> Bỏ 100%; Nếu Hào Thế Vượng -> Cát Tường tương đương Sinh Thế
-   4. Hào Thế bị suy, bị khắc -> ĐỀU BỎ HẾT (Cho dù Dụng Thần Vượng)
+   1. QUY TẮC NGUYỆT LỆNH: Nhật sinh mà Nguyệt không sinh -> Tính là HƯU TÙ (SUY VI) -> Dụng Thần/Hào Thế Hưu tù = Bỏ 100%!
+      (Trừ trường hợp Lâm/Hợp Nhật Nguyệt, Động Hóa Tiến/Sinh, hoặc Hào Động sinh)
+   2. Dụng thần động Hóa Thoái, Hóa Hồi Đầu Khắc, Hóa Tuyệt, Hóa Phá -> Bỏ 100%
+   3. Dụng thần khắc Thế -> Bỏ 100% (Trừ Tài Lai Khắc Thế với Hào Thế Song Vượng)
+   4. Dụng thần Xung/Hợp Hào Thế: Nếu Hào Thế Suy -> Bỏ 100%; Nếu Hào Thế Vượng -> Cát Tường tương đương sinh Thế
+   5. Hào Thế bị suy, bị khắc -> ĐỀU BỎ HẾT (Cho dù Dụng Thần Vượng)
    ========================================================================== */
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
@@ -86,7 +88,8 @@ function getNguyenAndKyThan(targetRel) {
 }
 
 /* ==========================================================================
-   MỤC 1 KIẾN THỨC: HÀM TÍNH ĐIỂM MỨC ĐỘ VƯỢNG SUY CỦA HÀO (Hào Tĩnh & Hào Động)
+   MỤC 1 KIẾN THỨC: HÀM TÍNH ĐIỂM MỨC ĐỘ VƯỢNG SUY CỦA HÀO
+   QUY TẮC NGUYỆT LỆNH: Nhật sinh mà Nguyệt không sinh -> Tính là HƯU TÙ (SUY VI)
    ========================================================================== */
 function getLineVungScore(line, cal) {
     const chi = line.chi;
@@ -120,8 +123,9 @@ function getLineVungScore(line, cal) {
         } else {
             if (isLamNhatNguyet || isNguyetHop) return { score: 35, isVung: true, note: 'Lâm/Nguyệt Hợp Nhật Nguyệt' };
             if (isNguyetSinhPho) return { score: 28, isVung: true, note: 'Nguyệt Lệnh vượng sinh/phò' };
-            if (isNhatSinhPho) return { score: 20, isVung: true, note: 'Nhật Thần vượng sinh/phò' };
-            return { score: 10, isVung: false, note: 'Động thường' };
+            
+            // Hào Động không hóa tiến/sinh, nếu Nguyệt Lệnh không sinh -> Hưu tù (0 điểm)
+            return { score: 0, isVung: false, note: 'Hưu Tù (Nguyệt không sinh phò)' };
         }
     } else {
         // Đối với Hào TĨNH
@@ -129,9 +133,13 @@ function getLineVungScore(line, cal) {
             let note = isLamNhatNguyet ? 'Lâm Nhật/Nguyệt' : isNguyetHop ? 'Nguyệt Hợp' : 'Nhật Hợp';
             return { score: 40, isVung: true, note: `${note} (Cấp 1 - Vượng Nhất)` };
         }
-        if (isNguyetSinhPho) return { score: 30, isVung: true, note: 'Nguyệt Lệnh vượng sinh/phò (Cấp 2 - Nguyệt Sinh > Nhật Sinh)' };
-        if (isNhatSinhPho) return { score: 20, isVung: true, note: 'Nhật Thần vượng sinh/phò (Cấp 3)' };
-        return { score: 0, isVung: false, note: 'Suy Tĩnh' };
+        if (isNguyetSinhPho) return { score: 30, isVung: true, note: 'Nguyệt Lệnh vượng sinh/phò (Cấp 2)' };
+
+        // QUY TẮC CỐT LÕI: Nếu Nguyệt Lệnh KHÔNG sinh phò, chỉ có Nhật Thần sinh vẫn tính là HƯU TÙ (SUY VI)
+        if (isNhatSinhPho) {
+            return { score: 0, isVung: false, note: 'Hưu Tù (Nhật sinh nhưng Nguyệt không sinh ➔ Tính là Suy vi)' };
+        }
+        return { score: 0, isVung: false, note: 'Suy Tĩnh Hưu Tù' };
     }
 }
 
@@ -254,7 +262,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
             isQualified: false,
             score: 20,
             grade: 'Dụng Thần Suy',
-            reasons: [`Dụng Thần ${targetRel} bị suy vi tại Nhật Nguyệt và không được Hào Động tương sinh (Dụng Thần Suy thì Hào Thế vượng mấy cũng HUNG, bắt buộc loại bỏ).`]
+            reasons: [`Dụng Thần ${targetRel} bị Hưu Tù/Suy Vi (Không có Nguyệt Lệnh sinh phò hay Hào Động sinh - Bắt buộc loại bỏ 100%).`]
         };
     }
 
@@ -263,7 +271,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     }
     totalScore += maxDungScore;
 
-    // --- 5. QUY TẮC: HÀO THẾ BỊ SUY HOẶC BỊ KHẮC ➔ BỎ HẾT (CHO DÙ DỤNG THẦN VƯỢNG!) ---
+    // --- 5. QUY TẮC: HÀO THẾ BỊ SUY (HƯU TÙ) HOẶC BỊ KHẮC ➔ BỎ HẾT (CHO DÙ DỤNG THẦN VƯỢNG!) ---
     const theVungInfo = getLineVungScore(haoThe, cal);
 
     // Kiểm tra Hào Thế Bị Khắc (bởi Nhật, Nguyệt, Hào Động, Hồi đầu khắc)
@@ -281,13 +289,13 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
-    // Kiểm tra Hào Thế Bị Suy (không đạt thế vượng tại Nhật/Nguyệt)
+    // Kiểm tra Hào Thế Bị Suy (Hưu Tù - không có Nguyệt Lệnh sinh phò hay Lâm/Hợp)
     if (theVungInfo.score <= 0) {
         return {
             isQualified: false,
             score: 15,
-            grade: 'Hào Thế Suy',
-            reasons: [`Hào Thế (${theChi}) bị suy vi tại Nhật Nguyệt (Hào Thế suy thì dù Dụng Thần vượng cũng KHÔNG CÓ TÁC DỤNG, bắt buộc loại bỏ 100%).`]
+            grade: 'Hào Thế Suy Hưu Tù',
+            reasons: [`Hào Thế (${theChi}) bị Hưu Tù suy vi tại Nguyệt Lệnh (Hào Thế suy thì dù Dụng Thần vượng cũng KHÔNG CÓ TÁC DỤNG, bắt buộc loại bỏ 100%).`]
         };
     }
 
@@ -350,7 +358,7 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
                 isQualified: false,
                 score: 15,
                 grade: 'Dụng Thần Xung/Hợp Thế Suy',
-                reasons: [`Dụng Thần ${targetRel} ${note} Hào Thế nhưng Hào Thế (${theChi}) bị suy vi tại Nhật Nguyệt (Bắt buộc loại bỏ 100%).`]
+                reasons: [`Dụng Thần ${targetRel} ${note} Hào Thế nhưng Hào Thế (${theChi}) bị suy vi Hưu Tù (Bắt buộc loại bỏ 100%).`]
             };
         } else {
             totalScore += 25;
