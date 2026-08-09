@@ -1,10 +1,13 @@
 /* ==========================================================================
-   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO (ELEGANT LUXURY CLASSIC AESTHETICS)
-   Aesthetics: Luxury Obsidian & Dark Red + Google Fonts 'Charm' (Font Chữ Phong Thủy Cổ Điển)
-   Đồng bộ 100% Tiêu đề, Thương hiệu, Nút bấm & Bảng Quẻ
+   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO (EXACT ORIGINAL DESIGN RESTORED)
+   Aesthetics: Luxury Obsidian & Dark Red Frame, White Digit Boxes, Gold Accents
+   - Phông chữ Inter hiện đại 100% (Loại bỏ toàn bộ Charm gây rối mắt)
+   - Khung Đỏ Đô "Nhập số thuê bao mong muốn" với 10 ô vuông Nền Trắng Chữ Đỏ
+   - Form Grid 3 cột trên máy tính, Tự động thu 1 cột trên điện thoại
+   - Tối ưu Mobile First & Tách biệt Nút Đóng Modal
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
     --bg-dark: #0c1222;
@@ -18,7 +21,7 @@
     --text-muted: #94a3b8;
     --border-color: #2d3a52;
     --border-gold: rgba(243, 198, 105, 0.4);
-    --font-title: 'Charm', cursive, serif;
+    --font-title: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -50,7 +53,7 @@ body {
 
 /* Main Container */
 .container {
-    max-width: 960px;
+    max-width: 980px;
     margin: 0 auto;
     padding: 0 15px;
     width: 100%;
@@ -58,7 +61,7 @@ body {
 }
 
 /* ==========================================================================
-   TOP USER NAVIGATION BAR (THƯƠNG MẠI HÓA XU & AUTH)
+   TOP USER NAVIGATION BAR
    ========================================================================== */
 .top-user-bar {
     background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
@@ -75,15 +78,13 @@ body {
 }
 
 .brand-title {
-    font-family: var(--font-title);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 900;
     color: var(--gold-glow);
     display: flex;
     align-items: center;
     gap: 8px;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .user-nav-group {
@@ -209,22 +210,20 @@ body {
 }
 
 .section-title {
-    font-family: var(--font-title);
-    font-size: 1.7rem;
-    font-weight: 700;
+    font-size: 1.3rem;
+    font-weight: 800;
     color: var(--gold-glow);
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--gold-dark);
     padding-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 20px;
 }
@@ -235,19 +234,19 @@ body {
 }
 
 .form-group label {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 700;
     color: #cbd5e1;
     margin-bottom: 8px;
 }
 
 .form-control {
     width: 100%;
-    padding: 12px 14px;
+    padding: 11px 14px;
     background: #0c1222;
     border: 1px solid var(--border-color);
     color: #ffffff;
-    font-size: 1rem;
+    font-size: 0.95rem;
     border-radius: 10px;
     outline: none;
     transition: all 0.3s ease;
@@ -275,10 +274,9 @@ body {
 .btn-eval-current {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    font-family: var(--font-title);
-    font-weight: 700;
-    font-size: 1.3rem;
-    padding: 10px 18px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 11px 20px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
@@ -288,7 +286,6 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-eval-current:hover {
@@ -297,105 +294,108 @@ body {
 }
 
 /* ==========================================================================
-   DIGIT SELECTOR (10 Ô VUÔNG ĐIỀN CHỮ SỐ SĐT CHUẨN VN)
+   DIGIT SELECTOR (KHUNG ĐỎ ĐÔ ĐẶC TRƯNG CHUẨN GIAO DIỆN CỦ GẮN O VUÔNG TRẮNG)
    ========================================================================== */
 .digit-section {
-    background: #0c1222;
-    border: 1px solid var(--border-color);
+    background: #7a1c1c; /* Màu Đỏ Đô Sang Trọng Độc Bản Chuẩn Giao Diện Cũ */
+    border: 1px solid var(--gold-dark);
     border-radius: 16px;
-    padding: 18px;
-    margin-bottom: 20px;
+    padding: 22px 18px 18px 18px;
+    margin-bottom: 22px;
+    text-align: center;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .digit-section-title {
-    font-family: var(--font-title);
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--gold-glow);
-    margin-bottom: 12px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-align: center;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .prefix-selector-group {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 14px;
 }
 
 .prefix-selector-group label {
-    font-size: 0.88rem;
-    color: var(--text-muted);
+    font-size: 0.9rem;
+    color: #ffd700;
+    font-weight: 700;
 }
 
 .prefix-select {
     padding: 6px 12px;
-    background: #151d30;
-    border: 1px solid var(--border-color);
+    background: #0c1222;
+    border: 1px solid var(--gold-dark);
     color: #ffffff;
     border-radius: 8px;
     outline: none;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .digit-boxes-container {
     display: flex;
     gap: 6px;
-    justify-content: space-between;
-    margin-bottom: 10px;
+    justify-content: center;
+    margin-bottom: 12px;
     width: 100%;
 }
 
 .digit-box {
     width: 44px;
     height: 48px;
-    background: #151d30;
-    border: 1.5px solid var(--border-color);
-    color: var(--gold-glow);
+    background: #ffffff !important; /* Ô vuông Nền Trắng tinh */
+    border: 1.5px solid var(--gold-dark) !important;
+    color: #8b2525 !important; /* Chữ Đỏ Đô nổi bật */
     font-size: 1.35rem;
-    font-weight: 800;
+    font-weight: 900;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 8px;
     outline: none;
     transition: all 0.2s ease;
     font-family: monospace;
 }
 
 .digit-box:focus {
-    border-color: var(--gold-glow);
-    background: #1a2438;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
 
 .digit-box.fixed-zero {
-    background: rgba(217, 119, 6, 0.2);
-    border-color: var(--gold-dark);
-    color: #ffffff;
+    background: #ffffff !important;
+    color: #8b2525 !important;
+    border-color: var(--gold-dark) !important;
 }
 
 .digit-help-text {
-    font-size: 0.82rem;
-    color: var(--text-muted);
+    font-size: 0.83rem;
+    color: #f1f5f9;
     line-height: 1.4;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
-/* NÚT SUBMIT CHÍNH */
+/* NÚT SUBMIT CHÍNH AMBER ORANGE */
 .btn-submit {
     width: 100%;
     padding: 16px;
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    font-family: var(--font-title);
-    font-weight: 700;
-    font-size: 1.5rem;
+    font-weight: 900;
+    font-size: 1.1rem;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
 }
 
 .btn-submit:hover {
@@ -541,7 +541,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (TỐI ƯU CỰC NÉT VÀ CHỐNG CHE NÚT ĐÓNG)
+   MODALS POPUP (SANG TRỌNG & NÚT ĐÓNG TÁCH BIỆT TRONG PADDING)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -784,9 +784,8 @@ body {
     margin-top: 14px;
     background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
     color: #ffffff;
-    font-family: var(--font-title);
-    font-weight: 700;
-    font-size: 1.2rem;
+    font-weight: 800;
+    font-size: 1rem;
     padding: 12px 16px;
     border-radius: 10px;
     border: none;
@@ -794,7 +793,6 @@ body {
     box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
     transition: all 0.2s ease;
     text-align: center;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-mobile-share-ios:active {
@@ -1029,6 +1027,9 @@ body {
     input, select, textarea {
         font-size: 16px !important;
     }
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 640px) {
@@ -1043,7 +1044,7 @@ body {
     }
 
     .brand-title {
-        font-size: 1.3rem;
+        font-size: 1.15rem;
         width: 100%;
         border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
         padding-bottom: 6px;
@@ -1057,7 +1058,7 @@ body {
     .form-card { padding: 14px; }
 
     .digit-section {
-        padding: 14px 10px;
+        padding: 16px 10px 14px 10px;
     }
 
     .digit-boxes-container {
@@ -1089,11 +1090,11 @@ body {
         padding: 12px;
         width: 100%;
         justify-content: center;
-        font-size: 1.15rem;
+        font-size: 0.95rem;
     }
 
     .btn-submit {
-        font-size: 1.25rem;
+        font-size: 0.95rem;
     }
 
     .sim-card {
@@ -1134,7 +1135,7 @@ body {
     }
 
     .ref-single-line-title {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
         white-space: normal;
     }
 }
