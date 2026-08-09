@@ -49,7 +49,7 @@ function initFormDefaults() {
             if (val === 30) cost = 12;
             if (val === 50) cost = 20;
 
-            btnSubmitSearch.innerHTML = `🔮 Gợi Ý List SIM Cát Tường Dịch Học (${cost} Xu)`;
+            btnSubmitSearch.innerHTML = `🔮 Gợi Ý SIM Số Đẹp (${cost} Xu)`;
         });
     }
 }
@@ -66,7 +66,7 @@ function setupInputTransforms() {
         }
     });
 
-    const lowercaseInputs = ['loginUsername', 'regUsername', 'regEmail', 'forgotInput'];
+    const lowercaseInputs = ['loginUsername', 'regUsername', 'forgotInput'];
     lowercaseInputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -180,11 +180,10 @@ function setupAuthAndCommerce() {
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('regUsername').value;
-            const em = document.getElementById('regEmail').value || `${u}@gmail.com`;
             const p = document.getElementById('regPassword').value;
             const ref = document.getElementById('regRefCode').value;
 
-            const res = AuthStore.register(u, em, p, ref);
+            const res = AuthStore.register(u, `${u}@gmail.com`, p, ref);
             if (res.success) {
                 closeModal('authModal');
                 updateUserNavUI();

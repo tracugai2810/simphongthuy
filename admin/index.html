@@ -6,9 +6,9 @@
     <title>Trang Quản Trị Admin - SIM Phong Thủy Lục Hào Pro</title>
     
     <!-- Google Fonts Đồng Bộ 100% Trang Web Main (Inter) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 
-    <!-- Embedded Full CSS (Chống 100% lỗi 404 CSS khi Vercel URL rewrite /admin) -->
+    <!-- Embedded Full CSS (Chống 100% lỗi 404 CSS & Lỗi Font chữ) -->
     <style>
         :root {
             --bg-dark: #0c1222;
@@ -18,11 +18,15 @@
             --gold-dark: #d97706;
             --border-color: #2d3a52;
             --border-gold: rgba(243, 198, 105, 0.4);
-            --font-title: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-title: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body, button, input, select, textarea, label, table, th, td, h1, h2, h3, h4, h5, h6, div, span, p, a {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+        }
 
         html, body {
             overflow-x: hidden !important;
@@ -37,7 +41,6 @@
             background: linear-gradient(135deg, #0c1222 0%, #0a0f1a 50%, #0c1222 100%) !important;
             background-attachment: fixed !important;
             color: #f1f5f9 !important;
-            font-family: var(--font-body) !important;
             line-height: 1.5;
             min-height: 100vh;
             padding: 15px;
@@ -64,7 +67,6 @@
         }
 
         .admin-brand {
-            font-family: var(--font-title);
             font-size: 1.4rem;
             font-weight: 800;
             color: #ffd700;
@@ -126,9 +128,9 @@
         }
 
         .admin-login-card h2 {
-            font-family: var(--font-title);
             color: #ffd700;
             font-size: 1.6rem;
+            font-weight: 800;
             margin-bottom: 20px;
         }
 
@@ -167,8 +169,8 @@
             padding: 12px;
             background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
             color: #ffffff;
-            font-weight: 800;
-            font-size: 1rem;
+            font-weight: 800 !important;
+            font-size: 1rem !important;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -231,7 +233,6 @@
         }
 
         .admin-card-title {
-            font-family: var(--font-title);
             color: #ffd700;
             font-size: 1.25rem;
             font-weight: 800;
@@ -345,6 +346,7 @@
             pointer-events: none;
             transition: opacity 0.25s ease;
             padding: 15px;
+            overflow-x: hidden !important;
         }
 
         .modal-overlay.active {
@@ -361,6 +363,7 @@
             width: 100%;
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
             position: relative;
+            overflow-x: hidden !important;
         }
     </style>
 </head>
@@ -560,12 +563,12 @@
         </div>
     </div>
 
-    <!-- CUSTOM POPUP 4: MODAL ĐẶT LẠI MẬT KHẨU THÀNH VIÊN SANG TRỌNG -->
+    <!-- CUSTOM POPUP 4: MODAL ĐẶT LẠI MẬT KHẨU THÀNH VIÊN SANG TRỌNG (FONT ĐỒNG BỘ 100% INTER) -->
     <div id="adminResetPasswordModal" class="modal-overlay">
         <div class="admin-modal-box" style="max-width: 440px;">
             <div style="text-align: center; margin-bottom: 16px;">
                 <div style="font-size: 2.4rem; margin-bottom: 4px;">🔑</div>
-                <h3 style="color: var(--gold-glow); font-size: 1.25rem;">ĐẶT LẠI MẬT KHẨU THÀNH VIÊN</h3>
+                <h3 style="color: var(--gold-glow); font-size: 1.25rem; font-weight: 800;">ĐẶT LẠI MẬT KHẨU THÀNH VIÊN</h3>
                 <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
                     Thành viên: <strong id="resetTargetUsername" style="color: #ffd700;">---</strong>
                 </p>
@@ -577,8 +580,8 @@
             </div>
 
             <div style="display: flex; gap: 10px;">
-                <button type="button" class="admin-tab-btn" style="flex: 1; padding: 12px;" onclick="document.getElementById('adminResetPasswordModal').classList.remove('active')">Hủy Bỏ</button>
-                <button type="button" class="btn-admin-submit" style="flex: 1; padding: 12px; margin-top: 0; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="submitAdminResetPassword()">✅ Lưu Mật Khẩu</button>
+                <button type="button" class="admin-tab-btn" style="flex: 1; padding: 12px; font-weight: 700;" onclick="document.getElementById('adminResetPasswordModal').classList.remove('active')">Hủy Bỏ</button>
+                <button type="button" class="btn-admin-submit" style="flex: 1; padding: 12px; margin-top: 0; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); font-weight: 800;" onclick="submitAdminResetPassword()">✅ Lưu Mật Khẩu</button>
             </div>
         </div>
     </div>

@@ -1,8 +1,8 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - EXACT DEVTOOLS CSS MATCH FROM ORIGINAL WEBSITE
-   - Nút Đóng X Trên Tất Cả Modal Z-Index 100100 Hoạt Động 100%
-   - Tối Ưu Phản Hồi 1-Tap Siêu Nhạy Cho Tất Cả Nút Bấm Trên Điện Thoại
-   - Đăng Xuất & Chuyển Trang Admin Bấm 1 Phát Ăn Ngay
+   - Nút Đóng X Trên Tất Cả Modal Z-Index 100100 Hoạt Động 100% 1-Tap
+   - Chống 100% Thanh Cuộn Ngang (Horizontal Scrollbar) Khi Rê Chuột Vào Popup
+   - Đồng Bộ Font Chữ Inter Toàn Bộ Web Không Lỗi Font
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -35,16 +35,21 @@ html, body {
     position: relative;
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 body {
     background-color: #0c1222;
     color: var(--text-light);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
     min-height: 100vh;
     padding-top: 15px;
     padding-bottom: 60px;
+}
+
+/* ĐỒNG BỘ FONT INTER CHO TẤT CẢ NÚT BẤM, INPUT & THẺ CHỮ */
+button, input, select, textarea, label, table, th, td {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* Main Container */
@@ -81,7 +86,6 @@ body {
     align-items: center;
     gap: 8px;
     letter-spacing: 0.3px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .user-nav-group {
@@ -111,7 +115,6 @@ body {
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
     user-select: none !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-auth-trigger {
@@ -154,7 +157,7 @@ body {
     color: #f87171;
 }
 
-/* CHỈ ÁP DỤNG HOVER KHI DÙNG CHUỘT TRÊN MÁY TÍNH (TRÁNH BỊ KẸT CHẠM TRÊN DI ĐỘNG) */
+/* CHỈ ÁP DỤNG HOVER KHI DÙNG CHUỘT TRÊN MÁY TÍNH */
 @media (hover: hover) and (pointer: fine) {
     .btn-auth-trigger:hover { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
     .coin-badge:hover { background: rgba(217, 119, 6, 0.3); }
@@ -190,7 +193,6 @@ body {
 }
 
 .section-title {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 20px;
     font-weight: 800;
     color: #F3C669;
@@ -215,7 +217,6 @@ body {
 }
 
 .form-group label {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: #cbd5e1;
@@ -232,7 +233,6 @@ body {
     border-radius: 8px;
     outline: none;
     transition: 0.3s;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .form-control:focus {
@@ -274,7 +274,6 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     touch-action: manipulation;
 }
 
@@ -302,7 +301,6 @@ body {
     margin-bottom: 8px;
     text-align: center;
     letter-spacing: 0.3px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .prefix-selector-group {
@@ -317,7 +315,6 @@ body {
     font-size: 0.88rem;
     color: #ffd700;
     font-weight: 700;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .prefix-select {
@@ -329,7 +326,6 @@ body {
     outline: none;
     font-weight: 700;
     font-size: 0.88rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .digit-boxes-container {
@@ -372,7 +368,6 @@ body {
     line-height: 1.4;
     max-width: 680px;
     margin: 0 auto;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* NÚT SUBMIT CHÍNH AMBER ORANGE */
@@ -389,7 +384,6 @@ body {
     box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
     transition: all 0.2s ease;
     letter-spacing: 0.3px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     touch-action: manipulation;
 }
 
@@ -433,7 +427,6 @@ body {
     color: #ffffff;
     letter-spacing: 1px;
     margin-bottom: 4px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .sim-number-display .highlight {
@@ -454,7 +447,6 @@ body {
     border-radius: 10px;
     display: inline-flex;
     align-items: center;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .badge-score {
@@ -473,7 +465,6 @@ body {
     list-style: none;
     font-size: 0.85rem;
     color: #cbd5e1;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .sim-reasons-list li {
@@ -509,7 +500,6 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     touch-action: manipulation;
 }
 
@@ -525,7 +515,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (TỐI ƯU CỰC NHẠY NÚT ĐÓNG X VÀ KHOẢNG CÁCH TÁCH BIỆT VỚI TAB)
+   MODALS POPUP (CHỐNG 100% LỖI THANH CUỘN NGANG KHI TRỎ CHUỘT VÀO POPUP)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -540,6 +530,7 @@ body {
     pointer-events: none;
     transition: opacity 0.25s ease;
     padding: 12px;
+    overflow-x: hidden !important;
 }
 
 .modal-overlay.active {
@@ -558,9 +549,9 @@ body {
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden !important; /* CHỐNG THANH CUỘN NGANG KHI TRỎ CHUỘT */
     -webkit-overflow-scrolling: touch;
     margin: auto;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .auth-modal-box {
@@ -572,6 +563,7 @@ body {
     padding: 38px 14px 12px 14px !important;
     max-height: 94vh;
     overflow-y: hidden !important;
+    overflow-x: hidden !important;
 }
 
 /* KHUNG MÃ GIỚI THIỆU THU GỌN VỪA VẶN 1 MÀN HÌNH */
@@ -579,27 +571,29 @@ body {
     padding: 38px 14px 14px 14px !important;
     max-height: 94vh;
     overflow-y: hidden !important;
+    overflow-x: hidden !important;
 }
 
 @media (max-height: 680px) {
     .compact-donate-modal, .compact-ref-modal {
         overflow-y: auto !important;
+        overflow-x: hidden !important;
     }
 }
 
-/* NÚT X ĐÓNG POPUP SIÊU NHẠY VỚI BÁN KÍNH BẤM MỞ RỘNG (HITBOX) */
-.modal-close {
+/* NÚT X ĐÓNG POPUP SIÊU NHẠY THIẾT KẾ DẠNG BUTTON NATIVE */
+button.modal-close, .modal-close {
     position: absolute !important;
     top: 12px !important;
     right: 12px !important;
     width: 38px !important;
     height: 38px !important;
-    line-height: 36px !important;
+    line-height: 34px !important;
     text-align: center !important;
-    background: rgba(255, 255, 255, 0.22) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
     border-radius: 50% !important;
     color: #ffffff !important;
-    font-size: 1.35rem !important;
+    font-size: 1.4rem !important;
     font-weight: bold !important;
     cursor: pointer !important;
     z-index: 100100 !important;
@@ -612,10 +606,13 @@ body {
     user-select: none !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
     touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+    padding: 0 !important;
 }
 
-/* Mở rộng vùng cảm ứng chạm ngón tay trên điện thoại (+12px Hitbox) */
-.modal-close::before {
+/* Mở rộng vùng cảm ứng chạm ngón tay (+12px Hitbox) */
+button.modal-close::before, .modal-close::before {
     content: '' !important;
     position: absolute !important;
     top: -12px !important;
@@ -623,6 +620,14 @@ body {
     left: -12px !important;
     right: -12px !important;
     border-radius: 50% !important;
+}
+
+button.modal-close:hover, .modal-close:hover,
+button.modal-close:active, .modal-close:active {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #f87171 !important;
+    transform: scale(1.06) !important;
 }
 
 /* AUTH MODAL TABS */
@@ -646,7 +651,6 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     touch-action: manipulation;
 }
 
@@ -779,6 +783,7 @@ body {
     border: 1px dashed var(--gold-dark);
     border-radius: 8px;
     padding: 10px 12px;
+    overflow-x: hidden !important;
 }
 
 .hex-card-scroll-wrapper {
@@ -813,7 +818,6 @@ body {
     box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4);
     transition: all 0.2s ease;
     text-align: center;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     touch-action: manipulation;
 }
 
@@ -925,8 +929,6 @@ body {
     background-color: #e60000;
 }
 
-.hex-[#1a1a1a]
-
 .hex-card-view table {
     width: 100%;
     border-collapse: collapse;
@@ -1033,7 +1035,6 @@ body {
     pointer-events: none;
     text-align: center;
     max-width: 90vw;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .toast-notification.show {

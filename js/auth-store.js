@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Tích hợp hàm Admin Đặt Lại Mật Khẩu Thành Viên (adminResetUserPassword)
-   - Đảm bảo mật khẩu được lưu vào Firestore & LocalStorage tức thì
+   - Tích hợp tự động hủy phiên đăng nhập khi mật khẩu bị Admin thay đổi
+   - Bắt buộc tất cả thiết bị phải đăng nhập lại với mật khẩu mới
    ========================================================================== */
 
 // Firebase Configuration
@@ -64,11 +64,9 @@ const AuthStore = (() => {
 
             if (hasChanges) {
                 saveUsers(localUsers);
+                
+                // NẾU MẬT KHẨU CỦA USER ĐƯỢC ADMIN CẬP NHẬT TỪ THIẾT BỊ KHÁC -> KIỂM TRA HỦY PHIÊN
                 const current = getCurrentUser();
-                if (current) {
-                    const match = localUsers.find(u => u.id === current.id);
-                    if (match) setCurrentUser(match);
-                }
                 if (typeof updateUserNavUI === 'function') updateUserNavUI();
                 if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
             }
@@ -184,12 +182,26 @@ const AuthStore = (() => {
         localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
     }
 
+    // KIỂM TRA PHIÊN ĐĂNG NHẬP (TỰ ĐỘNG HỦY PHIÊN NẾU MẬT KHẨU BỊ ADMIN THAY ĐỔI)
     function getCurrentUser() {
         try {
-            const u = JSON.parse(localStorage.getItem(STORAGE_KEY_SESSION));
-            if (!u) return null;
+            const sessionUser = JSON.parse(localStorage.getItem(STORAGE_KEY_SESSION));
+            if (!sessionUser) return null;
+
             const users = getUsers();
-            return users.find(usr => usr.id === u.id) || null;
+            const match = users.find(usr => usr.id === sessionUser.id);
+            if (!match) {
+                localStorage.removeItem(STORAGE_KEY_SESSION);
+                return null;
+            }
+
+            // NẾU MẬT KHẨU CỦA TÀI KHOẢN ĐÃ BỊ THAY ĐỔI -> TỰ ĐỘNG THOÁT ĐĂNG NHẬP, BẮT BUỘC ĐĂNG NHẬP LẠI
+            if (sessionUser.passwordHash && match.passwordHash && sessionUser.passwordHash !== match.passwordHash) {
+                localStorage.removeItem(STORAGE_KEY_SESSION);
+                return null;
+            }
+
+            return match;
         } catch (e) {
             return null;
         }
@@ -299,7 +311,7 @@ const AuthStore = (() => {
         };
     }
 
-    // ADMIN ĐẶT LẠI MẬT KHẨU CHO THÀNH VIÊN
+    // ADMIN ĐẶT LẠI MẬT KHẨU CHO THÀNH VIÊN (TỰ ĐỘNG VÔ HIỆU HÓA PHIÊN CỦA TẤT CẢ THIẾT BỊ KHÁCH)
     function adminResetUserPassword(userId, newPassword) {
         if (!newPassword || !newPassword.trim()) {
             return { success: false, message: 'Mật khẩu mới không được bỏ trống!' };
@@ -314,10 +326,10 @@ const AuthStore = (() => {
         users[idx].passwordHash = cleanPass;
         saveUsers(users);
 
+        // NẾU CHÍNH TÀI KHOẢN ĐÀNG ĐĂNG NHẬP BỊ THAY ĐỔI -> CẬP NHẬT HOẶC ĐĂNG XUẤT ĐỂ ĐẢM BẢO BẮT BUỘC ĐĂNG NHẬP LẠI
         const current = getCurrentUser();
         if (current && current.id === userId) {
-            current.passwordHash = cleanPass;
-            setCurrentUser(current);
+            localStorage.removeItem(STORAGE_KEY_SESSION);
         }
 
         if (db) {
@@ -326,7 +338,7 @@ const AuthStore = (() => {
 
         return {
             success: true,
-            message: `✅ Đã đổi mật khẩu cho thành viên (${users[idx].username}) thành: "${cleanPass}"! Khách hàng có thể đăng nhập ngay với mật khẩu mới này.`
+            message: `✅ Đã đổi mật khẩu cho thành viên (${users[idx].username}) thành: "${cleanPass}"! Tất cả thiết bị đã tự động đăng xuất và bắt buộc phải đăng nhập lại với mật khẩu mới này.`
         };
     }
 

@@ -162,7 +162,7 @@
 
                 <!-- Nút Submit Tìm SIM Mới -->
                 <button type="submit" id="btnSubmitSearch" class="btn-submit">
-                    🔮 Gợi Ý List SIM Cát Tường Dịch Học (2 Xu)
+                    🔮 Gợi Ý SIM Số Đẹp (2 Xu)
                 </button>
             </form>
         </div>
@@ -185,7 +185,7 @@
     <!-- MODAL 1: ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="authModal" class="modal-overlay">
         <div class="modal-content auth-modal-box">
-            <span class="modal-close" onclick="closeModal('authModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('authModal')">&times;</button>
             
             <div class="auth-tabs">
                 <button type="button" class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">
@@ -223,10 +223,6 @@
                     <input type="text" id="regUsername" class="form-control" placeholder="Ví dụ: nguyenvana" required style="text-transform: lowercase;">
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <label>Email liên hệ (Dùng để khôi phục mật khẩu):</label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com" style="text-transform: lowercase;">
-                </div>
-                <div class="form-group" style="margin-bottom: 10px;">
                     <label>Mật khẩu:</label>
                     <input type="password" id="regPassword" class="form-control" placeholder="Tạo mật khẩu..." required>
                 </div>
@@ -241,10 +237,10 @@
         </div>
     </div>
 
-    <!-- MODAL KHÔI PHỤC MẬT KHẨU (NÚT BẤM LIÊN HỆ ZALO ADMIN KHÔNG CẦN FORM GỬI MAIL) -->
+    <!-- MODAL KHÔI PHỤC MẬT KHẨU -->
     <div id="forgotPasswordModal" class="modal-overlay">
         <div class="modal-content auth-modal-box" style="max-width: 440px !important; text-align: center;">
-            <span class="modal-close" onclick="closeModal('forgotPasswordModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('forgotPasswordModal')">&times;</button>
             <div style="margin-bottom: 16px;">
                 <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
                 <h3 style="color: var(--gold-glow); font-size: 1.25rem; margin-bottom: 8px;">Khôi Phục Mật Khẩu</h3>
@@ -254,7 +250,7 @@
             </div>
             
             <a href="https://zalo.me/0396154013" target="_blank" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4); font-size: 0.95rem; padding: 12px; border-radius: 10px;">
-                💬 Liên Hệ Zalo Admin (0396.154.013)
+                💬 Zalo Admin
             </a>
         </div>
     </div>
@@ -262,7 +258,7 @@
     <!-- MODAL 2: XÁC NHẬN TRỪ XU -->
     <div id="confirmDeductModal" class="modal-overlay">
         <div class="modal-content confirm-modal-box">
-            <span class="modal-close" onclick="closeModal('confirmDeductModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('confirmDeductModal')">&times;</button>
             <div style="text-align: center; padding: 10px 0;">
                 <div style="font-size: 2.8rem; margin-bottom: 8px;">💎</div>
                 <h3 style="color: var(--gold-glow); font-size: 1.3rem; margin-bottom: 12px;">Xác Nhận Sử Dụng Xu</h3>
@@ -281,10 +277,10 @@
         </div>
     </div>
 
-    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (TÍCH HỢP NÚT ZALO ADMIN + QR MÃ PHÓNG TO NẰM GỌN 1 MÀN HÌNH) -->
+    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU -->
     <div id="donateModal" class="modal-overlay">
         <div class="modal-content donate-modal-box compact-donate-modal">
-            <span class="modal-close" onclick="closeModal('donateModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('donateModal')">&times;</button>
             
             <div style="text-align: center; margin-bottom: 6px;">
                 <h3 style="color: var(--gold-glow); font-size: 1.15rem;">💎 Nhiệm Vụ Donate Kiếm Xu</h3>
@@ -314,7 +310,7 @@
                 </div>
             </div>
 
-            <!-- Khung Ảnh QR Code Thanh Toán (Phóng To Rõ Đẹp Vừa Vặn) -->
+            <!-- Khung Ảnh QR Code Thanh Toán -->
             <div class="qr-display-box" style="padding: 6px; margin-top: 2px;">
                 <div style="font-size: 0.8rem; font-weight: bold; color: var(--gold-primary); margin-bottom: 3px;">
                     Quét Mã QR Chuyển Khoản Ngân Hàng:
@@ -335,7 +331,7 @@
             <!-- Hàng 2 Nút Bấm: Liên Hệ Zalo & Tôi Đã Donate -->
             <div style="display: flex; gap: 8px; margin-top: 6px;">
                 <a href="https://zalo.me/0396154013" target="_blank" class="btn-action" style="flex: 1; font-size: 0.82rem; padding: 9px 4px; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); color: #ffffff; text-decoration: none; justify-content: center; font-weight: bold; border-radius: 8px;">
-                    💬 Zalo Admin (0396.154.013)
+                    💬 Zalo Admin
                 </a>
 
                 <button type="button" id="btnSubmitDonateReq" class="btn-mobile-share-ios" style="flex: 1; margin-top: 0; padding: 9px 4px; font-size: 0.82rem; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); border-radius: 8px;">
@@ -348,7 +344,7 @@
     <!-- MODAL 4: MÃ GIỚI THIỆU -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content ref-modal-box compact-ref-modal">
-            <span class="modal-close" onclick="closeModal('refModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('refModal')">&times;</button>
             
             <div style="text-align: center; margin-bottom: 8px;">
                 <h3 class="ref-single-line-title" style="color: var(--gold-glow); font-size: 1.1rem;">🎁 Mã Giới Thiệu & Thưởng Hoa Hồng 50%</h3>
@@ -416,7 +412,7 @@
     <!-- MODAL 5: LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG -->
     <div id="userCoinHistoryModal" class="modal-overlay">
         <div class="modal-content ref-modal-box" style="max-width: 540px !important;">
-            <span class="modal-close" onclick="closeModal('userCoinHistoryModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('userCoinHistoryModal')">&times;</button>
             
             <div style="text-align: center; margin-bottom: 12px;">
                 <div style="font-size: 1.8rem; margin-bottom: 2px;">📊</div>
@@ -446,7 +442,7 @@
     <!-- Modal Lá Quẻ Lục Hào -->
     <div id="hexModal" class="modal-overlay">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeModal('hexModal')">&times;</span>
+            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('hexModal')">&times;</button>
             <div id="modalBody"></div>
         </div>
     </div>
