@@ -1,6 +1,7 @@
 /* ==========================================================================
-   ADMIN CONTROL PANEL LOGIC
+   ADMIN CONTROL PANEL LOGIC PRO
    - Xử lý đăng nhập Admin dambuicong / 281097
+   - Giao diện Obsidian Gold chuẩn phong cách Luxury
    - Xử lý Duyệt nạp xu Donate (Tự động cộng Xu & Tự động trích 50% hoa hồng)
    - Xử lý Quản lý thành viên & Nhật ký giao dịch
    ========================================================================== */
@@ -34,14 +35,36 @@ function setupLoginForm() {
         const u = document.getElementById('adminUser').value.trim();
         const p = document.getElementById('adminPass').value.trim();
 
-        if (u === 'dambuicong' && p === '281097') {
+        if (!u || !p) {
+            alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+            return;
+        }
+
+        const isDefaultAdmin = (u.toLowerCase() === 'dambuicong' && p === '281097');
+        let isStoreAdmin = false;
+
+        if (typeof AuthStore !== 'undefined') {
+            const users = AuthStore.getUsers();
+            const foundUser = users.find(usr => 
+                (usr.username.toLowerCase() === u.toLowerCase() || usr.email.toLowerCase() === u.toLowerCase()) && 
+                usr.passwordHash === p && 
+                (usr.isAdmin || usr.username.toLowerCase() === 'dambuicong')
+            );
+            if (foundUser) isStoreAdmin = true;
+        }
+
+        if (isDefaultAdmin || isStoreAdmin) {
             localStorage.setItem('sim_pt_admin_logged_in', 'true');
-            alert("Đăng nhập Admin thành công!");
+            showAdminToast("Đăng nhập Admin thành công!");
             checkAdminSession();
         } else {
             alert("Tên đăng nhập hoặc mật khẩu Admin không đúng!");
         }
     });
+}
+
+function showAdminToast(msg) {
+    alert(msg);
 }
 
 function adminLogout() {
@@ -74,6 +97,8 @@ function loadAdminDashboardData() {
 }
 
 function renderDonateRequests() {
+    if (typeof AuthStore === 'undefined') return;
+
     const reqs = AuthStore.getDonateRequests();
     const tbody = document.getElementById('donateTableBody');
     const pendingBadge = document.getElementById('pendingCount');
@@ -139,6 +164,8 @@ function handleReject(reqId) {
 }
 
 function renderUsersList() {
+    if (typeof AuthStore === 'undefined') return;
+
     const users = AuthStore.getUsers();
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;

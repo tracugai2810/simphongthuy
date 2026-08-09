@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Quản Trị Admin - SIM Phong Thủy Lục Hào</title>
+    <title>Trang Quản Trị Admin - SIM Phong Thủy Lục Hào Pro</title>
     <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body>
 
     <div class="admin-container">
-        <!-- ĐĂNG NHẬP ADMIN -->
+        <!-- ĐĂNG NHẬP ADMIN (GIAO DIỆN LUXURY OBSIDIAN GOLD) -->
         <div id="adminLoginBox" class="login-admin-box">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 2.5rem;">⚙️</div>
-                <h2 style="color: var(--gold-glow); font-size: 1.3rem;">ĐĂNG NHẬP QUẢN TRỊ VIÊN</h2>
-                <p style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">Hệ thống Sim Phong Thủy Lục Hào</p>
+            <div class="login-admin-header">
+                <div class="login-admin-icon">⚙️</div>
+                <h2 class="login-admin-title">ĐĂNG NHẬP QUẢN TRỊ VIÊN</h2>
+                <p class="login-admin-subtitle">Hệ Thống SIM Phong Thủy Lục Hào</p>
             </div>
 
             <form id="adminLoginForm">
-                <div style="margin-bottom: 14px;">
-                    <label style="display: block; font-size: 0.88rem; margin-bottom: 6px; font-weight: bold; color: #cbd5e1;">Tên quản trị viên:</label>
-                    <input type="text" id="adminUser" style="width: 100%; padding: 10px; background: #0c1222; border: 1px solid var(--border-color); color: #fff; border-radius: 8px;" placeholder="dambuicong" required>
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Tên quản trị viên:</label>
+                    <input type="text" id="adminUser" class="admin-form-input" placeholder="Nhập tên tài khoản Admin..." autocomplete="username" required>
                 </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-size: 0.88rem; margin-bottom: 6px; font-weight: bold; color: #cbd5e1;">Mật khẩu:</label>
-                    <input type="password" id="adminPass" style="width: 100%; padding: 10px; background: #0c1222; border: 1px solid var(--border-color); color: #fff; border-radius: 8px;" placeholder="281097" required>
+                <div class="admin-form-group" style="margin-bottom: 24px;">
+                    <label class="admin-form-label">Mật khẩu:</label>
+                    <input type="password" id="adminPass" class="admin-form-input" placeholder="Nhập mật khẩu..." autocomplete="current-password" required>
                 </div>
-                <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #fff; font-weight: bold; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer;">
+                <button type="submit" class="btn-admin-submit">
                     🚀 VÀO TRANG QUẢN TRỊ
                 </button>
             </form>
