@@ -3,10 +3,7 @@
    - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
    - Tích hợp Thương Mại Hóa: Phân quyền Auth, Quản Lý Xu, Trừ Xu Tra Cứu
    - Modal Lịch Sử Tiêu Dùng Xu, Modal Donate QR Code, Modal Mã Giới Thiệu
-   - Nút "Xem Chi Tiết":
-     + Máy Tính: Mở Modal hiển thị ảnh lá quẻ, hỗ trợ chuột phải Sao chép / Lưu ảnh
-     + Điện Thoại: Mở Modal hiển thị lá quẻ + Nút "📤 Chia Sẻ / Lưu Ảnh Về iPhone"
-       kích hoạt chuẩn 100% iOS Native Share Sheet trên Safari/Chrome iPhone!
+   - Tối Ưu Mobile First Toàn Bộ Trang Web
    ========================================================================== */
 
 let currentResults = [];
@@ -68,7 +65,7 @@ function setupAuthAndCommerce() {
     const btnEarnCoins = document.getElementById('btnEarnCoins');
     if (btnEarnCoins) btnEarnCoins.addEventListener('click', () => openDonateModal());
 
-    // Nút xem Lịch sử Xu khi bấm vào số Xu (Theo Ảnh 3)
+    // Nút xem Lịch sử Xu khi bấm vào số Xu
     const btnShowCoinHistory = document.getElementById('btnShowCoinHistory');
     if (btnShowCoinHistory) btnShowCoinHistory.addEventListener('click', () => openUserCoinHistoryModal());
 
@@ -222,7 +219,7 @@ function updateUserNavUI() {
     }
 }
 
-// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Theo Ảnh 3)
+// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Tối ưu giao diện & Đã lọc sạch chữ Nạp Xu)
 function openUserCoinHistoryModal() {
     const user = AuthStore.getCurrentUser();
     if (!user) {
@@ -238,19 +235,28 @@ function openUserCoinHistoryModal() {
     if (!tbody) return;
 
     if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có lịch sử tiêu dùng Xu.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:24px; color:#94a3b8;">Chưa có lịch sử tiêu dùng Xu.</td></tr>`;
     } else {
         let html = '';
         logs.forEach(l => {
-            const timeStr = new Date(l.timestamp).toLocaleString('vi-VN');
-            const changeStr = l.change >= 0 ? `<span style="color:#4ade80; font-weight:bold;">+${l.change} Xu</span>` : `<span style="color:#f87171; font-weight:bold;">${l.change} Xu</span>`;
+            const dt = new Date(l.timestamp);
+            const timeStr = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const formattedTime = `<div style="font-weight:700; font-size:0.85rem; color:#f1f5f9; white-space:nowrap;">${timeStr}</div><div style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;">${dateStr}</div>`;
+
+            // Loại bỏ hoàn toàn chữ Nạp Xu khỏi hiển thị
+            const cleanAction = (l.action || '').replace(/Nạp Xu/gi, '').trim();
+
+            const changeStr = l.change >= 0 
+                ? `<span style="color:#4ade80; font-weight:800; font-size:0.92rem; white-space:nowrap;">+${l.change} Xu</span>` 
+                : `<span style="color:#f87171; font-weight:800; font-size:0.92rem; white-space:nowrap;">${l.change} Xu</span>`;
 
             html += `
-                <tr>
-                    <td>${timeStr}</td>
-                    <td>${l.action}</td>
-                    <td>${changeStr}</td>
-                    <td><strong>${l.balanceAfter} Xu</strong></td>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <td style="padding: 10px 6px; vertical-align: middle;">${formattedTime}</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; color:#cbd5e1; font-size:0.88rem; line-height:1.4;">${cleanAction}</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; text-align:center;">${changeStr}</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; text-align:center; font-weight:bold; color:#ffd700; font-size:0.9rem; white-space:nowrap;">${l.balanceAfter} Xu</td>
                 </tr>
             `;
         });
@@ -297,7 +303,6 @@ function selectDonateTier(tierKey, coins, amountVnd, elem) {
         qrImg.alt = `QR Code Donate ${tierKey}`;
     }
 
-    // Nội dung chuyển khoản theo Ảnh 2 (Loại bỏ CK và số tiền, chỉ giữ DONATE [USERNAME])
     if (memoText) {
         memoText.textContent = `DONATE ${username.toUpperCase()}`;
     }

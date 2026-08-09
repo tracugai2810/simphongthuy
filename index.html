@@ -31,7 +31,7 @@
 
             <!-- Giao diện khi ĐÃ ĐĂNG NHẬP -->
             <div id="loggedInUserNav" class="user-nav-group" style="display: none;">
-                <!-- Bấm vào số Xu hiện Popup Lịch sử Tiêu dùng (Theo Ảnh 3) -->
+                <!-- Bấm vào số Xu hiện Popup Lịch sử Tiêu dùng -->
                 <div class="coin-badge" id="btnShowCoinHistory" title="Bấm để xem Lịch sử sử dụng Xu">
                     💰 <span id="userCoinBalance">0</span> Xu
                 </div>
@@ -258,7 +258,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (Tối ưu theo Ảnh 2) -->
+    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU -->
     <div id="donateModal" class="modal-overlay">
         <div class="modal-content donate-modal-box">
             <span class="modal-close" onclick="closeModal('donateModal')">&times;</span>
@@ -291,7 +291,7 @@
                 </div>
             </div>
 
-            <!-- Khung Ảnh QR Code Thanh Toán (Nội dung: DONATE [USERNAME], không có CK hay 50K) -->
+            <!-- Khung Ảnh QR Code Thanh Toán -->
             <div class="qr-display-box">
                 <div style="font-size: 0.92rem; font-weight: bold; color: var(--gold-primary); margin-bottom: 10px;">
                     Quét Mã QR Chuyển Khoản Ngân Hàng:
@@ -304,23 +304,21 @@
                 </div>
             </div>
 
-            <!-- Nút Đã Donate gọn gàng (Theo Ảnh 2) -->
+            <!-- Nút Đã Donate -->
             <button type="button" id="btnSubmitDonateReq" class="btn-mobile-share-ios" style="margin-top: 16px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
                 ✅ TÔI ĐÃ DONATE
             </button>
         </div>
     </div>
 
-    <!-- MODAL 4: MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG (Tối ưu theo Ảnh 1) -->
+    <!-- MODAL 4: MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content ref-modal-box">
             <span class="modal-close" onclick="closeModal('refModal')">&times;</span>
             
             <div style="text-align: center; margin-bottom: 16px;">
                 <div style="font-size: 2.2rem; margin-bottom: 4px;">🎁</div>
-                <!-- Tiêu đề 1 dòng gọn gàng không rớt dòng -->
                 <h3 class="ref-single-line-title">MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG 50%</h3>
-                <!-- Text sạch không có dấu ** -->
                 <p style="font-size: 0.88rem; color: #cbd5e1; margin-top: 6px;">
                     Chia sẻ đường dẫn cho bạn bè để nhận 50% số Xu mỗi khi bạn bè Donate!
                 </p>
@@ -365,12 +363,12 @@
         </div>
     </div>
 
-    <!-- MODAL 5: LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Theo Ảnh 3) -->
+    <!-- MODAL 5: LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Tối ưu Bảng căn chỉnh chuẩn Mobile & Desktop) -->
     <div id="userCoinHistoryModal" class="modal-overlay">
-        <div class="modal-content ref-modal-box" style="max-width: 600px !important;">
+        <div class="modal-content ref-modal-box" style="max-width: 580px !important;">
             <span class="modal-close" onclick="closeModal('userCoinHistoryModal')">&times;</span>
             
-            <div style="text-align: center; margin-bottom: 16px;">
+            <div style="text-align: center; margin-bottom: 14px;">
                 <div style="font-size: 2.2rem; margin-bottom: 4px;">📊</div>
                 <h3 style="color: var(--gold-glow); font-size: 1.25rem;">LỊCH SỬ TIÊU DÙNG XU CỦA BẠN</h3>
                 <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
@@ -378,14 +376,14 @@
                 </p>
             </div>
 
-            <div class="admin-table-wrapper" style="max-height: 320px; overflow-y: auto;">
-                <table class="admin-table" style="min-width: 100%;">
+            <div class="admin-table-wrapper" style="max-height: 340px; overflow-y: auto; border-radius: 12px; border: 1px solid var(--border-color);">
+                <table class="admin-table" style="min-width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr>
-                            <th>Thời Gian</th>
-                            <th>Nội Dung Thao Tác</th>
-                            <th>Xu Biến Động</th>
-                            <th>Số Dư</th>
+                        <tr style="background: #1a2438;">
+                            <th style="padding: 10px 8px; width: 105px;">Thời Gian</th>
+                            <th style="padding: 10px 8px;">Nội Dung Thao Tác</th>
+                            <th style="padding: 10px 8px; text-align: center; width: 95px;">Biến Động</th>
+                            <th style="padding: 10px 8px; text-align: center; width: 75px;">Số Dư</th>
                         </tr>
                     </thead>
                     <tbody id="userCoinHistoryTableBody">

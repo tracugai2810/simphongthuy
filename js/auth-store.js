@@ -294,7 +294,7 @@ const AuthStore = (() => {
 
         if (userIdx === -1) return { success: false, message: 'Tài khoản Donate không tồn tại!' };
 
-        // 1. Cộng Xu cho User
+        // 1. Cộng Xu cho User (Loại bỏ hoàn toàn chữ Nạp Xu)
         users[userIdx].coins += req.coinAmount;
         logCoinAction(users[userIdx].id, users[userIdx].username, `Donate Gói ${req.tierKey.toUpperCase()}`, req.coinAmount, users[userIdx].coins);
 
@@ -439,11 +439,14 @@ const AuthStore = (() => {
     function logCoinAction(userId, username, action, change, balanceAfter) {
         try {
             const logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
+            // Làm sạch nội dung thao tác khỏi chữ "Nạp Xu"
+            const cleanAction = (action || '').replace(/Nạp Xu/gi, '').trim();
+
             const logEntry = {
                 id: 'log_' + Date.now(),
                 userId,
                 username: username || 'Khách',
-                action,
+                action: cleanAction,
                 change,
                 balanceAfter,
                 timestamp: new Date().toISOString()
