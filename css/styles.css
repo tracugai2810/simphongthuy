@@ -1,33 +1,28 @@
 /* ==========================================================================
-   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO (UNIFIED ORIGINAL SANS-SERIF FONT)
-   Aesthetics: 100% Đồng bộ phông chữ Inter / System Sans-Serif sắc nét chuẩn web cũ
-   Áp dụng đồng bộ 100% cho Trang Chủ, Khung SĐT Đỏ Đô, Popups Đăng Nhập/Đăng Ký
+   SIM PHONG THỦY LỤC HÀO - PRECISE ORIGINAL DESIGN & FONT RESTORATION
+   Matched 100% pixel-by-pixel to user's original screenshot reference
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
 :root {
-    --bg-dark: #0c1222;
-    --bg-card: #151d30;
-    --bg-card-hover: #1a2438;
-    --primary-red: #8b2525;
+    --bg-dark: #090d16;
+    --bg-card: #131b2e;
+    --bg-card-hover: #19243c;
+    --primary-red: #881b1b;
     --gold-primary: #f3c669;
     --gold-glow: #ffd700;
     --gold-dark: #d97706;
-    --text-light: #f1f5f9;
+    --text-light: #f8fafc;
     --text-muted: #94a3b8;
-    --border-color: #2d3a52;
-    --border-gold: rgba(243, 198, 105, 0.4);
-    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-title: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --border-color: #232f48;
+    --border-gold: rgba(217, 119, 6, 0.4);
+    --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: var(--font-main) !important;
+    font-family: var(--font-main);
 }
 
 html, body {
@@ -40,13 +35,12 @@ html, body {
 }
 
 body {
-    background: linear-gradient(135deg, #0c1222 0%, #0a0f1a 50%, #0c1222 100%);
-    background-attachment: fixed;
+    background-color: #0b101d;
     color: var(--text-light);
-    font-family: var(--font-main) !important;
-    line-height: 1.6;
+    font-family: var(--font-main);
+    line-height: 1.5;
     min-height: 100vh;
-    padding-top: 15px;
+    padding-top: 20px;
     padding-bottom: 60px;
 }
 
@@ -54,7 +48,7 @@ body {
 .container {
     max-width: 980px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 16px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -63,28 +57,27 @@ body {
    TOP USER NAVIGATION BAR
    ========================================================================== */
 .top-user-bar {
-    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
-    border: 1px solid var(--border-gold);
-    border-radius: 16px;
-    padding: 12px 20px;
-    margin-bottom: 20px;
+    background: #141c2e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 10px 18px;
+    margin-bottom: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     gap: 12px;
     flex-wrap: wrap;
 }
 
 .brand-title {
-    font-size: 1.25rem;
-    font-weight: 900;
+    font-size: 1.15rem;
+    font-weight: 800;
     color: var(--gold-glow);
     display: flex;
     align-items: center;
     gap: 8px;
-    letter-spacing: 0.5px;
-    font-family: var(--font-main) !important;
+    letter-spacing: 0.3px;
 }
 
 .user-nav-group {
@@ -97,20 +90,18 @@ body {
 .btn-auth-trigger {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    font-weight: 800;
-    font-size: 0.92rem;
-    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 7px 15px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
-    font-family: var(--font-main) !important;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
 }
 
 .btn-auth-trigger:hover {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    transform: translateY(-1px);
 }
 
 .coin-badge {
@@ -118,53 +109,47 @@ body {
     border: 1px solid var(--gold-glow);
     color: var(--gold-glow);
     font-weight: 800;
-    font-size: 0.95rem;
-    padding: 6px 14px;
+    font-size: 0.9rem;
+    padding: 5px 13px;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: var(--font-main) !important;
 }
 
 .coin-badge:hover {
     background: rgba(217, 119, 6, 0.3);
-    transform: scale(1.05);
 }
 
 .btn-earn-coins {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    background: #059669;
     color: #ffffff;
-    font-weight: 800;
-    font-size: 0.88rem;
-    padding: 7px 14px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 6px 13px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 3px 8px rgba(22, 163, 74, 0.3);
-    font-family: var(--font-main) !important;
 }
 
 .btn-earn-coins:hover {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    transform: translateY(-1px);
+    background: #10b981;
 }
 
 .ref-badge {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(243, 198, 105, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(243, 198, 105, 0.3);
     color: #cbd5e1;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 6px 12px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    padding: 5px 11px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: var(--font-main) !important;
 }
 
 .ref-badge:hover {
-    background: rgba(243, 198, 105, 0.2);
+    background: rgba(243, 198, 105, 0.15);
     color: #ffffff;
 }
 
@@ -172,13 +157,12 @@ body {
     background: rgba(217, 119, 6, 0.2);
     border: 1px solid var(--gold-dark);
     color: var(--gold-primary);
-    font-size: 0.85rem;
-    font-weight: 800;
-    padding: 6px 12px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    padding: 5px 11px;
     border-radius: 8px;
     text-decoration: none;
     transition: all 0.2s ease;
-    font-family: var(--font-main) !important;
 }
 
 .admin-link-btn:hover {
@@ -187,54 +171,51 @@ body {
 }
 
 .btn-logout {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--border-color);
     color: #94a3b8;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 6px 12px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    padding: 5px 11px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: var(--font-main) !important;
 }
 
 .btn-logout:hover {
     background: rgba(239, 68, 68, 0.2);
     color: #f87171;
-    border-color: #ef4444;
 }
 
 /* ==========================================================================
    FORM NHẬP THÔNG TIN
    ========================================================================== */
 .form-card {
-    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
-    border: 1px solid var(--border-gold);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    background: #131b2e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
 }
 
 .section-title {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: var(--gold-glow);
-    margin-bottom: 20px;
+    color: var(--gold-primary);
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     border-bottom: 2px solid var(--gold-dark);
     padding-bottom: 10px;
-    font-family: var(--font-main) !important;
 }
 
 .form-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 18px;
 }
 
 .form-group {
@@ -243,181 +224,177 @@ body {
 }
 
 .form-group label {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: #cbd5e1;
-    margin-bottom: 8px;
-    font-family: var(--font-main) !important;
+    margin-bottom: 6px;
 }
 
 .form-control {
     width: 100%;
-    padding: 11px 14px;
-    background: #0c1222;
+    padding: 10px 12px;
+    background: #090d16;
     border: 1px solid var(--border-color);
     color: #ffffff;
-    font-size: 0.95rem;
-    border-radius: 10px;
+    font-size: 0.92rem;
+    border-radius: 8px;
     outline: none;
-    transition: all 0.3s ease;
-    font-family: var(--font-main) !important;
+    transition: all 0.2s ease;
 }
 
 .form-control:focus {
     border-color: var(--gold-dark);
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+    box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
 }
 
 /* ĐÁNH GIÁ SIM ĐANG DÙNG */
 .current-sim-group {
-    background: rgba(12, 18, 34, 0.6);
-    border: 1px dashed var(--border-gold);
-    padding: 16px;
-    border-radius: 14px;
+    background: rgba(9, 13, 22, 0.5);
+    border: 1px dashed var(--gold-dark);
+    padding: 14px;
+    border-radius: 10px;
+}
+
+.current-sim-group label {
+    color: var(--gold-primary) !important;
+    font-size: 0.9rem !important;
 }
 
 .current-sim-input-wrapper {
     display: flex;
     gap: 10px;
+    margin-top: 4px;
 }
 
 .btn-eval-current {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
     font-weight: 800;
-    font-size: 0.95rem;
-    padding: 11px 20px;
-    border-radius: 10px;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: var(--font-main) !important;
 }
 
 .btn-eval-current:hover {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   DIGIT SELECTOR (KHUNG ĐỎ ĐÔ DÀNH CHO SĐT CHUẨN NGUYÊN BẢN CŨ)
+   DIGIT SELECTOR (KHUNG ĐỎ ĐÔ ĐẶC TRƯNG VỚI 10 Ô VUÔNG NỀN TRẮNG CHỮ ĐỎ)
    ========================================================================== */
 .digit-section {
-    background: #7a1c1c;
-    border: 1px solid var(--gold-dark);
-    border-radius: 16px;
-    padding: 22px 18px 18px 18px;
-    margin-bottom: 22px;
+    background: #881b1b;
+    border: 1px solid #b91c1c;
+    border-radius: 12px;
+    padding: 20px 16px 16px 16px;
+    margin-bottom: 18px;
     text-align: center;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .digit-section-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #ffffff;
     margin-bottom: 8px;
     text-align: center;
-    letter-spacing: 0.5px;
-    font-family: var(--font-main) !important;
+    letter-spacing: 0.3px;
 }
 
 .prefix-selector-group {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 14px;
 }
 
 .prefix-selector-group label {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: #ffd700;
     font-weight: 700;
-    font-family: var(--font-main) !important;
 }
 
 .prefix-select {
-    padding: 6px 12px;
-    background: #0c1222;
+    padding: 5px 10px;
+    background: #090d16;
     border: 1px solid var(--gold-dark);
     color: #ffffff;
-    border-radius: 8px;
+    border-radius: 6px;
     outline: none;
     font-weight: 700;
-    font-family: var(--font-main) !important;
+    font-size: 0.88rem;
 }
 
 .digit-boxes-container {
     display: flex;
     gap: 6px;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
 .digit-box {
-    width: 44px;
-    height: 48px;
+    width: 42px;
+    height: 46px;
     background: #ffffff !important;
-    border: 1.5px solid var(--gold-dark) !important;
-    color: #8b2525 !important;
-    font-size: 1.35rem;
+    border: 1px solid #d97706 !important;
+    color: #991b1b !important;
+    font-size: 1.3rem;
     font-weight: 900;
     text-align: center;
     border-radius: 8px;
     outline: none;
     transition: all 0.2s ease;
-    font-family: monospace, var(--font-main) !important;
 }
 
 .digit-box:focus {
     border-color: #ffd700 !important;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
 }
 
 .digit-box.fixed-zero {
     background: #ffffff !important;
-    color: #8b2525 !important;
-    border-color: var(--gold-dark) !important;
+    color: #991b1b !important;
+    border-color: #d97706 !important;
 }
 
 .digit-help-text {
-    font-size: 0.83rem;
+    font-size: 0.82rem;
     color: #f1f5f9;
     line-height: 1.4;
-    max-width: 700px;
+    max-width: 680px;
     margin: 0 auto;
-    font-family: var(--font-main) !important;
 }
 
 /* NÚT SUBMIT CHÍNH AMBER ORANGE */
 .btn-submit {
     width: 100%;
-    padding: 16px;
+    padding: 14px;
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
     font-weight: 900;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
+    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    font-family: var(--font-main) !important;
 }
 
 .btn-submit:hover {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(217, 119, 6, 0.6);
+    transform: translateY(-1px);
 }
 
 /* ==========================================================================
@@ -427,41 +404,39 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .sim-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 .sim-card {
-    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
+    background: #131b2e;
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 18px 20px;
+    border-radius: 12px;
+    padding: 16px 18px;
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 16px;
+    gap: 14px;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease;
 }
 
 .sim-card:hover {
     border-color: var(--border-gold);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-1px);
 }
 
 .sim-number-display {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 1px;
-    margin-bottom: 6px;
-    font-family: var(--font-main) !important;
+    margin-bottom: 4px;
 }
 
 .sim-number-display .highlight {
@@ -472,17 +447,16 @@ body {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .badge {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 12px;
+    padding: 3px 9px;
+    border-radius: 10px;
     display: inline-flex;
     align-items: center;
-    font-family: var(--font-main) !important;
 }
 
 .badge-score {
@@ -499,15 +473,14 @@ body {
 
 .sim-reasons-list {
     list-style: none;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     color: #cbd5e1;
-    font-family: var(--font-main) !important;
 }
 
 .sim-reasons-list li {
     position: relative;
-    padding-left: 16px;
-    margin-bottom: 4px;
+    padding-left: 14px;
+    margin-bottom: 3px;
     line-height: 1.4;
 }
 
@@ -525,10 +498,10 @@ body {
 }
 
 .btn-action {
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 0.88rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
     border: none;
     cursor: pointer;
     white-space: nowrap;
@@ -537,13 +510,11 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-family: var(--font-main) !important;
 }
 
 .btn-view-hex {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
 }
 
 .btn-view-hex:hover {
@@ -561,20 +532,20 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (SANG TRỌNG & TẤT CẢ FONT INTER ĐỒNG BỘ 100%)
+   MODALS POPUP (CHUẨN ĐẸP, TỐI ƯU CỰC NÉT CHỐNG CHE NÚT ĐÓNG)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(6px);
     z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
     padding: 12px;
 }
 
@@ -584,33 +555,32 @@ body {
 }
 
 .modal-content {
-    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
-    border: 1px solid var(--border-gold);
-    border-radius: 18px;
-    padding: 42px 18px 20px 18px !important;
-    max-width: 520px;
+    background: #141c2e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 40px 18px 20px 18px !important;
+    max-width: 500px;
     width: 100%;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7);
     position: relative;
     max-height: 86vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     margin: auto;
-    font-family: var(--font-main) !important;
 }
 
 .modal-close {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
     text-align: center;
     background: rgba(255, 255, 255, 0.12);
     border-radius: 50%;
     color: #ffffff;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     cursor: pointer;
     z-index: 100;
     display: flex;
@@ -629,7 +599,7 @@ body {
 .auth-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
 }
@@ -640,16 +610,15 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: #cbd5e1;
-    font-weight: 800;
-    font-size: 0.92rem;
+    font-weight: 700;
+    font-size: 0.9rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: var(--font-main) !important;
 }
 
 .auth-tab-btn.active, .auth-tab-btn:hover {
-    background: var(--gold-dark);
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
     border-color: var(--gold-glow);
 }
@@ -659,13 +628,13 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .donate-card {
-    background: #0c1222;
+    background: #090d16;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 10px;
     text-align: center;
     cursor: pointer;
@@ -675,63 +644,62 @@ body {
 .donate-card.active, .donate-card:hover {
     border-color: var(--gold-glow);
     background: rgba(217, 119, 6, 0.15);
-    transform: translateY(-2px);
 }
 
 .donate-badge {
-    background: #16a34a;
+    background: #059669;
     color: #ffffff;
     font-weight: 800;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     padding: 2px 6px;
-    border-radius: 10px;
+    border-radius: 8px;
     display: inline-block;
     margin-bottom: 4px;
 }
 
 .donate-price {
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #ffffff;
 }
 
 .donate-desc {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     margin-top: 2px;
 }
 
 .qr-display-box {
-    background: #0c1222;
-    border: 1px dashed var(--border-gold);
-    border-radius: 12px;
-    padding: 14px;
+    background: #090d16;
+    border: 1px dashed var(--gold-dark);
+    border-radius: 10px;
+    padding: 12px;
     text-align: center;
     margin-top: 10px;
 }
 
 .qr-code-img {
-    max-width: 200px;
+    max-width: 190px;
     width: 100%;
     height: auto;
     border-radius: 8px;
     border: 2px solid #ffffff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     margin: 0 auto;
     display: block;
 }
 
 .ref-code-display-card {
-    background: #0c1222;
-    border: 1px solid var(--border-gold);
-    border-radius: 12px;
-    padding: 14px;
+    background: #090d16;
+    border: 1px solid var(--gold-dark);
+    border-radius: 10px;
+    padding: 12px;
     text-align: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .ref-code-big {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 900;
     color: var(--gold-glow);
     letter-spacing: 2px;
@@ -742,34 +710,34 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .ref-stat-card {
-    background: #0c1222;
+    background: #090d16;
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 10px 4px;
+    border-radius: 8px;
+    padding: 8px 4px;
     text-align: center;
 }
 
 .stat-num {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 800;
     color: #ffffff;
 }
 
 .stat-label {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 .ref-milestone-box {
     background: rgba(217, 119, 6, 0.08);
-    border: 1px dashed var(--border-gold);
-    border-radius: 10px;
-    padding: 12px 14px;
+    border: 1px dashed var(--gold-dark);
+    border-radius: 8px;
+    padding: 10px 12px;
 }
 
 .hex-card-scroll-wrapper {
@@ -789,33 +757,21 @@ body {
     cursor: pointer;
 }
 
-.desktop-img-hint {
-    text-align: center;
-    color: #4b5563;
-    font-size: 0.92rem;
-    margin-top: 14px;
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 6px;
-    font-weight: 500;
-}
-
 .btn-mobile-share-ios {
     display: block;
     width: 100%;
-    margin-top: 14px;
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    margin-top: 12px;
+    background: #059669;
     color: #ffffff;
     font-weight: 800;
-    font-size: 1rem;
-    padding: 12px 16px;
-    border-radius: 10px;
+    font-size: 0.95rem;
+    padding: 11px 16px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+    box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4);
     transition: all 0.2s ease;
     text-align: center;
-    font-family: var(--font-main) !important;
 }
 
 .btn-mobile-share-ios:active {
@@ -1025,18 +981,17 @@ body {
     background: rgba(15, 23, 42, 0.95);
     border: 1px solid var(--gold-glow);
     color: #ffffff;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 30px;
-    font-size: 0.92rem;
-    font-weight: 800;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    font-size: 0.88rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
     z-index: 10000;
     opacity: 0;
     transition: all 0.3s ease;
     pointer-events: none;
     text-align: center;
     max-width: 90vw;
-    font-family: var(--font-main) !important;
 }
 
 .toast-notification.show {
@@ -1068,7 +1023,7 @@ body {
     }
 
     .brand-title {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         width: 100%;
         border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
         padding-bottom: 6px;
@@ -1111,14 +1066,15 @@ body {
     }
 
     .btn-eval-current {
-        padding: 12px;
+        padding: 11px;
         width: 100%;
         justify-content: center;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
 
     .btn-submit {
         font-size: 0.95rem;
+        padding: 13px;
     }
 
     .sim-card {
@@ -1128,7 +1084,7 @@ body {
     }
 
     .sim-number-display {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
     }
 
     .sim-actions {
@@ -1149,7 +1105,7 @@ body {
     }
 
     .modal-content {
-        padding: 42px 12px 16px 12px !important;
+        padding: 40px 12px 16px 12px !important;
         max-width: 95% !important;
         margin: auto !important;
     }
@@ -1159,7 +1115,7 @@ body {
     }
 
     .ref-single-line-title {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         white-space: normal;
     }
 }
