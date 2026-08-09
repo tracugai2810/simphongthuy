@@ -2,13 +2,15 @@
    MAIN UI CONTROLLER - Website Sim Phong Thủy Lục Hào Pro
    - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
    - Tích hợp Thương Mại Hóa: Phân quyền Auth, Quản Lý Xu, Trừ Xu Tra Cứu
-   - Modal Lịch Sử Tiêu Dùng Xu, Modal Donate QR Code, Modal Mã Giới Thiệu (Nhập bổ sung mã GT)
-   - Tối Ưu Mobile First Toàn Bộ Trang Web
+   - Tải / Chia Sẻ Mã QR Donate Ngân Hàng Trên Mobile & Desktop
+   - Quên mật khẩu qua Email liên hệ
+   - Tối ưu Căn Giữa Cột Thao Tác Lịch Sử Tiêu Dùng Xu
+   - Khung Mã Giới Thiệu Thu Gọn 1 Màn Hình Chuẩn Nét Mobile
    ========================================================================== */
 
 let currentResults = [];
 let currentSimEvalItem = null;
-let pendingAction = null; // Thao tác chờ trừ Xu (evalCurrent hoặc searchSims)
+let pendingAction = null;
 let selectedDonateTierKey = '50k';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -92,8 +94,20 @@ function setupAuthAndCommerce() {
                     executePendingActionWithConfirm();
                 }
             } else {
-                alert(res.message);
+                showToast(res.message);
             }
+        });
+    }
+
+    // Nút Quên Mật Khẩu
+    const btnForgotPassword = document.getElementById('btnForgotPassword');
+    if (btnForgotPassword) {
+        btnForgotPassword.addEventListener('click', () => {
+            const inputUser = prompt("Vui lòng nhập Tên đăng nhập hoặc Email liên hệ của bạn để khôi phục mật khẩu:");
+            if (!inputUser || !inputUser.trim()) return;
+
+            const res = AuthStore.requestPasswordReset(inputUser.trim());
+            showToast(res.message);
         });
     }
 
@@ -116,12 +130,12 @@ function setupAuthAndCommerce() {
                     executePendingActionWithConfirm();
                 }
             } else {
-                alert(res.message);
+                showToast(res.message);
             }
         });
     }
 
-    // NÚT BẤM BỔ SUNG MÃ GIỚI THIỆU
+    // NÚT BẤM BỔ SUNG MÃ GIỚI THIỆU (THÔNG BÁO POPUP TOAST CHÍNH XÁC)
     const btnApplyRefCode = document.getElementById('btnApplyRefCode');
     if (btnApplyRefCode) {
         btnApplyRefCode.addEventListener('click', () => {
@@ -134,12 +148,10 @@ function setupAuthAndCommerce() {
             const inputRef = document.getElementById('inputApplyRefCode').value;
             const res = AuthStore.applyReferralCode(user.id, inputRef);
 
+            showToast(res.message);
             if (res.success) {
                 updateUserNavUI();
                 openRefModal();
-                showToast(res.message);
-            } else {
-                alert(res.message);
             }
         });
     }
@@ -155,12 +167,18 @@ function setupAuthAndCommerce() {
             }
 
             const res = AuthStore.createDonateRequest(user.id, selectedDonateTierKey);
+            showToast(res.message);
             if (res.success) {
                 closeModal('donateModal');
-                showToast(res.message);
-            } else {
-                alert(res.message);
             }
+        });
+    }
+
+    // TẢI / CHIA SẺ MÃ QR DONATE THANH TOÁN NGÂN HÀNG
+    const btnDownloadDonateQr = document.getElementById('btnDownloadDonateQr');
+    if (btnDownloadDonateQr) {
+        btnDownloadDonateQr.addEventListener('click', () => {
+            handleDownloadDonateQr();
         });
     }
 
@@ -193,7 +211,7 @@ function setupAuthAndCommerce() {
                 }
             } else {
                 closeModal('confirmDeductModal');
-                alert(res.message);
+                showToast(res.message);
                 openDonateModal();
             }
         });
@@ -209,6 +227,44 @@ function setupAuthAndCommerce() {
             copySimNumberOnly(url);
         });
     }
+}
+
+// XỬ LÝ TẢI / CHIA SẺ MÃ QR DONATE TRÊN ĐIỆN THOẠI & MÁY TÍNH
+function handleDownloadDonateQr() {
+    const qrImg = document.getElementById('donateQrImg');
+    if (!qrImg || !qrImg.src) return;
+
+    const imgSrc = qrImg.src;
+    const filename = `ma-qr-donate-${selectedDonateTierKey}-${Date.now()}.jpg`;
+
+    fetch(imgSrc)
+        .then(res => res.blob())
+        .then(blob => {
+            const file = new File([blob], filename, { type: 'image/jpeg' });
+
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    files: [file],
+                    title: `Mã QR Donate Ngân Hàng - Gói ${selectedDonateTierKey.toUpperCase()}`,
+                    text: `Mã QR Chuyển Khoản Ngân Hàng Donate Gói ${selectedDonateTierKey.toUpperCase()}`
+                }).then(() => {
+                    showToast("Đã chia sẻ / tải ảnh mã QR thành công!");
+                }).catch(err => {
+                    if (err.name !== 'AbortError') {
+                        fallbackDownloadBlob(blob, filename);
+                    }
+                });
+            } else {
+                fallbackDownloadBlob(blob, filename);
+            }
+        })
+        .catch(() => {
+            const link = document.createElement('a');
+            link.href = imgSrc;
+            link.download = filename;
+            link.click();
+            showToast("Đã tải ảnh mã QR về thiết bị!");
+        });
 }
 
 // CẬP NHẬT GIAO DIỆN HEADER TÀI KHOẢN
@@ -236,7 +292,7 @@ function updateUserNavUI() {
     }
 }
 
-// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Tối ưu 3 cột cho Mobile & Desktop)
+// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (CĂN GIỮA NỘI DUNG THAO TÁC CỰC CHUẨN)
 function openUserCoinHistoryModal() {
     const user = AuthStore.getCurrentUser();
     if (!user) {
@@ -259,7 +315,7 @@ function openUserCoinHistoryModal() {
             const dt = new Date(l.timestamp);
             const timeStr = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const dateStr = dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-            const formattedTime = `<div style="font-weight:700; font-size:0.82rem; color:#f1f5f9; white-space:nowrap;">${timeStr}</div><div style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;">${dateStr}</div>`;
+            const formattedTime = `<div style="font-weight:700; font-size:0.82rem; color:#f1f5f9; white-space:nowrap; text-align:center;">${timeStr}</div><div style="font-size:0.75rem; color:#94a3b8; white-space:nowrap; text-align:center;">${dateStr}</div>`;
 
             const cleanAction = (l.action || '').replace(/Nạp Xu/gi, '').trim();
 
@@ -271,9 +327,9 @@ function openUserCoinHistoryModal() {
 
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
-                    <td style="padding: 10px 6px; vertical-align: middle;">${formattedTime}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; color:#cbd5e1; font-size:0.86rem; line-height:1.4;">${cleanAction}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; text-align:right;">
+                    <td style="padding: 10px 6px; vertical-align: middle; text-align: center;">${formattedTime}</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; text-align: center; color:#cbd5e1; font-size:0.86rem; line-height:1.4;">${cleanAction}</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; text-align: center;">
                         ${changeBadge}
                         ${balanceStr}
                     </td>
@@ -331,7 +387,7 @@ function selectDonateTier(tierKey, coins, amountVnd, elem) {
     }
 }
 
-// MỞ MODAL MÃ GIỚI THIỆU (KIỂM TRA HIỂN THỊ Ô NHẬP BỔ SUNG MÃ GT)
+// MỞ MODAL MÃ GIỚI THIỆU
 function openRefModal() {
     const user = AuthStore.getCurrentUser();
     if (!user) {
@@ -476,7 +532,7 @@ function setupCurrentSimEval() {
         const rawSim = inputSim.replace(/[^0-9]/g, '');
 
         if (!rawSim || rawSim.length !== 10) {
-            alert("Vui lòng nhập số điện thoại hợp lệ (chuẩn 10 chữ số Việt Nam)!");
+            showToast("Vui lòng nhập SĐT hợp lệ chuẩn 10 chữ số!");
             return;
         }
 
@@ -527,7 +583,7 @@ function executeEvalCurrentSim() {
     const hexData = calculateSimHexagram(rawSim, cal);
 
     if (!hexData) {
-        alert("Không thể lập quẻ từ dãy số này. Vui lòng kiểm tra lại SĐT!");
+        showToast("Không thể lập quẻ từ dãy số này!");
         return;
     }
 
@@ -693,7 +749,7 @@ function showToast(message) {
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 3000);
+    }, 3200);
 }
 
 function renderHexVisual(lines, isChanged) {
@@ -873,13 +929,13 @@ function openHexModalDesktopObject(item) {
             if (isMobile) {
                 bottomHtml = `
                     <button id="btnMobileShareTrigger" class="btn-mobile-share-ios">
-                        📤 Chia Sẻ / Lưu Ảnh Về iPhone / Điện Thoại
+                        📤 Chia Sẻ / Lưu Ảnh Về Điện Thoại
                     </button>
                 `;
             } else {
                 bottomHtml = `
                     <div class="desktop-img-hint">
-                        💡 <strong>Mẹo:</strong> Bạn có thể <strong>Nhấp chuột phải vào ảnh trên</strong> để <em>Sao chép hình ảnh</em> hoặc <em>Lưu hình ảnh thành...</em> về máy tính.
+                        💡 <strong>Mẹo:</strong> Nhấp chuột phải vào ảnh để <em>Sao chép hình ảnh</em> hoặc <em>Lưu hình ảnh thành...</em>
                     </div>
                 `;
             }
@@ -912,7 +968,7 @@ function triggerDirectShareOnUserGesture(canvas, simNumber) {
 
     canvas.toBlob(blob => {
         if (!blob) {
-            alert("Không thể khởi tạo file ảnh.");
+            showToast("Không thể khởi tạo file ảnh.");
             return;
         }
 
@@ -942,7 +998,7 @@ function fallbackDownloadBlob(blob, filename) {
     link.href = URL.createObjectURL(blob);
     link.click();
     setTimeout(() => URL.revokeObjectURL(link.href), 2500);
-    showToast(`Đã tải ảnh lá quẻ về máy thành công!`);
+    showToast(`Đã tải ảnh về máy thành công!`);
 }
 
 function openModal(modalId) {

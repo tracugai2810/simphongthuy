@@ -1,6 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - EXACT DEVTOOLS CSS MATCH FROM ORIGINAL WEBSITE
-   Derived directly from user's Chrome DevTools element inspection
+   Tối ưu nút đóng modal không bao giờ bị đè, Căn giữa cột Thao tác Lịch sử,
+   Khung Mã Giới Thiệu Thu Gọn Vừa Vặn 1 Màn Hình Không Cần Cuộn
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -207,7 +208,6 @@ body {
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
 }
 
-/* devTools match: font 20px Inter, color #F3C669, margin 0 0 18px, padding 0 0 8px */
 .section-title {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 20px;
@@ -241,7 +241,6 @@ body {
     margin-bottom: 6px;
 }
 
-/* devTools match: color var(--text-light), font-size 0.95rem, background rgb(17, 18, 34), border 1px solid var(--border-color), border-radius 8px, padding 10px 14px, outline none, transition 0.3s */
 .form-control {
     width: 100%;
     padding: 10px 14px;
@@ -556,7 +555,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (100% INTER ACCURATE DEVTOOLS STYLING)
+   MODALS POPUP (CHỐNG TRÀN VÀ CHE NÚT ĐÓNG X)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -582,32 +581,45 @@ body {
     background: #151d30;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
-    padding: 40px 18px 20px 18px !important;
+    padding: 46px 18px 20px 18px !important; /* Top padding 46px chống vướng nút đóng X */
     max-width: 500px;
     width: 100%;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7);
     position: relative;
-    max-height: 86vh;
+    max-height: 88vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     margin: auto;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* KHUNG MÃ GIỚI THIỆU THU GỌN VỪA VẶN 1 MÀN HÌNH KHÔNG CẦN CUỘN TRÊN DESKTOP & MOBILE */
+.compact-ref-modal {
+    padding: 38px 14px 14px 14px !important;
+    max-height: 94vh;
+    overflow-y: hidden !important;
+}
+
+@media (max-height: 680px) {
+    .compact-ref-modal {
+        overflow-y: auto !important;
+    }
+}
+
 .modal-close {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 34px;
-    height: 34px;
-    line-height: 34px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
     text-align: center;
     background: rgba(255, 255, 255, 0.12);
     border-radius: 50%;
     color: #ffffff;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    z-index: 100;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -624,19 +636,20 @@ body {
 .auth-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    margin-top: 4px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
 }
 
 .auth-tab-btn {
     flex: 1;
-    padding: 10px;
+    padding: 8px 10px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: #cbd5e1;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -705,7 +718,7 @@ body {
 }
 
 .qr-code-img {
-    max-width: 190px;
+    max-width: 170px;
     width: 100%;
     height: auto;
     border-radius: 8px;
@@ -786,7 +799,7 @@ body {
 .btn-mobile-share-ios {
     display: block;
     width: 100%;
-    margin-top: 12px;
+    margin-top: 10px;
     background: #059669;
     color: #ffffff;
     font-weight: 800;
@@ -1133,7 +1146,7 @@ body {
     }
 
     .modal-content {
-        padding: 40px 12px 16px 12px !important;
+        padding: 42px 12px 16px 12px !important;
         max-width: 95% !important;
         margin: auto !important;
     }
@@ -1143,7 +1156,7 @@ body {
     }
 
     .ref-single-line-title {
-        font-size: 0.92rem;
+        font-size: 0.9rem;
         white-space: normal;
     }
 }

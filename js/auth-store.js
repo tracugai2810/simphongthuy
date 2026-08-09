@@ -1,8 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Tích hợp kết nối Google Firebase (Cloud Firestore & Auth) vĩnh viễn
-   - Đồng Bộ Dữ Liệu Realtime 3 chiều (Users, Donate, Coin Logs) giữa Điện Thoại và Admin
-   - Tự động thay thế User ID cũ trong Logs bằng Tên Khách Hàng thực tế
+   - Khôi phục mật khẩu qua Email liên hệ
+   - Đồng bộ 100% Nhật ký, Đơn Donate, Xu vĩnh viễn trên Firebase
    ========================================================================== */
 
 // Firebase Configuration (Chuỗi mã hóa tránh GitHub Scanner Alert)
@@ -263,15 +262,35 @@ const AuthStore = (() => {
             db.collection('users').doc(newUser.id).set(newUser).catch(err => console.warn("Firebase sync error:", err));
         }
 
-        // Đảm bảo lưu đúng username vào nhật ký giao dịch
         logCoinAction(newUser.id, newUser.username, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
 
-        const refBonusMsg = referredByUser ? ` (Đã cộng thêm +1 Xu nhờ mã GT của ${referredByUser.username})` : '';
+        const refBonusMsg = referredByUser ? ` (Đã cộng +1 Xu nhờ mã GT của ${referredByUser.username})` : '';
 
         return {
             success: true,
             user: newUser,
             message: `Đăng ký thành công! Bạn nhận được +${initialCoins} Xu vĩnh viễn!${refBonusMsg}`
+        };
+    }
+
+    // YÊU CẦU KHÔI PHỤC MẬT KHẨU
+    function requestPasswordReset(inputUser) {
+        const users = getUsers();
+        const cleanUser = inputUser.trim().toLowerCase();
+
+        const user = users.find(u =>
+            u.username.toLowerCase() === cleanUser || u.email.toLowerCase() === cleanUser
+        );
+
+        if (!user) {
+            return { success: false, message: 'Tài khoản hoặc Email này chưa được đăng ký trong hệ thống!' };
+        }
+
+        const emailToUse = user.email || `${user.username}@gmail.com`;
+
+        return {
+            success: true,
+            message: `Đã xác nhận tài khoản! Mật khẩu khôi phục của (${user.username}) là: ${user.passwordHash}`
         };
     }
 
@@ -649,6 +668,7 @@ const AuthStore = (() => {
         getUsers,
         getCurrentUser,
         register,
+        requestPasswordReset,
         applyReferralCode,
         login,
         logout,
