@@ -37,6 +37,23 @@ function initFormDefaults() {
     if (dateInput) {
         dateInput.value = localISOTime;
     }
+
+    // Lắng nghe sự kiện thay đổi số lượng SIM để tự động cập nhật số Xu trên nút bấm
+    const limitSelect = document.getElementById('limitSelect');
+    const btnSubmitSearch = document.getElementById('btnSubmitSearch');
+
+    if (limitSelect && btnSubmitSearch) {
+        limitSelect.addEventListener('change', (e) => {
+            const val = parseInt(e.target.value) || 5;
+            let cost = 2;
+            if (val === 5) cost = 2;
+            if (val === 15) cost = 6;
+            if (val === 30) cost = 12;
+            if (val === 50) cost = 20;
+
+            btnSubmitSearch.innerHTML = `🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC (${cost} Xu)`;
+        });
+    }
 }
 
 // THƯƠNG MẠI HÓA & AUTH STORE UI SYNC
@@ -93,7 +110,7 @@ function setupAuthAndCommerce() {
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('regUsername').value;
-            const em = document.getElementById('regEmail').value;
+            const em = document.getElementById('regEmail').value || `${u}@simpt.local`;
             const p = document.getElementById('regPassword').value;
             const ref = document.getElementById('regRefCode').value;
 
@@ -340,8 +357,8 @@ function setupFormEvents() {
             return;
         }
 
-        const limitVal = parseInt(document.getElementById('limitSelect').value) || 15;
-        let cost = 6;
+        const limitVal = parseInt(document.getElementById('limitSelect').value) || 5;
+        let cost = 2;
         if (limitVal === 5) cost = 2;
         if (limitVal === 15) cost = 6;
         if (limitVal === 30) cost = 12;
@@ -470,7 +487,7 @@ function executeSearchSims() {
     const birthDateVal = document.getElementById('birthDate').value;
     const gender = document.querySelector('input[name="gender"]:checked').value;
     const purpose = document.getElementById('purposeSelect').value;
-    const limitVal = parseInt(document.getElementById('limitSelect').value) || 15;
+    const limitVal = parseInt(document.getElementById('limitSelect').value) || 5;
 
     let pattern = '0';
     for (let i = 2; i <= 10; i++) {

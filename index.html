@@ -92,12 +92,12 @@
                         </select>
                     </div>
 
-                    <!-- Số lượng SIM muốn hiển thị -->
+                    <!-- Số lượng SIM chọn mặc định Top 5 (2 Xu) theo ảnh 2 -->
                     <div class="form-group">
                         <label for="limitSelect">🔢 Số lượng SIM cần tìm (Số Xu):</label>
                         <select id="limitSelect" class="form-control">
-                            <option value="5">Top 5 SIM Đại Cát (2 Xu)</option>
-                            <option value="15" selected>Top 15 SIM Đại Cát (6 Xu - Mặc định)</option>
+                            <option value="5" selected>Top 5 SIM Đại Cát (2 Xu - Mặc định)</option>
+                            <option value="15">Top 15 SIM Đại Cát (6 Xu)</option>
                             <option value="30">Top 30 SIM Đại Cát (12 Xu)</option>
                             <option value="50">Top 50 SIM Đại Cát (20 Xu)</option>
                         </select>
@@ -159,9 +159,9 @@
                     </div>
                 </div>
 
-                <!-- Nút Submit Tìm SIM Mới -->
-                <button type="submit" class="btn-submit">
-                    🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC
+                <!-- Nút Submit Tìm SIM Mới (Hiển thị số Xu tiêu tốn theo ảnh 3) -->
+                <button type="submit" id="btnSubmitSearch" class="btn-submit">
+                    🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC (2 Xu)
                 </button>
             </form>
         </div>
@@ -217,12 +217,12 @@
                     <input type="text" id="regUsername" class="form-control" placeholder="Ví dụ: nguyenvana" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <label>Email liên hệ:</label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com" required>
+                    <label>Email liên hệ (Không bắt buộc):</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com (Dùng lấy lại MK)">
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Mật khẩu:</label>
-                    <input type="password" id="regPassword" class="form-control" placeholder="Tạo mật khẩu an toàn..." required>
+                    <input type="password" id="regPassword" class="form-control" placeholder="Tạo mật khẩu..." required>
                 </div>
                 <div class="form-group" style="margin-bottom: 16px;">
                     <label style="color: var(--gold-glow);">🎁 Mã người giới thiệu (Không bắt buộc - Nhận ngay +1 Xu):</label>
