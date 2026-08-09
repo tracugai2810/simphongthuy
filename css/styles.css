@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET
    Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
-   Tối ưu Mobile First cho Khách Hàng Đại Chúng
+   Tối ưu Mobile First cho Khách Hàng Đại Chúng & Chuẩn 10 Chữ Số SĐT VN
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -171,6 +171,8 @@ select.form-control option, select.prefix-select option {
     text-align: center;
     margin: 18px 0;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    overflow: hidden;
 }
 
 .digit-section-title {
@@ -206,21 +208,23 @@ select.form-control option, select.prefix-select option {
     cursor: pointer;
 }
 
+/* Dãy 10 Ô Vuông Chữ Số - Co Giãn Linh Hoạt Không Bị Tràn Màn Hình Mobile */
 .digit-boxes-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 6px;
-    flex-wrap: nowrap;
+    gap: 5px;
     margin-bottom: 10px;
-    overflow-x: auto;
+    width: 100%;
     padding: 4px 0;
+    box-sizing: border-box;
 }
 
 .digit-box {
     width: 42px;
     height: 48px;
-    flex-shrink: 0;
+    flex: 1;
+    max-width: 42px;
     background: #ffffff;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
@@ -229,6 +233,7 @@ select.form-control option, select.prefix-select option {
     font-weight: 700;
     text-align: center;
     outline: none;
+    padding: 0;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease;
 }
@@ -519,6 +524,28 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
+/* Nút Tải/Chia Sẻ Ảnh Về iPhone Trên Mobile */
+.btn-mobile-share-ios {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.btn-mobile-share-ios:active {
+    transform: scale(0.98);
+}
+
 /* Layout Lá quẻ */
 .hex-card-view {
     background-color: #fefee5;
@@ -721,18 +748,26 @@ select.form-control option, select.prefix-select option {
 @media (max-width: 640px) {
     body { padding-top: 10px; }
     .container { padding: 0 10px; }
-    .form-card { padding: 16px; }
+    .form-card { padding: 14px; }
+
+    .digit-section {
+        padding: 14px 10px;
+    }
 
     .digit-boxes-container {
         gap: 3px;
         justify-content: space-between;
+        width: 100%;
+        padding: 2px 0;
     }
 
     .digit-box {
-        width: 30px;
-        height: 40px;
+        width: calc((100% - 27px) / 10);
+        max-width: 36px;
+        height: 42px;
         font-size: 1.1rem;
         border-radius: 6px;
+        padding: 0;
     }
 
     .prefix-selector-group {

@@ -1,10 +1,12 @@
 /* ==========================================================================
    MAIN UI CONTROLLER - Website Sim Phong Thủy
-   - Tự động nhảy focus 10 ô vuông điền SĐT
+   - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
    - Đánh Giá SIM Đang Dùng (Lập quẻ & chấm điểm SĐT hiện tại)
+   - Tự động khởi tạo SIM Đại Cát tức thì kể cả khi để trống 10 ô vuông
    - Nút "Xem Chi Tiết":
-     + Trên Máy Tính: Mở Modal hiển thị ảnh lá quẻ, hỗ trợ chuột phải Sao chép / Lưu ảnh trực tiếp
-     + Trên Điện Thoại: Tải / Chia sẻ ảnh lá quẻ về iPhone (Web Share API chuẩn iOS)
+     + Máy Tính: Mở Modal hiển thị ảnh lá quẻ, hỗ trợ chuột phải Sao chép / Lưu ảnh
+     + Điện Thoại: Mở Modal hiển thị lá quẻ + Nút "📤 Chia Sẻ / Lưu Ảnh Về iPhone"
+       kích hoạt chuẩn 100% iOS Native Share Sheet trên Safari/Chrome iPhone!
    ========================================================================== */
 
 let currentResults = [];
@@ -87,7 +89,7 @@ function setupFormEvents() {
     });
 }
 
-// XỬ LÝ ĐÁNH GIÁ SIM ĐANG DÙNG (CỦA KHÁCH HÀNG)
+// XỬ LÝ ĐÁNH GIÁ SIM ĐANG DÙNG (CHUẨN 10 SỐ)
 function setupCurrentSimEval() {
     const btn = document.getElementById('btnEvalCurrentSim');
     if (!btn) return;
@@ -96,8 +98,8 @@ function setupCurrentSimEval() {
         const inputSim = document.getElementById('evalCurrentSim').value.trim();
         const rawSim = inputSim.replace(/[^0-9]/g, '');
 
-        if (!rawSim || rawSim.length < 9) {
-            alert("Vui lòng nhập SĐT hợp lệ (từ 9 đến 10 chữ số)!");
+        if (!rawSim || rawSim.length !== 10) {
+            alert("Vui lòng nhập số điện thoại hợp lệ (chuẩn 10 chữ số Việt Nam)!");
             return;
         }
 
@@ -159,12 +161,7 @@ function setupCurrentSimEval() {
 
 function handleCurrentSimDetail() {
     if (!currentSimEvalItem) return;
-
-    if (isMobileDevice()) {
-        downloadHexImageForObject(currentSimEvalItem);
-    } else {
-        openHexModalDesktopObject(currentSimEvalItem);
-    }
+    openHexModalDesktopObject(currentSimEvalItem);
 }
 
 function processSearch() {
@@ -315,12 +312,7 @@ function renderHexVisual(lines, isChanged) {
 function handleDetailClick(index) {
     const item = currentResults[index];
     if (!item) return;
-
-    if (isMobileDevice()) {
-        downloadHexImageForObject(item);
-    } else {
-        openHexModalDesktopObject(item);
-    }
+    openHexModalDesktopObject(item);
 }
 
 function buildHexCardHTML(item) {
@@ -427,7 +419,7 @@ function buildHexCardHTML(item) {
                 </tbody>
             </table>
 
-            <!-- Đánh giá Phong Thủy Chi Tiết Lồng ghép 100% Lý do Cát Tường -->
+            <!-- Đánh giá Phong Thủy Chi Tiết -->
             <div class="eval-box">
                 <h4>🎯 Đánh giá Cát Tường: ${evaluation.score}/100 - ${evaluation.grade}</h4>
                 <ul>
@@ -438,12 +430,13 @@ function buildHexCardHTML(item) {
     `;
 }
 
-// MỞ MODAL XEM ẢNH LÁ QUẺ TRÊN MÁY TÍNH (Cho mọi quẻ)
+// MỞ MODAL XEM ẢNH LÁ QUẺ (DÀNH CHO CẢ MÁY TÍNH VÀ ĐIỆN THOẠI)
 function openHexModalDesktopObject(item) {
     if (!item) return;
 
     const modal = document.getElementById('hexModal');
     const modalBody = document.getElementById('modalBody');
+    const isMobile = isMobileDevice();
 
     modalBody.innerHTML = `
         <div style="text-align:center; padding:20px; color:#888;">
@@ -472,14 +465,37 @@ function openHexModalDesktopObject(item) {
             const dataUrl = canvas.toDataURL('image/png');
             document.body.removeChild(tempContainer);
 
+            let bottomHtml = '';
+            if (isMobile) {
+                // Trên Mobile: Nút bấm trực tiếp kích hoạt iOS Native Share Sheet / Tải file
+                bottomHtml = `
+                    <button id="btnMobileShareTrigger" class="btn-mobile-share-ios">
+                        📤 Chia Sẻ / Lưu Ảnh Về iPhone / Điện Thoại
+                    </button>
+                `;
+            } else {
+                bottomHtml = `
+                    <div class="desktop-img-hint">
+                        💡 <strong>Mẹo:</strong> Bạn có thể <strong>Nhấp chuột phải vào ảnh trên</strong> để <em>Sao chép hình ảnh</em> hoặc <em>Lưu hình ảnh thành...</em> về máy tính.
+                    </div>
+                `;
+            }
+
             modalBody.innerHTML = `
                 <div class="hex-card-scroll-wrapper">
-                    <img src="${dataUrl}" class="hex-native-img" alt="Lá quẻ SIM ${item.sim}" title="Nhấp chuột phải để sao chép hoặc lưu ảnh" />
+                    <img src="${dataUrl}" class="hex-native-img" alt="Lá quẻ SIM ${item.sim}" />
                 </div>
-                <div class="desktop-img-hint">
-                    💡 <strong>Mẹo:</strong> Bạn có thể <strong>Nhấp chuột phải vào ảnh trên</strong> để <em>Sao chép hình ảnh</em> hoặc <em>Lưu hình ảnh thành...</em> về máy tính.
-                </div>
+                ${bottomHtml}
             `;
+
+            if (isMobile) {
+                const shareBtn = document.getElementById('btnMobileShareTrigger');
+                if (shareBtn) {
+                    shareBtn.addEventListener('click', () => {
+                        triggerDirectShareOnUserGesture(canvas, formatSimNumber(item.sim));
+                    });
+                }
+            }
         }).catch(err => {
             console.error('html2canvas error:', err);
             document.body.removeChild(tempContainer);
@@ -488,11 +504,8 @@ function openHexModalDesktopObject(item) {
     }, 100);
 }
 
-/* ==========================================================================
-   HÀM XUẤT / TẢI / CHIA SẺ ẢNH LÁ QUẺ (HỖ TRỢ CHUẨN IOS / IPHONE SHARE SHEET)
-   ========================================================================== */
-
-function exportOrShareHexImage(canvas, simNumber) {
+// KÍCH HOẠT CHIA SẺ TRỰC TIẾP TRÊN EVENT TAP CỦA NGƯỜI DÙNG (IOS SAFARI COMPATIBLE)
+function triggerDirectShareOnUserGesture(canvas, simNumber) {
     const filename = `la-que-sim-${simNumber.replace(/[^0-9]/g, '')}-${Date.now()}.png`;
 
     canvas.toBlob(blob => {
@@ -503,21 +516,19 @@ function exportOrShareHexImage(canvas, simNumber) {
 
         const file = new File([blob], filename, { type: 'image/png' });
 
-        // Kiểm tra Hỗ trợ Web Share API trên iPhone / Safari (Menu Chia sẻ iOS)
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             navigator.share({
                 files: [file],
                 title: `Lá Quẻ SIM Phong Thủy - ${simNumber}`,
                 text: `Lá quẻ Dịch Học SIM Phong Thủy SĐT: ${simNumber}`
             }).then(() => {
-                showToast("Đã mở menu chia sẻ / lưu ảnh trên iPhone!");
+                showToast("Đã chia sẻ / lưu ảnh thành công!");
             }).catch(err => {
                 if (err.name !== 'AbortError') {
                     fallbackDownloadBlob(blob, filename);
                 }
             });
         } else {
-            // Tải về trực tiếp cho Desktop & Android
             fallbackDownloadBlob(blob, filename);
         }
     }, 'image/png');
@@ -530,35 +541,6 @@ function fallbackDownloadBlob(blob, filename) {
     link.click();
     setTimeout(() => URL.revokeObjectURL(link.href), 2500);
     showToast(`Đã tải ảnh lá quẻ về máy thành công!`);
-}
-
-// TẢI / CHIA SẺ ẢNH TRÊN MOBILE (iPhone/Android) CHO BẤT KỲ SIM NÀO
-function downloadHexImageForObject(item) {
-    if (!item) return;
-
-    showToast("Đang tạo ảnh lá quẻ...");
-
-    const hiddenArea = document.getElementById('hiddenRenderArea');
-    hiddenArea.style.width = '900px';
-    hiddenArea.innerHTML = buildHexCardHTML(item);
-
-    setTimeout(() => {
-        const cardElem = hiddenArea.querySelector('#hexCardCapture');
-        html2canvas(cardElem, {
-            scale: 2,
-            useCORS: true,
-            scrollX: 0,
-            scrollY: 0,
-            windowWidth: 960
-        }).then(canvas => {
-            hiddenArea.innerHTML = '';
-            exportOrShareHexImage(canvas, formatSimNumber(item.sim));
-        }).catch(err => {
-            console.error('html2canvas mobile error:', err);
-            hiddenArea.innerHTML = '';
-            alert("Có lỗi khi tạo ảnh lá quẻ trên điện thoại.");
-        });
-    }, 150);
 }
 
 function setupModalEvents() {

@@ -1,13 +1,8 @@
 /* ==========================================================================
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO PRO
-   Lồng ghép 100% thuật toán Dịch Học từ file KIEN_THUC_LUC_HAO_SIM.md:
-   1. QUY TẮC NGUYỆT XUNG & NHẬT XUNG:
-      - Hào Tĩnh bị Nguyệt Xung (Nguyệt Phá) hoặc Nhật Xung (Ám Xung / Nhật Phá) -> BỊ TÍNH LÀ SUY BẠI / XẤU -> BỎ 100%!
-      - Nguyệt Xung Hào tĩnh xấu tương đương Hóa Suy Bại (Hóa khắc, thoái, tuyệt, phá...).
-      - Nhật Xung Hào tĩnh Hưu tù -> Xấu nặng tương đương Nguyệt xung.
-      - Nhật Xung Hào tĩnh Vượng -> Vẫn bị tính là Suy/Xấu.
-      - Hào Động bị xung -> Không sao, nhưng kém hơn Hào động được Nhật Nguyệt sinh phò.
-   2. PHÂN ĐỊNH VƯỢNG DỤNG THẦN & HƯNG HÀO THẾ.
+   - Đảm bảo 100% SIM 10 Chữ Số chuẩn Việt Nam.
+   - Thuật toán khởi tạo кандидат thông minh: Đảm bảo khi để trống ô (0*********)
+     vẫn tìm ra đầy đủ Danh sách SIM Đại Cát tức thì.
    ========================================================================== */
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
@@ -99,7 +94,6 @@ function getLineVungScore(line, cal) {
     const isNhatXung = isBranchXung(chi, nhatChi);
 
     if (line.isMoving) {
-        // Hào Động bị xung: Không sao, nhưng kém hơn hào động được sinh phò
         const hoiDauSinh = isGenerating(line.changed.hanh, hanh);
         const hoaTien = isProgressingBranch(chi, line.changed.branch);
 
@@ -124,7 +118,6 @@ function getLineVungScore(line, cal) {
             return { score: 0, isVung: false, note: 'Bị hưu tù suy vi' };
         }
     } else {
-        // Hào Tĩnh bị xung: Nguyệt Xung hoặc Nhật Xung ĐỀU TÍNH LÀ SUY BẠI / XẤU!
         if (isNguyetXung) {
             return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nguyệt Xung (Nguyệt Phá - Xấu nặng tương đương Hóa Bại)' };
         }
@@ -184,7 +177,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
-    // Dụng Thần Bị Xung Nặng (Nguyệt Xung / Nhật Xung khi Tĩnh)
     const dungThanStaticXung = dungThanLines.find(dt => !dt.isMoving && (isBranchXung(dt.chi, nguyetChi) || isBranchXung(dt.chi, nhatChi)));
     if (dungThanStaticXung) {
         return {
@@ -195,7 +187,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
-    // Dụng Thần Động Hóa Bại
     for (let dt of dungThanLines) {
         if (dt.isMoving) {
             const dtHoiDauSinh = isGenerating(dt.changed.hanh, dt.hanh);
@@ -220,7 +211,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         }
     }
 
-    // Hào Động Khắc Dụng Thần
     const dongKhacDung = hexData.linesData.find(dL => dL.isMoving && dungThanLines.some(dt => isOvercoming(dL.hanh, dt.hanh)));
     if (dongKhacDung) {
         return {
@@ -231,7 +221,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
-    // Kiểm tra Dụng Thần Phải Vượng
     let maxDungScore = 0;
     let maxDungNote = '';
     let dungThanBestLine = null;
@@ -269,7 +258,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     reasons.push(`Dụng Thần (${targetRel}) vượng khí, trợ vận may phát triển tốt.`);
     totalScore += maxDungScore;
 
-    // Kiểm tra Hào Thế (Bản mệnh) Bị Xung Nặng
     if (!haoThe.isMoving && (isBranchXung(theChi, nguyetChi) || isBranchXung(theChi, nhatChi))) {
         return {
             isQualified: false,
@@ -339,7 +327,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         }
     }
 
-    // Tương tác Dụng Thần khắc Thế
     const dungKhacThe = dungThanLines.find(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
     if (dungKhacThe) {
         if (purpose === 'cautai') {
@@ -367,7 +354,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         }
     }
 
-    // Dụng Thần Xung/Hợp Thế
     const dtXungThe = dungThanLines.find(dt => isBranchXung(dt.chi, theChi));
     const dtHopThe = dungThanLines.find(dt => isBranchHarmonious(dt.chi, theChi));
 
@@ -456,54 +442,67 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     };
 }
 
+/* ==========================================================================
+   HÀM KHỞI TẠO VÀ ĐÃI LỌC KẾT QUẢ SIM (CHUẨN 10 CHỮ SỐ VIỆT NAM)
+   ========================================================================== */
 function generateMatchingSims(pattern, dateInput, gender, purpose, maxCount = 15) {
     const cal = calculateCanChi(dateInput);
     if (!cal) return [];
 
-    const fixedPattern = pattern.replace(/[^0-9*]/g, '');
-    const isWildcard = (char) => !char || char === '*';
+    let fixedPattern = pattern.replace(/[^0-9*]/g, '');
+    while (fixedPattern.length < 10) fixedPattern += '*';
+    fixedPattern = fixedPattern.slice(0, 10);
 
-    const candidates = [];
-    const maxIterations = 3500;
-    let count = 0;
+    const activePrefixes = [
+        '098', '097', '096', '086', '039', '038', '037', '036', '035', '034', '033', '032',
+        '090', '093', '089', '070', '079', '077', '076', '078',
+        '091', '094', '088', '083', '084', '085', '081', '082',
+        '087', '099', '056', '058'
+    ];
 
-    function generateRecursive(currentStr, index) {
-        if (candidates.length >= maxCount * 6 || count >= maxIterations) return;
-        count++;
+    const results = [];
+    const testedSims = new Set();
+    const targetQualifiedCount = Math.max(maxCount, 15);
+    const maxAttempts = 25000;
+    let attempts = 0;
 
-        if (index >= fixedPattern.length) {
-            if (currentStr.length >= 9) candidates.push(currentStr);
-            return;
-        }
+    while (results.length < targetQualifiedCount && attempts < maxAttempts) {
+        attempts++;
 
-        const char = fixedPattern[index];
-        if (!isWildcard(char)) {
-            generateRecursive(currentStr + char, index + 1);
+        let candidate = '';
+        const needPrefixChoice = (fixedPattern[1] === '*' || fixedPattern[2] === '*');
+
+        if (needPrefixChoice && Math.random() < 0.85) {
+            const randomPrefix = activePrefixes[Math.floor(Math.random() * activePrefixes.length)];
+            candidate = randomPrefix;
+            for (let i = 3; i < 10; i++) {
+                if (fixedPattern[i] !== '*') {
+                    candidate += fixedPattern[i];
+                } else {
+                    candidate += Math.floor(Math.random() * 10).toString();
+                }
+            }
         } else {
-            const digits = ['8', '6', '9', '3', '5', '2', '7', '1', '0', '4'];
-            const shuffled = [...digits].sort(() => Math.random() - 0.5);
-
-            for (let d of shuffled) {
-                generateRecursive(currentStr + d, index + 1);
-                if (candidates.length >= maxCount * 6 || count >= maxIterations) break;
+            for (let i = 0; i < 10; i++) {
+                if (fixedPattern[i] !== '*') {
+                    candidate += fixedPattern[i];
+                } else {
+                    candidate += Math.floor(Math.random() * 10).toString();
+                }
             }
         }
-    }
 
-    generateRecursive('', 0);
+        if (candidate.length !== 10 || testedSims.has(candidate)) continue;
+        testedSims.add(candidate);
 
-    const uniqueSims = Array.from(new Set(candidates));
-    const results = [];
-
-    for (let sim of uniqueSims) {
-        const hexData = calculateSimHexagram(sim, cal);
+        const hexData = calculateSimHexagram(candidate, cal);
         if (!hexData) continue;
 
-        const evalResult = evaluateSimFengShui(sim, hexData, cal, purpose, gender);
+        const evalResult = evaluateSimFengShui(candidate, hexData, cal, purpose, gender);
 
         if (evalResult.isQualified) {
             results.push({
-                sim,
+                sim: candidate,
                 hexData,
                 evaluation: evalResult
             });
@@ -511,6 +510,5 @@ function generateMatchingSims(pattern, dateInput, gender, purpose, maxCount = 15
     }
 
     results.sort((a, b) => b.evaluation.score - a.evaluation.score);
-
     return results.slice(0, maxCount);
 }
