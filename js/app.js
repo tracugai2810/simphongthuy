@@ -1063,12 +1063,16 @@ function fallbackDownloadBlob(blob, filename) {
     showToast(`Đã tải ảnh về máy thành công!`);
 }
 
+let lastCloseTime = 0;
+
 function openModal(modalId) {
+    if (Date.now() - lastCloseTime < 350) return; // Chống ghost click trên di động mở lại popup vừa tắt
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.add('active');
 }
 
 function closeModal(modalId) {
+    lastCloseTime = Date.now();
     if (typeof modalId === 'string') {
         const modal = document.getElementById(modalId);
         if (modal) modal.classList.remove('active');
@@ -1084,35 +1088,39 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 
 function setupModalEvents() {
-    // 1. Gắn trực tiếp sự kiện cho tất cả nút .modal-close
+    // 1. Gắn sự kiện chuẩn cho tất cả nút .modal-close (Chống nổ ghost click re-open)
     document.querySelectorAll('.modal-close').forEach(btn => {
         const handleClose = (e) => {
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
+            lastCloseTime = Date.now();
             const modal = btn.closest('.modal-overlay');
             if (modal) {
                 modal.classList.remove('active');
             }
         };
 
+        btn.onclick = handleClose;
         btn.addEventListener('click', handleClose);
-        btn.addEventListener('touchend', handleClose);
-        btn.addEventListener('pointerdown', handleClose);
     });
 
     // 2. Chạm vùng tối ngoài popup để tắt
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('active');
+            if (e.target === modal) {
+                lastCloseTime = Date.now();
+                modal.classList.remove('active');
+            }
         });
     });
 
     // 3. Phím Escape để tắt
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            lastCloseTime = Date.now();
             document.querySelectorAll('.modal-overlay.active').forEach(modal => {
                 modal.classList.remove('active');
             });
