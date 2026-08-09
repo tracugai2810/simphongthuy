@@ -1,28 +1,29 @@
 /* ==========================================================================
-   SIM PHONG THỦY LỤC HÀO - PRECISE ORIGINAL DESIGN & FONT RESTORATION
-   Matched 100% pixel-by-pixel to user's original screenshot reference
+   SIM PHONG THỦY LỤC HÀO - EXACT DEVTOOLS CSS MATCH FROM ORIGINAL WEBSITE
+   Derived directly from user's Chrome DevTools element inspection
    ========================================================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
-    --bg-dark: #090d16;
-    --bg-card: #131b2e;
-    --bg-card-hover: #19243c;
+    --bg-dark: #0c1222;
+    --bg-card: #151d30;
+    --bg-card-hover: #1a2438;
     --primary-red: #881b1b;
     --gold-primary: #f3c669;
     --gold-glow: #ffd700;
     --gold-dark: #d97706;
-    --text-light: #f8fafc;
+    --text-light: #f1f5f9;
     --text-muted: #94a3b8;
     --border-color: #232f48;
-    --border-gold: rgba(217, 119, 6, 0.4);
-    --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --border-gold: rgba(243, 198, 105, 0.4);
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: var(--font-main);
 }
 
 html, body {
@@ -35,12 +36,12 @@ html, body {
 }
 
 body {
-    background-color: #0b101d;
+    background-color: #0c1222;
     color: var(--text-light);
-    font-family: var(--font-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
     min-height: 100vh;
-    padding-top: 20px;
+    padding-top: 15px;
     padding-bottom: 60px;
 }
 
@@ -48,7 +49,7 @@ body {
 .container {
     max-width: 980px;
     margin: 0 auto;
-    padding: 0 16px;
+    padding: 0 15px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -57,8 +58,8 @@ body {
    TOP USER NAVIGATION BAR
    ========================================================================== */
 .top-user-bar {
-    background: #141c2e;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #151d30;
+    border: 1px solid var(--border-gold);
     border-radius: 12px;
     padding: 10px 18px;
     margin-bottom: 18px;
@@ -73,11 +74,12 @@ body {
 .brand-title {
     font-size: 1.15rem;
     font-weight: 800;
-    color: var(--gold-glow);
+    color: #ffd700;
     display: flex;
     align-items: center;
     gap: 8px;
     letter-spacing: 0.3px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .user-nav-group {
@@ -98,6 +100,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-auth-trigger:hover {
@@ -106,14 +109,15 @@ body {
 
 .coin-badge {
     background: rgba(217, 119, 6, 0.15);
-    border: 1px solid var(--gold-glow);
-    color: var(--gold-glow);
+    border: 1px solid #ffd700;
+    color: #ffd700;
     font-weight: 800;
     font-size: 0.9rem;
     padding: 5px 13px;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .coin-badge:hover {
@@ -130,6 +134,7 @@ body {
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-earn-coins:hover {
@@ -146,6 +151,7 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .ref-badge:hover {
@@ -163,6 +169,7 @@ body {
     border-radius: 8px;
     text-decoration: none;
     transition: all 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .admin-link-btn:hover {
@@ -180,6 +187,7 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-logout:hover {
@@ -188,27 +196,29 @@ body {
 }
 
 /* ==========================================================================
-   FORM NHẬP THÔNG TIN
+   FORM NHẬP THÔNG TIN (DEVTOOLS ACCURATE MATCH)
    ========================================================================== */
 .form-card {
-    background: #131b2e;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #151d30;
+    border: 1px solid var(--border-gold);
     border-radius: 14px;
     padding: 20px;
     margin-bottom: 22px;
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
 }
 
+/* devTools match: font 20px Inter, color #F3C669, margin 0 0 18px, padding 0 0 8px */
 .section-title {
-    font-size: 1.25rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 20px;
     font-weight: 800;
-    color: var(--gold-primary);
-    margin-bottom: 18px;
+    color: #F3C669;
+    margin: 0px 0px 18px 0px;
+    padding: 0px 0px 8px 0px;
     display: flex;
     align-items: center;
     gap: 8px;
     border-bottom: 2px solid var(--gold-dark);
-    padding-bottom: 10px;
 }
 
 .form-grid {
@@ -224,22 +234,25 @@ body {
 }
 
 .form-group label {
-    font-size: 0.88rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #cbd5e1;
     margin-bottom: 6px;
 }
 
+/* devTools match: color var(--text-light), font-size 0.95rem, background rgb(17, 18, 34), border 1px solid var(--border-color), border-radius 8px, padding 10px 14px, outline none, transition 0.3s */
 .form-control {
     width: 100%;
-    padding: 10px 12px;
-    background: #090d16;
+    padding: 10px 14px;
+    background: rgb(17, 18, 34);
     border: 1px solid var(--border-color);
-    color: #ffffff;
-    font-size: 0.92rem;
+    color: var(--text-light);
+    font-size: 0.95rem;
     border-radius: 8px;
     outline: none;
-    transition: all 0.2s ease;
+    transition: 0.3s;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .form-control:focus {
@@ -256,7 +269,7 @@ body {
 }
 
 .current-sim-group label {
-    color: var(--gold-primary) !important;
+    color: #F3C669 !important;
     font-size: 0.9rem !important;
 }
 
@@ -281,6 +294,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-eval-current:hover {
@@ -307,6 +321,7 @@ body {
     margin-bottom: 8px;
     text-align: center;
     letter-spacing: 0.3px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .prefix-selector-group {
@@ -321,17 +336,19 @@ body {
     font-size: 0.88rem;
     color: #ffd700;
     font-weight: 700;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .prefix-select {
     padding: 5px 10px;
-    background: #090d16;
+    background: rgb(17, 18, 34);
     border: 1px solid var(--gold-dark);
     color: #ffffff;
     border-radius: 6px;
     outline: none;
     font-weight: 700;
     font-size: 0.88rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .digit-boxes-container {
@@ -354,6 +371,7 @@ body {
     border-radius: 8px;
     outline: none;
     transition: all 0.2s ease;
+    font-family: monospace, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .digit-box:focus {
@@ -373,6 +391,7 @@ body {
     line-height: 1.4;
     max-width: 680px;
     margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* NÚT SUBMIT CHÍNH AMBER ORANGE */
@@ -390,6 +409,7 @@ body {
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-submit:hover {
@@ -414,7 +434,7 @@ body {
 }
 
 .sim-card {
-    background: #131b2e;
+    background: #151d30;
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 16px 18px;
@@ -437,10 +457,11 @@ body {
     color: #ffffff;
     letter-spacing: 1px;
     margin-bottom: 4px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .sim-number-display .highlight {
-    color: var(--gold-glow);
+    color: #ffd700;
 }
 
 .sim-badge-group {
@@ -457,6 +478,7 @@ body {
     border-radius: 10px;
     display: inline-flex;
     align-items: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .badge-score {
@@ -467,7 +489,7 @@ body {
 
 .badge-hex {
     background: rgba(217, 119, 6, 0.2);
-    color: var(--gold-primary);
+    color: #f3c669;
     border: 1px solid var(--gold-dark);
 }
 
@@ -475,6 +497,7 @@ body {
     list-style: none;
     font-size: 0.85rem;
     color: #cbd5e1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .sim-reasons-list li {
@@ -488,7 +511,7 @@ body {
     content: "✦";
     position: absolute;
     left: 0;
-    color: var(--gold-primary);
+    color: #f3c669;
 }
 
 .sim-actions {
@@ -510,6 +533,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-view-hex {
@@ -532,7 +556,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (CHUẨN ĐẸP, TỐI ƯU CỰC NÉT CHỐNG CHE NÚT ĐÓNG)
+   MODALS POPUP (100% INTER ACCURATE DEVTOOLS STYLING)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -555,7 +579,7 @@ body {
 }
 
 .modal-content {
-    background: #141c2e;
+    background: #151d30;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
     padding: 40px 18px 20px 18px !important;
@@ -567,6 +591,7 @@ body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     margin: auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .modal-close {
@@ -615,12 +640,13 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .auth-tab-btn.active, .auth-tab-btn:hover {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    border-color: var(--gold-glow);
+    border-color: #ffd700;
 }
 
 /* DONATE TIER GRID */
@@ -632,7 +658,7 @@ body {
 }
 
 .donate-card {
-    background: #090d16;
+    background: rgb(17, 18, 34);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 10px;
@@ -642,7 +668,7 @@ body {
 }
 
 .donate-card.active, .donate-card:hover {
-    border-color: var(--gold-glow);
+    border-color: #ffd700;
     background: rgba(217, 119, 6, 0.15);
 }
 
@@ -670,7 +696,7 @@ body {
 }
 
 .qr-display-box {
-    background: #090d16;
+    background: rgb(17, 18, 34);
     border: 1px dashed var(--gold-dark);
     border-radius: 10px;
     padding: 12px;
@@ -690,7 +716,7 @@ body {
 }
 
 .ref-code-display-card {
-    background: #090d16;
+    background: rgb(17, 18, 34);
     border: 1px solid var(--gold-dark);
     border-radius: 10px;
     padding: 12px;
@@ -701,7 +727,7 @@ body {
 .ref-code-big {
     font-size: 1.8rem;
     font-weight: 900;
-    color: var(--gold-glow);
+    color: #ffd700;
     letter-spacing: 2px;
     margin: 2px 0;
 }
@@ -714,7 +740,7 @@ body {
 }
 
 .ref-stat-card {
-    background: #090d16;
+    background: rgb(17, 18, 34);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 4px;
@@ -772,6 +798,7 @@ body {
     box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4);
     transition: all 0.2s ease;
     text-align: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-mobile-share-ios:active {
@@ -979,7 +1006,7 @@ body {
     left: 50%;
     transform: translateX(-50%) translateY(100px);
     background: rgba(15, 23, 42, 0.95);
-    border: 1px solid var(--gold-glow);
+    border: 1px solid #ffd700;
     color: #ffffff;
     padding: 10px 20px;
     border-radius: 30px;
@@ -992,6 +1019,7 @@ body {
     pointer-events: none;
     text-align: center;
     max-width: 90vw;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .toast-notification.show {
