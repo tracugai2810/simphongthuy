@@ -1,7 +1,9 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - EXACT DEVTOOLS CSS MATCH FROM ORIGINAL WEBSITE
-   Tối ưu nút đóng modal không bao giờ bị đè, Căn giữa cột Thao tác Lịch sử,
-   Khung Mã Giới Thiệu Thu Gọn Vừa Vặn 1 Màn Hình Không Cần Cuộn
+   - Nút Tải QR ẩn trên máy tính, chỉ hiển thị trên Điện Thoại
+   - Mã QR Phóng To 240px Quét Sắc Nét
+   - Nút Đóng X Popup Quẻ Lục Hào Z-Index 10000 Hoạt Động 100%
+   - Mốc Thưởng +Xu Đổi Màu Vàng Kim Nổi Bật Dễ Nhìn
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -555,7 +557,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (CHỐNG TRÀN VÀ CHE NÚT ĐÓNG X)
+   MODALS POPUP (NÚT TẢI QR ẨN TRÊN DESKTOP, PHÓNG TO MÃ QR 240PX)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -581,7 +583,7 @@ body {
     background: #151d30;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
-    padding: 46px 18px 20px 18px !important; /* Top padding 46px chống vướng nút đóng X */
+    padding: 46px 18px 20px 18px !important;
     max-width: 500px;
     width: 100%;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7);
@@ -593,7 +595,7 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* KHUNG MÃ GIỚI THIỆU THU GỌN VỪA VẶN 1 MÀN HÌNH KHÔNG CẦN CUỘN TRÊN DESKTOP & MOBILE */
+/* KHUNG MÃ GIỚI THIỆU THU GỌN VỪA VẶN 1 MÀN HÌNH KHÔNG CẦN CUỘN */
 .compact-ref-modal {
     padding: 38px 14px 14px 14px !important;
     max-height: 94vh;
@@ -610,26 +612,27 @@ body {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
     text-align: center;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 50%;
     color: #ffffff;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     cursor: pointer;
-    z-index: 1000;
+    z-index: 10000 !important;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    pointer-events: auto !important;
 }
 
 .modal-close:hover, .modal-close:active {
-    background: rgba(239, 68, 68, 0.3);
-    color: #f87171;
+    background: rgba(239, 68, 68, 0.4);
+    color: #ffffff;
 }
 
 /* AUTH MODAL TABS */
@@ -712,20 +715,26 @@ body {
     background: rgb(17, 18, 34);
     border: 1px dashed var(--gold-dark);
     border-radius: 10px;
-    padding: 12px;
+    padding: 14px;
     text-align: center;
     margin-top: 10px;
 }
 
+/* Phóng to Ảnh QR cho khách quét cực chuẩn */
 .qr-code-img {
-    max-width: 170px;
+    max-width: 240px;
     width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 2px solid #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     margin: 0 auto;
     display: block;
+}
+
+/* NÚT TẢI QR MẶC ĐỊNH ẨN TRÊN MÁY TÍNH */
+.mobile-only-qr-btn {
+    display: none !important;
 }
 
 .ref-code-display-card {
@@ -1055,6 +1064,11 @@ body {
 @media (max-width: 640px) {
     body { padding-top: 10px; padding-bottom: 40px; }
     .container { padding: 0 10px; }
+
+    /* HIỂN THỊ NÚT TẢI QR TRÊN DI ĐỘNG */
+    .mobile-only-qr-btn {
+        display: block !important;
+    }
 
     .top-user-bar {
         padding: 10px 12px;

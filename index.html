@@ -93,7 +93,7 @@
                         </select>
                     </div>
 
-                    <!-- Số lượng SIM chọn (Bỏ "(Số Xu)" ở tiêu đề và bỏ "- Mặc định" ở option) -->
+                    <!-- Số lượng SIM chọn -->
                     <div class="form-group">
                         <label for="limitSelect">🔢 Số lượng SIM cần tìm:</label>
                         <select id="limitSelect" class="form-control">
@@ -182,7 +182,7 @@
 
     </div>
 
-    <!-- MODAL 1: ĐĂNG NHẬP / ĐĂNG KÝ (Tối ưu nút đóng X & Quên mật khẩu) -->
+    <!-- MODAL 1: ĐĂNG NHẬP / ĐĂNG KÝ (Tên tài khoản ghi thường, Mã GT ghi hoa) -->
     <div id="authModal" class="modal-overlay">
         <div class="modal-content auth-modal-box">
             <span class="modal-close" onclick="closeModal('authModal')">&times;</span>
@@ -200,14 +200,14 @@
             <form id="loginForm" class="auth-form-content">
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label>Tên đăng nhập hoặc Email:</label>
-                    <input type="text" id="loginUsername" class="form-control" placeholder="Nhập tên đăng nhập..." required>
+                    <input type="text" id="loginUsername" class="form-control" placeholder="Nhập tên đăng nhập..." required style="text-transform: lowercase;">
                 </div>
                 <div class="form-group" style="margin-bottom: 8px;">
                     <label>Mật khẩu:</label>
                     <input type="password" id="loginPassword" class="form-control" placeholder="Nhập mật khẩu..." required>
                 </div>
                 <div style="text-align: right; margin-bottom: 14px;">
-                    <a href="javascript:void(0)" id="btnForgotPassword" style="color: var(--gold-glow); font-size: 0.85rem; text-decoration: underline; font-weight: bold;">
+                    <a href="javascript:void(0)" id="btnOpenForgotPasswordModal" style="color: var(--gold-glow); font-size: 0.85rem; text-decoration: underline; font-weight: bold;">
                         🔒 Quên mật khẩu?
                     </a>
                 </div>
@@ -220,11 +220,11 @@
             <form id="registerForm" class="auth-form-content" style="display: none;">
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Tên đăng nhập:</label>
-                    <input type="text" id="regUsername" class="form-control" placeholder="Ví dụ: nguyenvana" required>
+                    <input type="text" id="regUsername" class="form-control" placeholder="Ví dụ: nguyenvana" required style="text-transform: lowercase;">
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Email liên hệ (Dùng để khôi phục mật khẩu):</label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com">
+                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com" style="text-transform: lowercase;">
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Mật khẩu:</label>
@@ -232,10 +232,34 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 16px;">
                     <label style="color: var(--gold-glow); font-size: 0.86rem;">🎁 Mã người giới thiệu (Không phân biệt hoa/thường - +1 Xu):</label>
-                    <input type="text" id="regRefCode" class="form-control" placeholder="Nhập mã giới thiệu (VD: SIM123 hoặc sim123)...">
+                    <input type="text" id="regRefCode" class="form-control" placeholder="Nhập mã giới thiệu (VD: SIM123 hoặc sim123)..." style="text-transform: uppercase;">
                 </div>
                 <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
                     🎁 ĐĂNG KÝ (NHẬN XU TRẢI NGHIỆM)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KHÔI PHỤC MẬT KHẨU TỰ THIẾT KẾ ĐẸP MẮT (KHÔNG DÙNG PROMPT BẢNG TRÌNH DUYỆT) -->
+    <div id="forgotPasswordModal" class="modal-overlay">
+        <div class="modal-content auth-modal-box" style="max-width: 440px !important;">
+            <span class="modal-close" onclick="closeModal('forgotPasswordModal')">&times;</span>
+            <div style="text-align: center; margin-bottom: 14px;">
+                <div style="font-size: 2.2rem; margin-bottom: 4px;">🔒</div>
+                <h3 style="color: var(--gold-glow); font-size: 1.2rem;">KHÔI PHỤC MẬT KHẨU</h3>
+                <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 4px;">
+                    Nhập Email liên hệ hoặc Tên tài khoản để lấy lại mật khẩu
+                </p>
+            </div>
+            <form id="forgotPasswordForm">
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Email liên hệ hoặc Tên tài khoản:</label>
+                    <input type="text" id="forgotInput" class="form-control" placeholder="Nhập email hoặc tên tài khoản..." required style="text-transform: lowercase;">
+                </div>
+                <div id="forgotResultBox" style="display: none; margin-bottom: 14px; padding: 10px; border-radius: 8px; font-size: 0.88rem; font-weight: bold; text-align: center; line-height: 1.5;"></div>
+                <button type="submit" class="btn-submit">
+                    🚀 LẤY LAI MẬT KHẨU
                 </button>
             </form>
         </div>
@@ -263,7 +287,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (Bổ sung nút Tải / Chia sẻ ảnh QR) -->
+    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (Mã QR To Rõ Đẹp Mắt, Nút Tải QR Chỉ Hiện Trên Di Động) -->
     <div id="donateModal" class="modal-overlay">
         <div class="modal-content donate-modal-box">
             <span class="modal-close" onclick="closeModal('donateModal')">&times;</span>
@@ -296,7 +320,7 @@
                 </div>
             </div>
 
-            <!-- Khung Ảnh QR Code Thanh Toán -->
+            <!-- Khung Ảnh QR Code Thanh Toán (Phóng to Mã QR cho khách dễ quét) -->
             <div class="qr-display-box">
                 <div style="font-size: 0.88rem; font-weight: bold; color: var(--gold-primary); margin-bottom: 6px;">
                     Quét Mã QR Chuyển Khoản Ngân Hàng:
@@ -309,8 +333,8 @@
                 </div>
             </div>
 
-            <!-- Nút Tải / Chia Sẻ Ảnh QR Ngân Hàng Trên Điện Thoại -->
-            <button type="button" id="btnDownloadDonateQr" class="btn-action btn-view-hex" style="width: 100%; margin-top: 10px; font-size: 0.92rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+            <!-- Nút Tải / Chia Sẻ Mã QR Ngân Hàng (Chỉ hiển thị trên Điện Thoại) -->
+            <button type="button" id="btnDownloadDonateQr" class="btn-action btn-view-hex mobile-only-qr-btn" style="width: 100%; margin-top: 10px; font-size: 0.92rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
                 📥 TẢI / CHIA SẺ MÃ QR THANH TOÁN
             </button>
 
@@ -321,7 +345,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MÃ GIỚI THIỆU (GỌN GÀNG 1 KHUNG HÌNH KHÔNG CẦN KÉO THANH CUỘN) -->
+    <!-- MODAL 4: MÃ GIỚI THIỆU (GỌN GÀNG 1 KHUNG HÌNH - MỐC THƯỞNG +XU NỔI BẬT) -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content ref-modal-box compact-ref-modal">
             <span class="modal-close" onclick="closeModal('refModal')">&times;</span>
@@ -374,22 +398,22 @@
                 </div>
             </div>
 
-            <!-- Mốc Thưởng Giới Thiệu (Thu gọn 1 dòng) -->
+            <!-- Mốc Thưởng Giới Thiệu (ĐỔI MÀU +XU NỔI BẬT DỄ NHÌN CHUẨN ẢNH 4) -->
             <div class="ref-milestone-box" style="padding: 6px 10px; font-size: 0.78rem;">
                 <div style="font-weight: bold; color: var(--gold-primary); margin-bottom: 2px;">
                     🏆 Cột Mốc Thưởng Xu Donate:
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.75rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
-                    <span>✦ 5 bạn: <strong>+5 Xu</strong></span>
-                    <span>✦ 10 bạn: <strong>+10 Xu</strong></span>
-                    <span>✦ 20 bạn: <strong>+20 Xu</strong></span>
-                    <span>✦ 50 bạn: <strong>+50 Xu</strong></span>
+                    <span>✦ 5 bạn: <strong style="color: #ffd700; font-weight: 800;">+5 Xu</strong></span>
+                    <span>✦ 10 bạn: <strong style="color: #ffd700; font-weight: 800;">+10 Xu</strong></span>
+                    <span>✦ 20 bạn: <strong style="color: #ffd700; font-weight: 800;">+20 Xu</strong></span>
+                    <span>✦ 50 bạn: <strong style="color: #ffd700; font-weight: 800;">+50 Xu</strong></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 5: LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Nội dung Thao tác CĂN GIỮA Chuẩn Ảnh 2) -->
+    <!-- MODAL 5: LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG -->
     <div id="userCoinHistoryModal" class="modal-overlay">
         <div class="modal-content ref-modal-box" style="max-width: 540px !important;">
             <span class="modal-close" onclick="closeModal('userCoinHistoryModal')">&times;</span>
@@ -419,10 +443,10 @@
         </div>
     </div>
 
-    <!-- Modal Lá Quẻ Lục Hào (Dành cho Máy tính) -->
+    <!-- Modal Lá Quẻ Lục Hào (Đã gắn onclick closeModal và z-index chuẩn cho Nút X) -->
     <div id="hexModal" class="modal-overlay">
         <div class="modal-content">
-            <span id="modalClose" class="modal-close">&times;</span>
+            <span class="modal-close" onclick="closeModal('hexModal')">&times;</span>
             <div id="modalBody"></div>
         </div>
     </div>

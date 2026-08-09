@@ -1,10 +1,11 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Khôi phục mật khẩu qua Email liên hệ
-   - Đồng bộ 100% Nhật ký, Đơn Donate, Xu vĩnh viễn trên Firebase
+   - Mật khẩu Admin chính thức: 140498
+   - Tên tài khoản mặc định lưu chữ thường, Mã giới thiệu mặc định chữ hoa
+   - Khôi phục mật khẩu tùy chỉnh qua Custom Popup
    ========================================================================== */
 
-// Firebase Configuration (Chuỗi mã hóa tránh GitHub Scanner Alert)
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: ['AIzaSyCg27', 'XLHJukI9AIYkyEv1', 'YX4o7eyOW9CdQ'].join(''),
   authDomain: "simphongthuy-a7a80.firebaseapp.com",
@@ -135,24 +136,33 @@ const AuthStore = (() => {
 
     function initDefaultData() {
         let users = getUsers();
-        if (users.length === 0) {
-            const adminUser = {
-                id: 'usr_admin_01',
-                username: 'dambuicong',
-                email: 'dambuicong@admin.com',
-                passwordHash: '281097',
-                coins: 9999,
-                refCode: 'ADMIN97',
-                referredBy: null,
-                isAdmin: true,
-                createdAt: new Date().toISOString()
-            };
-            users.push(adminUser);
-            saveUsers(users);
 
-            if (db) {
-                db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
-            }
+        // Đảm bảo Admin luôn có mật khẩu mới 140498 và chứa cả email dambuicong@gmail.com
+        const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
+        const adminUser = {
+            id: 'usr_admin_01',
+            username: 'dambuicong',
+            email: 'dambuicong@gmail.com',
+            passwordHash: '140498',
+            coins: 9999,
+            refCode: 'ADMIN97',
+            referredBy: null,
+            isAdmin: true,
+            createdAt: new Date().toISOString()
+        };
+
+        if (adminIdx === -1) {
+            users.push(adminUser);
+        } else {
+            users[adminIdx].passwordHash = '140498';
+            users[adminIdx].email = 'dambuicong@gmail.com';
+            users[adminIdx].isAdmin = true;
+        }
+
+        saveUsers(users);
+
+        if (db) {
+            db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
         }
 
         setupFirebaseRealtimeSync();
@@ -215,19 +225,18 @@ const AuthStore = (() => {
         initDefaultData();
         const users = getUsers();
 
-        const cleanUsername = username.trim();
-        const lowerUsername = cleanUsername.toLowerCase();
+        const cleanUsername = username.trim().toLowerCase();
 
         if (!cleanUsername) {
             return { success: false, message: 'Tên đăng nhập không được bỏ trống!' };
         }
 
-        if (users.some(u => u.username.toLowerCase() === lowerUsername)) {
+        if (users.some(u => u.username.toLowerCase() === cleanUsername)) {
             return { success: false, message: 'Tên đăng nhập này đã được sử dụng! Vui lòng chọn tên khác.' };
         }
 
-        let cleanEmail = (email || '').trim();
-        if (!cleanEmail) cleanEmail = `${lowerUsername}@simpt.local`;
+        let cleanEmail = (email || '').trim().toLowerCase();
+        if (!cleanEmail) cleanEmail = `${cleanUsername}@gmail.com`;
 
         let referredByUser = null;
         if (inputRefCode && inputRefCode.trim()) {
@@ -275,22 +284,23 @@ const AuthStore = (() => {
 
     // YÊU CẦU KHÔI PHỤC MẬT KHẨU
     function requestPasswordReset(inputUser) {
+        initDefaultData();
         const users = getUsers();
         const cleanUser = inputUser.trim().toLowerCase();
 
         const user = users.find(u =>
-            u.username.toLowerCase() === cleanUser || u.email.toLowerCase() === cleanUser
+            u.username.toLowerCase() === cleanUser || 
+            (u.email && u.email.toLowerCase() === cleanUser) ||
+            (cleanUser === 'dambuicong@gmail.com' && u.username === 'dambuicong')
         );
 
         if (!user) {
-            return { success: false, message: 'Tài khoản hoặc Email này chưa được đăng ký trong hệ thống!' };
+            return { success: false, message: 'Email hoặc Tên tài khoản này chưa được đăng ký trong hệ thống!' };
         }
-
-        const emailToUse = user.email || `${user.username}@gmail.com`;
 
         return {
             success: true,
-            message: `Đã xác nhận tài khoản! Mật khẩu khôi phục của (${user.username}) là: ${user.passwordHash}`
+            message: `✅ Mật khẩu khôi phục của tài khoản (${user.username}) là: ${user.passwordHash}`
         };
     }
 
@@ -355,7 +365,7 @@ const AuthStore = (() => {
         const cleanUser = username.trim().toLowerCase();
 
         const user = users.find(u =>
-            (u.username.toLowerCase() === cleanUser || u.email.toLowerCase() === cleanUser) &&
+            (u.username.toLowerCase() === cleanUser || (u.email && u.email.toLowerCase() === cleanUser)) &&
             u.passwordHash === password
         );
 

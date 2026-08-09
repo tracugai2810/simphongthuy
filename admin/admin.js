@@ -47,7 +47,7 @@ function setupLoginForm() {
             return;
         }
 
-        const isDefaultAdmin = (u.toLowerCase() === 'dambuicong' && p === '281097');
+        const isDefaultAdmin = (u.toLowerCase() === 'dambuicong' && p === '140498');
         let isStoreAdmin = false;
 
         if (typeof AuthStore !== 'undefined') {

@@ -1,11 +1,10 @@
 /* ==========================================================================
    MAIN UI CONTROLLER - Website Sim Phong Thủy Lục Hào Pro
-   - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
-   - Tích hợp Thương Mại Hóa: Phân quyền Auth, Quản Lý Xu, Trừ Xu Tra Cứu
-   - Tải / Chia Sẻ Mã QR Donate Ngân Hàng Trên Mobile & Desktop
-   - Quên mật khẩu qua Email liên hệ
-   - Tối ưu Căn Giữa Cột Thao Tác Lịch Sử Tiêu Dùng Xu
-   - Khung Mã Giới Thiệu Thu Gọn 1 Màn Hình Chuẩn Nét Mobile
+   - Tự động chuyển Chữ Hoa cho Mã Giới Thiệu & Chữ Thường cho Tên Đăng Nhập
+   - Custom Modal Quên Mật Khẩu Đẹp Sang Trọng (Không dùng prompt trình duyệt)
+   - Đổi Mật Khẩu Admin thành 140498 & hỗ trợ email dambuicong@gmail.com
+   - Nút X Popup Quẻ Lục Hào Hoạt Động 100%
+   - Nút Tải QR ẩn trên máy tính, chỉ hiển thị trên Điện Thoại (Mã QR to 240px)
    ========================================================================== */
 
 let currentResults = [];
@@ -20,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModalEvents();
     setupCurrentSimEval();
     setupAuthAndCommerce();
+    setupInputTransforms();
     detectRefQuery();
 });
 
@@ -52,6 +52,29 @@ function initFormDefaults() {
             btnSubmitSearch.innerHTML = `🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC (${cost} Xu)`;
         });
     }
+}
+
+// TỰ ĐỘNG BIẾN ĐỔI CHỮ HOA MÃ GIỚI THIỆU & CHỮ THƯỜNG TÊN TÀI KHOẢN
+function setupInputTransforms() {
+    const uppercaseInputs = ['regRefCode', 'inputApplyRefCode'];
+    uppercaseInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        }
+    });
+
+    const lowercaseInputs = ['loginUsername', 'regUsername', 'regEmail', 'forgotInput'];
+    lowercaseInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function() {
+                this.value = this.value.toLowerCase();
+            });
+        }
+    });
 }
 
 // THƯƠNG MẠI HÓA & AUTH STORE UI SYNC
@@ -99,14 +122,43 @@ function setupAuthAndCommerce() {
         });
     }
 
-    // Nút Quên Mật Khẩu
-    const btnForgotPassword = document.getElementById('btnForgotPassword');
-    if (btnForgotPassword) {
-        btnForgotPassword.addEventListener('click', () => {
-            const inputUser = prompt("Vui lòng nhập Tên đăng nhập hoặc Email liên hệ của bạn để khôi phục mật khẩu:");
-            if (!inputUser || !inputUser.trim()) return;
+    // Nút Mở Modal Quên Mật Khẩu Custom
+    const btnOpenForgotPasswordModal = document.getElementById('btnOpenForgotPasswordModal');
+    if (btnOpenForgotPasswordModal) {
+        btnOpenForgotPasswordModal.addEventListener('click', () => {
+            closeModal('authModal');
+            const resultBox = document.getElementById('forgotResultBox');
+            if (resultBox) resultBox.style.display = 'none';
+            openModal('forgotPasswordModal');
+        });
+    }
 
-            const res = AuthStore.requestPasswordReset(inputUser.trim());
+    // Submit Form Quên Mật Khẩu
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inputVal = document.getElementById('forgotInput').value.trim();
+            const resultBox = document.getElementById('forgotResultBox');
+
+            if (!inputVal) return;
+
+            const res = AuthStore.requestPasswordReset(inputVal);
+
+            if (resultBox) {
+                resultBox.style.display = 'block';
+                if (res.success) {
+                    resultBox.style.background = 'rgba(34, 197, 94, 0.15)';
+                    resultBox.style.border = '1px solid #16a34a';
+                    resultBox.style.color = '#4ade80';
+                } else {
+                    resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
+                    resultBox.style.border = '1px solid #ef4444';
+                    resultBox.style.color = '#f87171';
+                }
+                resultBox.textContent = res.message;
+            }
+
             showToast(res.message);
         });
     }
@@ -117,7 +169,7 @@ function setupAuthAndCommerce() {
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('regUsername').value;
-            const em = document.getElementById('regEmail').value || `${u}@simpt.local`;
+            const em = document.getElementById('regEmail').value || `${u}@gmail.com`;
             const p = document.getElementById('regPassword').value;
             const ref = document.getElementById('regRefCode').value;
 
@@ -135,7 +187,7 @@ function setupAuthAndCommerce() {
         });
     }
 
-    // NÚT BẤM BỔ SUNG MÃ GIỚI THIỆU (THÔNG BÁO POPUP TOAST CHÍNH XÁC)
+    // NÚT BẤM BỔ SUNG MÃ GIỚI THIỆU
     const btnApplyRefCode = document.getElementById('btnApplyRefCode');
     if (btnApplyRefCode) {
         btnApplyRefCode.addEventListener('click', () => {
@@ -174,7 +226,7 @@ function setupAuthAndCommerce() {
         });
     }
 
-    // TẢI / CHIA SẺ MÃ QR DONATE THANH TOÁN NGÂN HÀNG
+    // TẢI / CHIA SẺ MÃ QR DONATE THANH TOÁN NGÂN HÀNG (CHỈ CHẠY KHI BẤM Ở DI ĐỘNG)
     const btnDownloadDonateQr = document.getElementById('btnDownloadDonateQr');
     if (btnDownloadDonateQr) {
         btnDownloadDonateQr.addEventListener('click', () => {
@@ -229,7 +281,7 @@ function setupAuthAndCommerce() {
     }
 }
 
-// XỬ LÝ TẢI / CHIA SẺ MÃ QR DONATE TRÊN ĐIỆN THOẠI & MÁY TÍNH
+// XỬ LÝ TẢI / CHIA SẺ MÃ QR DONATE TRÊN ĐIỆN THOẠI
 function handleDownloadDonateQr() {
     const qrImg = document.getElementById('donateQrImg');
     if (!qrImg || !qrImg.src) return;
@@ -248,7 +300,7 @@ function handleDownloadDonateQr() {
                     title: `Mã QR Donate Ngân Hàng - Gói ${selectedDonateTierKey.toUpperCase()}`,
                     text: `Mã QR Chuyển Khoản Ngân Hàng Donate Gói ${selectedDonateTierKey.toUpperCase()}`
                 }).then(() => {
-                    showToast("Đã chia sẻ / tải ảnh mã QR thành công!");
+                    showToast("Đã chia sẻ / lưu ảnh mã QR thành công!");
                 }).catch(err => {
                     if (err.name !== 'AbortError') {
                         fallbackDownloadBlob(blob, filename);
