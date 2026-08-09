@@ -17,8 +17,8 @@
     <link rel="canonical" href="http://simphongthuy.io.vn/">
 
     <!-- Favicon Icons -->
-    <link rel="icon" type="image/png" href="favicon.png?v=20260809_v9">
-    <link rel="apple-touch-icon" href="favicon.png?v=20260809_v9">
+    <link rel="icon" type="image/png" href="favicon.png?v=20260809_v10">
+    <link rel="apple-touch-icon" href="favicon.png?v=20260809_v10">
 
     <!-- Open Graph / Facebook / Zalo -->
     <meta property="og:type" content="website">
@@ -110,7 +110,7 @@
     </script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=20260809_v9">
+    <link rel="stylesheet" href="css/styles.css?v=20260809_v10">
 
     <!-- html2canvas cho xuất & tải ảnh quẻ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -164,47 +164,66 @@
                 <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.5; max-width: 820px; margin: 0 auto;">Ứng dụng Dịch Học Lục Hào lập quẻ Kinh Dịch, tính Can Chi ngày sinh, chấm điểm Dụng Thần & Hào Thế vượng trợ vận mệnh chuẩn xác tại http://simphongthuy.io.vn.</p>
             </section>
 
-            <!-- Form Tra Cứu SIM Hiện Tại -->
+            <!-- FORM CARD 1: THÔNG TIN KHÁCH HÀNG & NHU CẦU + ĐÁNH GIÁ SIM ĐANG DÙNG -->
             <section class="form-card">
-                <h2 class="section-title">📱 Tra Cứu & Lập Quẻ SIM Đang Dùng</h2>
-                <div class="current-sim-group" style="margin-top: 10px;">
-                    <div class="form-grid" style="margin-bottom: 10px;">
-                        <div class="form-group" style="grid-column: span 2;">
-                            <label for="currentSimInput">Số Điện Thoại Cần Tra Cứu:</label>
-                            <input type="tel" id="currentSimInput" class="form-control" placeholder="Ví dụ: 0981276667..." maxlength="11">
-                        </div>
-                        <div class="form-group">
-                            <label for="currentSimBirthDate">Ngày Giờ Sinh:</label>
-                            <input type="datetime-local" id="currentSimBirthDate" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="currentSimGender">Giới Tính:</label>
-                            <select id="currentSimGender" class="form-control">
-                                <option value="male">Nam</option>
-                                <option value="female">Nữ</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="grid-column: span 2;">
-                            <label for="currentSimPurpose">Mục Đích Cầu:</label>
-                            <select id="currentSimPurpose" class="form-control">
-                                <option value="cautai">💰 Cầu Tài Lộc (Kinh doanh, Lộc tài)</option>
-                                <option value="cauquan">👔 Cầu Quan Lộc (Thăng tiến, Công danh)</option>
-                                <option value="suckhoe">🏥 Sức Khỏe & Bình An</option>
-                                <option value="concai">👶 Con Cái & Gia Đạo</option>
-                                <option value="honnhan">❤️ Tình Duyên & Hôn Nhân</option>
-                            </select>
+                <h2 class="section-title">📌 1. Thông Tin Khách Hàng & Nhu Cầu</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="birthDate">📅 Ngày & Giờ sinh (Dương lịch):</label>
+                        <input type="datetime-local" id="birthDate" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>👤 Giới tính:</label>
+                        <div style="display: flex; gap: 16px; align-items: center; height: 42px; padding-left: 4px;">
+                            <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: #f1f5f9; font-weight: 600;">
+                                <input type="radio" name="genderRadio" value="male" checked style="accent-color: #d97706; width: 16px; height: 16px;"> Nam
+                            </label>
+                            <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: #f1f5f9; font-weight: 600;">
+                                <input type="radio" name="genderRadio" value="female" style="accent-color: #d97706; width: 16px; height: 16px;"> Nữ
+                            </label>
                         </div>
                     </div>
-                    <button type="button" id="btnEvalCurrentSim" class="btn-eval-current">
-                        🔮 Xem Quẻ SIM Hiện Tại (1 Xu)
-                    </button>
+
+                    <div class="form-group">
+                        <label for="purpose">🎯 Việc muốn cầu (Mong muốn):</label>
+                        <select id="purpose" class="form-control">
+                            <option value="cautai">💰 Cầu Tài Lộc (Kinh doanh, Lộc tài)</option>
+                            <option value="cauquan">👔 Cầu Quan Lộc (Thăng tiến, Công danh)</option>
+                            <option value="suckhoe">🏥 Sức Khỏe & Bình An</option>
+                            <option value="concai">👶 Con Cái & Gia Đạo</option>
+                            <option value="honnhan">❤️ Tình Duyên & Hôn Nhân</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 3;">
+                        <label for="limitSelect">🔢 Số lượng SIM cần tìm (Số Xu):</label>
+                        <select id="limitSelect" class="form-control" style="max-width: 380px;">
+                            <option value="5">Top 5 SIM Đại Cát (2 Xu - Mặc định)</option>
+                            <option value="15" selected>Top 15 SIM Đại Cát (6 Xu)</option>
+                            <option value="30">Top 30 SIM Đại Cát (12 Xu)</option>
+                            <option value="50">Top 50 SIM Đại Cát (20 Xu)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Khung Đánh Giá SIM Đang Dùng (Hiện tại) -->
+                <div class="current-sim-group">
+                    <label style="font-weight: 800; display: block; margin-bottom: 6px;">📱 Đánh Giá SIM Đang Dùng (Hiện tại):</label>
+                    <div class="current-sim-input-wrapper">
+                        <input type="tel" id="currentSimInput" class="form-control" placeholder="Nhập SĐT đang dùng (ví dụ: 0357138201)..." maxlength="11" style="flex: 1;">
+                        <button type="button" id="btnEvalCurrentSim" class="btn-eval-current">
+                            🔍 Đánh Giá SIM (1 Xu)
+                        </button>
+                    </div>
                 </div>
                 <div id="currentSimResultArea" class="result-area" style="display: none; margin-top: 14px;"></div>
             </section>
 
-            <!-- Section Đãi Lọc SIM Số Đẹp -->
+            <!-- FORM CARD 2: ĐÃI LỌC SIM SỐ ĐẸP -->
             <section class="form-card">
-                <h2 class="section-title">✨ Đãi Lọc SIM Phong Thủy Lục Hào Theo Ngày Sinh</h2>
+                <h2 class="section-title">✨ 2. Đãi Lọc SIM Phong Thủy Lục Hào Theo Ngày Sinh</h2>
                 
                 <!-- Khung Đỏ Đô 10 Ô Vuông Đặc Trưng -->
                 <div class="digit-section">
@@ -244,40 +263,6 @@
                     </div>
                 </div>
 
-                <!-- Form Grid Thông Tin Bắt Buộc -->
-                <div class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="birthDate">Ngày Giờ Sinh (Âm/Dương Lịch):</label>
-                        <input type="datetime-local" id="birthDate" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Giới Tính:</label>
-                        <select id="gender" class="form-control">
-                            <option value="male">Nam</option>
-                            <option value="female">Nữ</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="purpose">Mục Đích Cầu:</label>
-                        <select id="purpose" class="form-control">
-                            <option value="cautai">💰 Cầu Tài Lộc (Kinh doanh, Lộc tài)</option>
-                            <option value="cauquan">👔 Cầu Quan Lộc (Thăng tiến, Công danh)</option>
-                            <option value="suckhoe">🏥 Sức Khỏe & Bình An</option>
-                            <option value="concai">👶 Con Cái & Gia Đạo</option>
-                            <option value="honnhan">❤️ Tình Duyên & Hôn Nhân</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="limitSelect">Số Lượng SIM:</label>
-                        <select id="limitSelect" class="form-control">
-                            <option value="5">Top 5 SIM (2 Xu)</option>
-                            <option value="15" selected>Top 15 SIM (6 Xu)</option>
-                            <option value="30">Top 30 SIM (12 Xu)</option>
-                            <option value="50">Top 50 SIM (20 Xu)</option>
-                        </select>
-                    </div>
-                </div>
-
                 <button type="button" id="btnSubmitSearch" class="btn-submit">
                     🔮 Gợi Ý SIM Số Đẹp (6 Xu)
                 </button>
@@ -309,7 +294,7 @@
                 <div class="seo-faq-grid">
                     <article class="seo-faq-card">
                         <h4>🌟 Chuẩn Xác Theo Ngày Giờ Sinh</h4>
-                        <p>Hệ thống tự động lập quẻ Kinh Dịch dựa trên chính xác Can Chi ngày giờ sinh của bạn, giúp tìm ra dãy số SIM có tần số năng lượng đồng điệu với bản mệnh.</p>
+                        <p>Hệ thống tự động lập quẻ Kinh Dịch dựa trên Can Chi ngày giờ sinh chính xác của bạn, giúp tìm ra dãy số SIM có tần số năng lượng đồng điệu với bản mệnh.</p>
                     </article>
                     <article class="seo-faq-card">
                         <h4>🚀 Đãi Lọc Tự Động Nhanh Chóng</h4>
@@ -605,9 +590,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <!-- Scripts -->
-    <script src="js/auth-store.js?v=20260809_v9"></script>
-    <script src="js/luchao-core.js?v=20260809_v9"></script>
-    <script src="js/sim-engine.js?v=20260809_v9"></script>
-    <script src="js/app.js?v=20260809_v9"></script>
+    <script src="js/auth-store.js?v=20260809_v10"></script>
+    <script src="js/luchao-core.js?v=20260809_v10"></script>
+    <script src="js/sim-engine.js?v=20260809_v10"></script>
+    <script src="js/app.js?v=20260809_v10"></script>
 </body>
 </html>

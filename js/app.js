@@ -550,12 +550,23 @@ function setupDigitBoxes() {
     }
 }
 
-function setupFormEvents() {
-    const form = document.getElementById('simForm');
-    if (!form) return;
+function getFormInputs() {
+    const birthDateVal = document.getElementById('birthDate')?.value || '';
+    const genderRadio = document.querySelector('input[name="genderRadio"]:checked');
+    const genderSelect = document.getElementById('gender');
+    const gender = genderRadio ? genderRadio.value : (genderSelect ? genderSelect.value : 'male');
+    const purpose = document.getElementById('purpose')?.value || document.getElementById('purposeSelect')?.value || 'cautai';
+    const limitVal = parseInt(document.getElementById('limitSelect')?.value) || 5;
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    return { birthDateVal, gender, purpose, limitVal };
+}
+
+function setupFormEvents() {
+    const btnSubmitSearch = document.getElementById('btnSubmitSearch');
+    const form = document.getElementById('simForm');
+
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
 
         const user = AuthStore.getCurrentUser();
         if (!user) {
@@ -564,7 +575,13 @@ function setupFormEvents() {
             return;
         }
 
-        const limitVal = parseInt(document.getElementById('limitSelect').value) || 5;
+        const { birthDateVal } = getFormInputs();
+        if (!birthDateVal) {
+            showToast("Vui lòng chọn ngày & giờ sinh!");
+            return;
+        }
+
+        const { limitVal } = getFormInputs();
         let cost = 2;
         if (limitVal === 5) cost = 2;
         if (limitVal === 15) cost = 6;
@@ -578,7 +595,10 @@ function setupFormEvents() {
         };
 
         executePendingActionWithConfirm();
-    });
+    };
+
+    if (btnSubmitSearch) btnSubmitSearch.addEventListener('click', handleSearch);
+    if (form) form.addEventListener('submit', handleSearch);
 }
 
 function setupCurrentSimEval() {
@@ -593,17 +613,24 @@ function setupCurrentSimEval() {
             return;
         }
 
-        const inputSim = document.getElementById('evalCurrentSim').value.trim();
+        const { birthDateVal } = getFormInputs();
+        if (!birthDateVal) {
+            showToast("Vui lòng chọn ngày & giờ sinh trước!");
+            return;
+        }
+
+        const inputEl = document.getElementById('currentSimInput') || document.getElementById('evalCurrentSim');
+        const inputSim = inputEl ? inputEl.value.trim() : '';
         const rawSim = inputSim.replace(/[^0-9]/g, '');
 
         if (!rawSim || rawSim.length !== 10) {
-            showToast("Vui lòng nhập SĐT hợp lệ chuẩn 10 chữ số!");
+            showToast("Vui lòng nhập SĐT đang dùng hợp lệ chuẩn 10 chữ số!");
             return;
         }
 
         pendingAction = {
             type: 'evalCurrent',
-            cost: 2,
+            cost: 1,
             actionName: `Đánh Giá SIM Đang Dùng (${formatSimNumber(rawSim)})`
         };
 
@@ -626,23 +653,22 @@ function executePendingActionWithConfirm() {
         return;
     }
 
-    const confirmText = document.getElementById('confirmDeductText');
-    if (confirmText) {
-        confirmText.innerHTML = `
-            Thao tác <strong>${pendingAction.actionName}</strong> sẽ tiêu tốn <strong style="color:#ffd700;">${pendingAction.cost} Xu</strong>.<br/>
-            Số dư hiện tại của bạn: <strong>${user.coins} Xu</strong> (Sau khi trừ còn: <strong>${user.coins - pendingAction.cost} Xu</strong>).
-        `;
-    }
+    const confirmActionName = document.getElementById('confirmDeductActionName');
+    const confirmCost = document.getElementById('confirmDeductCost');
+    const confirmBalance = document.getElementById('confirmDeductBalance');
+
+    if (confirmActionName) confirmActionName.textContent = `Thao tác: ${pendingAction.actionName}`;
+    if (confirmCost) confirmCost.textContent = `${pendingAction.cost} Xu`;
+    if (confirmBalance) confirmBalance.textContent = `${user.coins} Xu`;
 
     openModal('confirmDeductModal');
 }
 
 function executeEvalCurrentSim() {
-    const inputSim = document.getElementById('evalCurrentSim').value.trim();
+    const inputEl = document.getElementById('currentSimInput') || document.getElementById('evalCurrentSim');
+    const inputSim = inputEl ? inputEl.value.trim() : '';
     const rawSim = inputSim.replace(/[^0-9]/g, '');
-    const birthDateVal = document.getElementById('birthDate').value;
-    const gender = document.querySelector('input[name="gender"]:checked').value;
-    const purpose = document.getElementById('purposeSelect').value;
+    const { birthDateVal, gender, purpose } = getFormInputs();
 
     const cal = calculateCanChi(birthDateVal);
     const hexData = calculateSimHexagram(rawSim, cal);
@@ -654,47 +680,46 @@ function executeEvalCurrentSim() {
 
     const evaluation = evaluateSimFengShui(rawSim, hexData, cal, purpose, gender);
 
-    const currentSimBox = document.getElementById('currentSimResultBox');
+    const currentSimArea = document.getElementById('currentSimResultArea') || document.getElementById('currentSimResultBox');
     const formattedSim = formatSimNumber(rawSim);
     currentSimEvalItem = { sim: rawSim, hexData, evaluation };
 
-    currentSimBox.style.display = 'block';
-    currentSimBox.innerHTML = `
-        <div class="sim-card" style="border: 2px solid var(--gold-dark); background: #1a2438;">
-            <div class="sim-info">
-                <div style="font-size: 0.95rem; color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;">
-                    📲 KẾT QUẢ ĐÁNH GIÁ SIM ĐANG DÙNG:
-                </div>
-                <div class="sim-number-display" style="font-size: 1.8rem;">
-                    <span class="highlight">${formattedSim}</span>
+    if (currentSimArea) {
+        currentSimArea.style.display = 'block';
+        currentSimArea.innerHTML = `
+            <div class="sim-card" style="border: 2px solid var(--gold-dark); background: #1a2438; margin-top: 14px;">
+                <div class="sim-info">
+                    <div style="font-size: 0.95rem; color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;">
+                        📲 KẾT QUẢ ĐÁNH GIÁ SIM ĐANG DÙNG:
+                    </div>
+                    <div class="sim-number-display" style="font-size: 1.8rem;">
+                        <span class="highlight">${formattedSim}</span>
+                    </div>
+
+                    <div class="sim-badge-group">
+                        <span class="badge badge-score">${evaluation.score}/100 - ${evaluation.grade}</span>
+                        <span class="badge badge-hex">Quẻ Chủ: ${hexData.mainName} → ${hexData.changedName}</span>
+                    </div>
+
+                    <ul class="sim-reasons-list">
+                        ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
                 </div>
 
-                <div class="sim-badge-group">
-                    <span class="badge badge-score">${evaluation.score}/100 - ${evaluation.grade}</span>
-                    <span class="badge badge-hex">Quẻ Chủ: ${hexData.mainName} → ${hexData.changedName}</span>
+                <div class="sim-actions">
+                    <button class="btn-action btn-view-hex" onclick="handleCurrentSimDetail()">
+                        🔍 Xem Chi Tiết
+                    </button>
                 </div>
-
-                <ul class="sim-reasons-list">
-                    ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
-                </ul>
             </div>
+        `;
 
-            <div class="sim-actions">
-                <button class="btn-action btn-view-hex" onclick="handleCurrentSimDetail()">
-                    🔍 Xem Chi Tiết
-                </button>
-            </div>
-        </div>
-    `;
-
-    currentSimBox.scrollIntoView({ behavior: 'smooth' });
+        currentSimArea.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function executeSearchSims() {
-    const birthDateVal = document.getElementById('birthDate').value;
-    const gender = document.querySelector('input[name="gender"]:checked').value;
-    const purpose = document.getElementById('purposeSelect').value;
-    const limitVal = parseInt(document.getElementById('limitSelect').value) || 5;
+    const { birthDateVal, gender, purpose, limitVal } = getFormInputs();
 
     let pattern = '0';
     for (let i = 2; i <= 10; i++) {
@@ -704,12 +729,14 @@ function executeSearchSims() {
     }
 
     const resultsContainer = document.getElementById('resultsContainer');
-    resultsContainer.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: var(--gold-primary);">
-            <div class="spinner" style="font-size: 2rem; margin-bottom: 10px;">🔮</div>
-            <p style="font-size: 1.1rem; font-weight: 600;">Đang lập quẻ Lục Hào & Tính toán Top ${limitVal} SIM Cát Tường...</p>
-        </div>
-    `;
+    if (resultsContainer) {
+        resultsContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--gold-primary);">
+                <div class="spinner" style="font-size: 2rem; margin-bottom: 10px;">🔮</div>
+                <p style="font-size: 1.1rem; font-weight: 600;">Đang lập quẻ Lục Hào & Tính toán Top ${limitVal} SIM Cát Tường...</p>
+            </div>
+        `;
+    }
 
     setTimeout(() => {
         currentResults = generateMatchingSims(pattern, birthDateVal, gender, purpose, limitVal);
