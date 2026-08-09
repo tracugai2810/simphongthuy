@@ -100,6 +100,7 @@ button, input, select, textarea, label, table, th, td {
 .coin-badge,
 .btn-earn-coins,
 .ref-badge,
+.btn-zalo-admin,
 .admin-link-btn,
 .btn-logout {
     min-height: 38px !important;
@@ -115,6 +116,19 @@ button, input, select, textarea, label, table, th, td {
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
     user-select: none !important;
+}
+
+.btn-zalo-admin {
+    background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    box-shadow: 0 3px 10px rgba(0, 136, 255, 0.4) !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-zalo-admin:hover {
+    background: linear-gradient(135deg, #3399FF 0%, #0066FF 100%) !important;
+    transform: translateY(-1px) !important;
 }
 
 .btn-auth-trigger {

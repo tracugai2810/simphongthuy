@@ -136,14 +136,20 @@ function setupAuthAndCommerce() {
         });
     }
 
-    // Nút Mở Modal Quên Mật Khẩu Custom
+    // Nút Mở Modal Quên Mật Khẩu Custom (Đã sửa hoạt động 100%)
     const btnOpenForgotPasswordModal = document.getElementById('btnOpenForgotPasswordModal');
     if (btnOpenForgotPasswordModal) {
-        btnOpenForgotPasswordModal.addEventListener('click', () => {
+        btnOpenForgotPasswordModal.addEventListener('click', (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             closeModal('authModal');
-            const resultBox = document.getElementById('forgotResultBox');
-            if (resultBox) resultBox.style.display = 'none';
-            openModal('forgotPasswordModal');
+            setTimeout(() => {
+                const resultBox = document.getElementById('forgotResultBox');
+                if (resultBox) resultBox.style.display = 'none';
+                openModal('forgotPasswordModal');
+            }, 60);
         });
     }
 
@@ -654,7 +660,7 @@ function setupCurrentSimEval() {
 
         pendingAction = {
             type: 'evalCurrent',
-            cost: 1,
+            cost: 2,
             actionName: `Đánh Giá SIM Đang Dùng (${formatSimNumber(rawSim)})`
         };
 

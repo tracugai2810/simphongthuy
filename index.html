@@ -17,8 +17,8 @@
     <link rel="canonical" href="http://simphongthuy.io.vn/">
 
     <!-- Favicon Icons -->
-    <link rel="icon" type="image/png" href="favicon.png?v=20260809_v13">
-    <link rel="apple-touch-icon" href="favicon.png?v=20260809_v13">
+    <link rel="icon" type="image/png" href="favicon.png?v=20260809_v17">
+    <link rel="apple-touch-icon" href="favicon.png?v=20260809_v17">
 
     <!-- Open Graph / Facebook / Zalo -->
     <meta property="og:type" content="website">
@@ -110,7 +110,7 @@
     </script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=20260809_v13">
+    <link rel="stylesheet" href="css/styles.css?v=20260809_v17">
 
     <!-- html2canvas cho xuất & tải ảnh quẻ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -119,7 +119,7 @@
 
     <div class="container">
 
-        <!-- Top Header Navigation Bar (Thương Mại Hóa: Đăng nhập, Số dư Xu, Kiếm Xu, Mã GT) -->
+        <!-- Top Header Navigation Bar (Thương Mại Hóa: Đăng nhập, Số dư Xu, Kiếm Xu, Mã GT, Zalo Admin) -->
         <header class="top-user-bar">
             <div class="brand-title">
                 🔮 <span>SIM PHONG THỦY LỤC HÀO</span>
@@ -127,6 +127,9 @@
 
             <!-- Giao diện khi CHƯA ĐĂNG NHẬP -->
             <div id="guestUserNav" class="user-nav-group">
+                <a href="https://zalo.me/0396154013" target="_blank" rel="noopener" class="btn-zalo-admin" title="Liên hệ Zalo Admin">
+                    💬 Zalo Admin
+                </a>
                 <button type="button" id="btnOpenAuth" class="btn-auth-trigger">
                     🔑 Đăng Nhập / Đăng Ký
                 </button>
@@ -146,6 +149,11 @@
                 <div class="ref-badge" id="btnShowRefModal" title="Bấm để sao chép link giới thiệu">
                     🎁 Mã GT: <strong id="userRefCode">---</strong>
                 </div>
+
+                <!-- Nút Zalo Admin Bổ Sung Ngay Bên Cạnh Mã GT -->
+                <a href="https://zalo.me/0396154013" target="_blank" rel="noopener" class="btn-zalo-admin" title="Liên hệ Zalo Admin">
+                    💬 Zalo Admin
+                </a>
 
                 <a href="admin/index.html" id="adminLinkBtn" class="admin-link-btn" style="display: none;" title="Trang Quản Trị Admin">
                     ⚙️ Admin
@@ -207,13 +215,13 @@
                     </div>
                 </div>
 
-                <!-- Khung Đánh Giá SIM Đang Dùng -->
+                <!-- Khung Đánh Giá SIM Đang Dùng (Đã sửa giá thành 2 Xu) -->
                 <div class="current-sim-group">
                     <label style="font-weight: 800; display: block; margin-bottom: 6px;">📱 Đánh Giá SIM Đang Dùng:</label>
                     <div class="current-sim-input-wrapper">
-                        <input type="tel" id="currentSimInput" class="form-control" placeholder="Nhập SĐT đang dùng (ví dụ: 0357138201)..." maxlength="11" style="flex: 1;">
+                        <input type="tel" id="currentSimInput" class="form-control" placeholder="Nhập SĐT đang dùng..." maxlength="11" style="flex: 1;">
                         <button type="button" id="btnEvalCurrentSim" class="btn-eval-current">
-                            🔍 Đánh Giá SIM (1 Xu)
+                            🔍 Đánh Giá SIM (2 Xu)
                         </button>
                     </div>
                 </div>
@@ -337,7 +345,7 @@
                     <input type="password" id="loginPassword" class="form-control" placeholder="Nhập mật khẩu..." required>
                 </div>
                 <div style="text-align: right; margin-bottom: 14px;">
-                    <a href="javascript:void(0)" id="btnOpenForgotPasswordModal" style="color: var(--gold-glow); font-size: 0.85rem; text-decoration: underline; font-weight: bold;">
+                    <a href="javascript:void(0)" id="btnOpenForgotPasswordModal" style="color: var(--gold-glow); font-size: 0.88rem; text-decoration: underline; font-weight: bold; cursor: pointer;">
                         🔒 Quên mật khẩu?
                     </a>
                 </div>
@@ -346,7 +354,7 @@
                 </button>
             </form>
 
-            <!-- Form Đăng Ký -->
+            <!-- Form Đăng Ký (Đã sửa nhãn gọn gàng theo Ảnh 4) -->
             <form id="registerForm" class="auth-form-content" style="display: none;">
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Tên đăng nhập:</label>
@@ -357,8 +365,8 @@
                     <input type="password" id="regPassword" class="form-control" placeholder="Tạo mật khẩu..." required>
                 </div>
                 <div class="form-group" style="margin-bottom: 16px;">
-                    <label style="color: var(--gold-glow); font-size: 0.86rem;">🎁 Mã người giới thiệu (Không phân biệt hoa/thường - +1 Xu):</label>
-                    <input type="text" id="regRefCode" class="form-control" placeholder="Nhập mã giới thiệu (VD: SIM123 hoặc sim123)..." style="text-transform: uppercase;">
+                    <label style="color: var(--gold-glow); font-size: 0.88rem;">🎁 Mã người giới thiệu (+1 Xu):</label>
+                    <input type="text" id="regRefCode" class="form-control" placeholder="NHẬP MÃ GIỚI THIỆU (VD: SIM123)..." style="text-transform: uppercase;">
                 </div>
                 <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
                     🎁 Đăng Ký (Nhận Xu Trải Nghiệm)
@@ -367,9 +375,9 @@
         </div>
     </div>
 
-    <!-- MODAL KHÔI PHỤC MẬT KHẨU -->
+    <!-- MODAL KHÔI PHỤC MẬT KHẨU (CUSTOM MODAL ĐÃ SỬA HOẠT ĐỘNG 100%) -->
     <div id="forgotPasswordModal" class="modal-overlay">
-        <div class="modal-content auth-modal-box" style="max-width: 440px !important; text-align: center;">
+        <div class="modal-content auth-modal-box" style="max-width: 460px !important; text-align: center;">
             <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('forgotPasswordModal')">&times;</button>
             <div style="margin-bottom: 16px;">
                 <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
@@ -379,8 +387,8 @@
                 </p>
             </div>
             
-            <a href="https://zalo.me/0396154013" target="_blank" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4); font-size: 0.95rem; padding: 12px; border-radius: 10px;">
-                💬 Zalo Admin
+            <a href="https://zalo.me/0396154013" target="_blank" rel="noopener" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4); font-size: 0.95rem; padding: 12px; border-radius: 10px;">
+                💬 Chát Zalo Admin Hỗ Trợ
             </a>
         </div>
     </div>
@@ -405,7 +413,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: DONATE NẠP XU (ĐÃ TỐI ƯU TO RÕ ĐẸP) -->
+    <!-- MODAL 3: DONATE NẠP XU (ĐÃ SỬA CHỈ GIỮ LẠI DÒNG NỘI DUNG CK & NÚT ZALO ADMIN) -->
     <div id="donateModal" class="modal-overlay">
         <div class="modal-content compact-donate-modal">
             <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('donateModal')">&times;</button>
@@ -439,19 +447,11 @@
                 <img id="donateQrImg" src="50k.jfif" alt="QR Code Donate 50k" class="qr-code-img">
             </div>
 
-            <!-- Khung Thông Tin Nội Dung Chuyển Khoản -->
-            <div class="donate-info-box">
-                <div class="info-row-item">
-                    <span class="info-label">Ngân Hàng / STK:</span>
-                    <span class="info-val">MB BANK - 0396154013</span>
-                </div>
-                <div class="info-row-item">
-                    <span class="info-label">Chủ Tài Khoản:</span>
-                    <span class="info-val">DƯƠNG VĂN CÔNG</span>
-                </div>
-                <div class="info-row-item highlight-memo">
-                    <span class="info-label">Nội Dung CK:</span>
-                    <span id="donateMemoText" class="info-val-memo">DONATE ADMIN</span>
+            <!-- Khung Thông Tin Nội Dung Chuyển Khoản (Chỉ Giữ Lại Dòng Nội Dung) -->
+            <div class="donate-info-box" style="text-align: center; padding: 10px;">
+                <div class="info-row-item highlight-memo" style="justify-content: center; font-size: 1.05rem;">
+                    <span class="info-label" style="font-weight: 800; color: #ffd700;">Nội Dung:</span>
+                    <span id="donateMemoText" class="info-val-memo" style="font-weight: 900; font-size: 1.1rem; color: #4ade80;">DONATE ADMIN</span>
                 </div>
             </div>
 
@@ -465,10 +465,17 @@
                     ✅ Tôi Đã Donate
                 </button>
             </div>
+
+            <!-- Nút Chát Zalo Admin Hỗ Trợ Donate -->
+            <div style="margin-top: 8px;">
+                <a href="https://zalo.me/0396154013" target="_blank" rel="noopener" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); font-size: 0.95rem; padding: 10px; border-radius: 10px;">
+                    💬 Chát Zalo Admin Hỗ Trợ
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL 4: CHIA SẺ MÃ GIỚI THIỆU -->
+    <!-- MODAL 4: CHIA SẺ MÃ GIỚI THIỆU (ĐÃ TỐI ƯU CĂN GIỮA TO RÕ CHO MẠNG XÃ HỘI) -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content compact-ref-modal">
             <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('refModal')">&times;</button>
@@ -481,11 +488,11 @@
                 </p>
             </div>
 
-            <!-- Khung Thẻ Hiện Mã Giới Thiệu To Sang Trọng -->
-            <div class="ref-card-box">
-                <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 600; margin-bottom: 4px;">MÃ GIỚI THIỆU CỦA BẠN:</div>
-                <div id="refCodeBig" class="ref-code-display">---</div>
-                <button type="button" id="btnCopyRefLink" class="btn-copy-ref">
+            <!-- Khung Thẻ Hiện Mã Giới Thiệu Căn Giữa To Đẹp Cực Sang Trọng -->
+            <div class="ref-card-box" style="text-align: center; padding: 20px 16px;">
+                <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">MÃ GIỚI THIỆU CỦA BẠN:</div>
+                <div id="refCodeBig" class="ref-code-display" style="font-size: 2.5rem; font-weight: 900; color: #ffd700; letter-spacing: 4px; margin: 8px 0 16px 0; text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);">---</div>
+                <button type="button" id="btnCopyRefLink" class="btn-copy-ref" style="width: 100%; padding: 14px 20px; font-size: 1rem; font-weight: 800; border-radius: 12px;">
                     📋 Sao Chép Link Giới Thiệu
                 </button>
             </div>
@@ -587,9 +594,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <!-- Scripts -->
-    <script src="js/auth-store.js?v=20260809_v16"></script>
-    <script src="js/luchao-core.js?v=20260809_v16"></script>
-    <script src="js/sim-engine.js?v=20260809_v16"></script>
-    <script src="js/app.js?v=20260809_v16"></script>
+    <script src="js/auth-store.js?v=20260809_v17"></script>
+    <script src="js/luchao-core.js?v=20260809_v17"></script>
+    <script src="js/sim-engine.js?v=20260809_v17"></script>
+    <script src="js/app.js?v=20260809_v17"></script>
 </body>
 </html>
