@@ -25,7 +25,7 @@
             <!-- Giao diện khi CHƯA ĐĂNG NHẬP -->
             <div id="guestUserNav" class="user-nav-group">
                 <button type="button" id="btnOpenAuth" class="btn-auth-trigger">
-                    🔑 Đăng Nhập / Đăng Ký
+                    🔑 Đăng nhập / Đăng ký
                 </button>
             </div>
 
@@ -49,7 +49,7 @@
                 </a>
 
                 <button type="button" id="btnLogout" class="btn-logout" title="Đăng Xuất">
-                    🚪 Đăng Xuất
+                    🚪 Đăng xuất
                 </button>
             </div>
         </header>
@@ -57,7 +57,7 @@
         <!-- Form Nhập Thông Tin Khách Hàng -->
         <div class="form-card">
             <div class="section-title">
-                <span>📌</span> 1. Thông Tin Khách Hàng & Nhu Cầu
+                <span>📌</span> 1. Thông tin cá nhân
             </div>
 
             <form id="simForm">
@@ -110,7 +110,7 @@
                         <div class="current-sim-input-wrapper">
                             <input type="text" id="evalCurrentSim" class="form-control" placeholder="Nhập SĐT đang dùng...">
                             <button type="button" id="btnEvalCurrentSim" class="btn-eval-current">
-                                🔍 Đánh Giá SIM (2 Xu)
+                                🔍 Đánh giá SIM (2 Xu)
                             </button>
                         </div>
                     </div>
@@ -160,9 +160,9 @@
                     </div>
                 </div>
 
-                <!-- Nút Submit Tìm SIM Mới -->
+                <!-- Nút Submit Tìm SIM Mới (Chữ hoa đầu câu, chữ SIM giữ nguyên) -->
                 <button type="submit" id="btnSubmitSearch" class="btn-submit">
-                    🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC (2 Xu)
+                    🔮 Gợi ý list SIM cát tường dịch học (2 Xu)
                 </button>
             </form>
         </div>
@@ -173,7 +173,7 @@
         <!-- Khung Kết Quả Gợi Ý SIM Mới -->
         <div id="resultsHeader" class="results-header" style="display: none;">
             <div class="section-title" style="border: none; margin: 0;">
-                <span>✨</span> Danh Sách SIM Phù Hợp Đã Lập Quẻ
+                <span>✨</span> Danh sách SIM phù hợp đã lập quẻ
             </div>
             <div id="resultCount" class="sim-badge-group"></div>
         </div>
@@ -182,17 +182,17 @@
 
     </div>
 
-    <!-- MODAL 1: ĐĂNG NHẬP / ĐĂNG KÝ (Tên tài khoản ghi thường, Mã GT ghi hoa) -->
+    <!-- MODAL 1: ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="authModal" class="modal-overlay">
         <div class="modal-content auth-modal-box">
             <span class="modal-close" onclick="closeModal('authModal')">&times;</span>
             
             <div class="auth-tabs">
                 <button type="button" class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">
-                    🔑 Đăng Nhập
+                    🔑 Đăng nhập
                 </button>
                 <button type="button" class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">
-                    ✨ Đăng Ký (Tặng +1 Xu)
+                    ✨ Đăng ký (Tặng +1 Xu)
                 </button>
             </div>
 
@@ -212,7 +212,7 @@
                     </a>
                 </div>
                 <button type="submit" class="btn-submit">
-                    🚀 ĐĂNG NHẬP NGAY
+                    🚀 Đăng nhập ngay
                 </button>
             </form>
 
@@ -235,19 +235,19 @@
                     <input type="text" id="regRefCode" class="form-control" placeholder="Nhập mã giới thiệu (VD: SIM123 hoặc sim123)..." style="text-transform: uppercase;">
                 </div>
                 <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
-                    🎁 ĐĂNG KÝ (NHẬN XU TRẢI NGHIỆM)
+                    🎁 Đăng ký (Nhận Xu trải nghiệm)
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL KHÔI PHỤC MẬT KHẨU TỰ THIẾT KẾ ĐẸP MẮT (KHÔNG DÙNG PROMPT BẢNG TRÌNH DUYỆT) -->
+    <!-- MODAL KHÔI PHỤC MẬT KHẨU -->
     <div id="forgotPasswordModal" class="modal-overlay">
         <div class="modal-content auth-modal-box" style="max-width: 440px !important;">
             <span class="modal-close" onclick="closeModal('forgotPasswordModal')">&times;</span>
             <div style="text-align: center; margin-bottom: 14px;">
                 <div style="font-size: 2.2rem; margin-bottom: 4px;">🔒</div>
-                <h3 style="color: var(--gold-glow); font-size: 1.2rem;">KHÔI PHỤC MẬT KHẨU</h3>
+                <h3 style="color: var(--gold-glow); font-size: 1.2rem;">Khôi phục mật khẩu</h3>
                 <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 4px;">
                     Nhập Email liên hệ hoặc Tên tài khoản để lấy lại mật khẩu
                 </p>
@@ -259,7 +259,7 @@
                 </div>
                 <div id="forgotResultBox" style="display: none; margin-bottom: 14px; padding: 10px; border-radius: 8px; font-size: 0.88rem; font-weight: bold; text-align: center; line-height: 1.5;"></div>
                 <button type="submit" class="btn-submit">
-                    🚀 LẤY LẠI MẬT KHẨU
+                    🚀 Lấy lại mật khẩu
                 </button>
             </form>
         </div>
@@ -271,36 +271,36 @@
             <span class="modal-close" onclick="closeModal('confirmDeductModal')">&times;</span>
             <div style="text-align: center; padding: 10px 0;">
                 <div style="font-size: 2.8rem; margin-bottom: 8px;">💎</div>
-                <h3 style="color: var(--gold-glow); font-size: 1.3rem; margin-bottom: 12px;">XÁC NHẬN SỬ DỤNG XU</h3>
+                <h3 style="color: var(--gold-glow); font-size: 1.3rem; margin-bottom: 12px;">Xác nhận sử dụng Xu</h3>
                 <p id="confirmDeductText" style="font-size: 1rem; color: #e2e8f0; margin-bottom: 16px; line-height: 1.6;">
                     Thao tác này sẽ tiêu tốn <strong>2 Xu</strong>.
                 </p>
                 <div style="display: flex; gap: 12px; justify-content: center;">
                     <button type="button" class="btn-action btn-copy-info" style="padding: 10px 20px; font-size: 0.95rem;" onclick="closeModal('confirmDeductModal')">
-                        Hủy Bỏ
+                        Hủy bỏ
                     </button>
                     <button type="button" id="btnConfirmDeductAction" class="btn-eval-current" style="padding: 10px 24px; font-size: 0.95rem;">
-                        ✅ Xác Nhận Trừ Xu
+                        ✅ Xác nhận trừ Xu
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (Mã QR To Rõ Đẹp Mắt, Nút Tải QR Chỉ Hiện Trên Di Động) -->
+    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (Tối ưu Thu Gọn 1 Màn Hình Chuẩn Không Thanh Cuộn) -->
     <div id="donateModal" class="modal-overlay">
-        <div class="modal-content donate-modal-box">
+        <div class="modal-content donate-modal-box compact-donate-modal">
             <span class="modal-close" onclick="closeModal('donateModal')">&times;</span>
             
-            <div style="text-align: center; margin-bottom: 12px;">
-                <h3 style="color: var(--gold-glow); font-size: 1.25rem;">💎 NHIỆM VỤ DONATE KIẾM XU</h3>
-                <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 2px;">
+            <div style="text-align: center; margin-bottom: 8px;">
+                <h3 style="color: var(--gold-glow); font-size: 1.15rem;">💎 Nhiệm vụ donate kiếm Xu</h3>
+                <p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 1px;">
                     Ủng hộ phát triển hệ thống & nhận Xu tra cứu vĩnh viễn!
                 </p>
             </div>
 
             <!-- 3 Gói Donate -->
-            <div class="donate-tier-grid">
+            <div class="donate-tier-grid" style="margin-bottom: 8px;">
                 <div class="donate-card active" onclick="selectDonateTier('50k', 2, 50000, this)">
                     <div class="donate-badge">+2 XU</div>
                     <div class="donate-price">50.000 VNĐ</div>
@@ -320,38 +320,38 @@
                 </div>
             </div>
 
-            <!-- Khung Ảnh QR Code Thanh Toán (Phóng to Mã QR cho khách dễ quét) -->
-            <div class="qr-display-box">
-                <div style="font-size: 0.88rem; font-weight: bold; color: var(--gold-primary); margin-bottom: 6px;">
-                    Quét Mã QR Chuyển Khoản Ngân Hàng:
+            <!-- Khung Ảnh QR Code Thanh Toán -->
+            <div class="qr-display-box" style="padding: 6px 10px; margin-top: 4px;">
+                <div style="font-size: 0.82rem; font-weight: bold; color: var(--gold-primary); margin-bottom: 4px;">
+                    Quét mã QR chuyển khoản ngân hàng:
                 </div>
                 
                 <img id="donateQrImg" src="50k.jfif" alt="QR Code Donate 50k" class="qr-code-img" />
 
-                <div style="margin-top: 8px; font-size: 0.9rem; color: #e2e8f0;">
-                    Nội dung: <strong id="donateMemoText" style="color: #ffd700; font-size: 1rem;">DONATE KHACH</strong>
+                <div style="margin-top: 4px; font-size: 0.85rem; color: #e2e8f0;">
+                    Nội dung: <strong id="donateMemoText" style="color: #ffd700; font-size: 0.95rem;">DONATE KHACH</strong>
                 </div>
             </div>
 
             <!-- Nút Tải / Chia Sẻ Mã QR Ngân Hàng (Chỉ hiển thị trên Điện Thoại) -->
-            <button type="button" id="btnDownloadDonateQr" class="btn-action btn-view-hex mobile-only-qr-btn" style="width: 100%; margin-top: 10px; font-size: 0.92rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
-                📥 TẢI / CHIA SẺ MÃ QR THANH TOÁN
+            <button type="button" id="btnDownloadDonateQr" class="btn-action btn-view-hex mobile-only-qr-btn" style="width: 100%; margin-top: 6px; font-size: 0.85rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+                📥 Tải / Chia sẻ mã QR thanh toán
             </button>
 
             <!-- Nút Đã Donate -->
-            <button type="button" id="btnSubmitDonateReq" class="btn-mobile-share-ios" style="margin-top: 8px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
-                ✅ TÔI ĐÃ DONATE
+            <button type="button" id="btnSubmitDonateReq" class="btn-mobile-share-ios" style="margin-top: 6px; padding: 9px; font-size: 0.9rem; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
+                ✅ Tôi đã donate
             </button>
         </div>
     </div>
 
-    <!-- MODAL 4: MÃ GIỚI THIỆU (GỌN GÀNG 1 KHUNG HÌNH - MỐC THƯỞNG +XU NỔI BẬT) -->
+    <!-- MODAL 4: MÃ GIỚI THIỆU -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content ref-modal-box compact-ref-modal">
             <span class="modal-close" onclick="closeModal('refModal')">&times;</span>
             
             <div style="text-align: center; margin-bottom: 8px;">
-                <h3 class="ref-single-line-title" style="color: var(--gold-glow); font-size: 1.1rem;">🎁 MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG 50%</h3>
+                <h3 class="ref-single-line-title" style="color: var(--gold-glow); font-size: 1.1rem;">🎁 Mã giới thiệu & Thưởng hoa hồng 50%</h3>
                 <p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 2px;">
                     Chia sẻ link để nhận 50% số Xu mỗi khi bạn bè Donate!
                 </p>
@@ -360,12 +360,12 @@
             <!-- KHUNG NHẬP BỔ SUNG MÃ GIỚI THIỆU -->
             <div id="refApplySection" class="ref-apply-box" style="background: rgba(217, 119, 6, 0.12); border: 1px solid var(--border-gold); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px;">
                 <label style="font-size: 0.82rem; color: var(--gold-glow); font-weight: bold; display: block; margin-bottom: 4px;">
-                    🎁 Nhập Mã Giới Thiệu Của Bạn Bè (+1 Xu):
+                    🎁 Nhập mã giới thiệu của bạn bè (+1 Xu):
                 </label>
                 <div style="display: flex; gap: 6px;">
                     <input type="text" id="inputApplyRefCode" class="form-control" placeholder="Nhập mã GT (VD: SIM123)..." style="text-transform: uppercase; font-size: 0.88rem; padding: 6px 10px;">
                     <button type="button" id="btnApplyRefCode" class="btn-earn-coins" style="white-space: nowrap; padding: 6px 12px; font-weight: bold; font-size: 0.82rem;">
-                        ✅ Áp Dụng (+1 Xu)
+                        ✅ Áp dụng (+1 Xu)
                     </button>
                 </div>
             </div>
@@ -374,34 +374,34 @@
                 ✅ Đã áp dụng mã từ: <span id="refAppliedName" style="color: #ffd700;">---</span>
             </div>
 
-            <!-- THẺ MÃ GIỚI THIỆU CỦA BẠN (GỌN GÀNG INLINE) -->
+            <!-- THẺ MÃ GIỚI THIỆU CỦA BẠN -->
             <div class="ref-code-display-card" style="padding: 8px; margin-bottom: 8px;">
-                <div style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase;">Mã Giới Thiệu Của Bạn: <strong id="refCodeBig" style="color: var(--gold-glow); font-size: 1.2rem; margin-left: 6px;">SIM---</strong></div>
+                <div style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase;">Mã giới thiệu của bạn: <strong id="refCodeBig" style="color: var(--gold-glow); font-size: 1.2rem; margin-left: 6px;">SIM---</strong></div>
                 <button type="button" id="btnCopyRefLink" class="btn-action btn-view-hex" style="width: 100%; margin-top: 6px; font-size: 0.85rem; padding: 6px 10px;">
-                    📋 Sao Chép Link & Mã Giới Thiệu
+                    📋 Sao chép link & mã giới thiệu
                 </button>
             </div>
 
-            <!-- Thống kê Giới thiệu (Inline Compact) -->
+            <!-- Thống kê Giới thiệu -->
             <div class="ref-stats-grid" style="margin-bottom: 8px;">
                 <div class="ref-stat-card" style="padding: 6px 2px;">
                     <div id="statTotalRefs" class="stat-num" style="font-size: 1.1rem;">0</div>
-                    <div class="stat-label" style="font-size: 0.68rem;">Đã Mời</div>
+                    <div class="stat-label" style="font-size: 0.68rem;">Đã mời</div>
                 </div>
                 <div class="ref-stat-card" style="padding: 6px 2px;">
                     <div id="statQualRefs" class="stat-num" style="color: #22c55e; font-size: 1.1rem;">0</div>
-                    <div class="stat-label" style="font-size: 0.68rem;">Đã Donate</div>
+                    <div class="stat-label" style="font-size: 0.68rem;">Đã donate</div>
                 </div>
                 <div class="ref-stat-card" style="padding: 6px 2px;">
                     <div id="statTotalEarned" class="stat-num" style="color: #ffd700; font-size: 1.1rem;">0</div>
-                    <div class="stat-label" style="font-size: 0.68rem;">Xu Hoa Hồng</div>
+                    <div class="stat-label" style="font-size: 0.68rem;">Xu hoa hồng</div>
                 </div>
             </div>
 
-            <!-- Mốc Thưởng Giới Thiệu (ĐỔI MÀU +XU NỔI BẬT DỄ NHÌN CHUẨN ẢNH 4) -->
+            <!-- Mốc Thưởng Giới Thiệu -->
             <div class="ref-milestone-box" style="padding: 6px 10px; font-size: 0.78rem;">
                 <div style="font-weight: bold; color: var(--gold-primary); margin-bottom: 2px;">
-                    🏆 Cột Mốc Thưởng Xu Donate:
+                    🏆 Cột mốc thưởng Xu donate:
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.75rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
                     <span>✦ 5 bạn: <strong style="color: #ffd700; font-weight: 800;">+5 Xu</strong></span>
@@ -420,7 +420,7 @@
             
             <div style="text-align: center; margin-bottom: 12px;">
                 <div style="font-size: 1.8rem; margin-bottom: 2px;">📊</div>
-                <h3 style="color: var(--gold-glow); font-size: 1.2rem;">LỊCH SỬ TIÊU DÙNG XU CỦA BẠN</h3>
+                <h3 style="color: var(--gold-glow); font-size: 1.2rem;">Lịch sử tiêu dùng Xu của bạn</h3>
                 <p style="font-size: 0.88rem; color: #cbd5e1; margin-top: 2px;">
                     Số dư hiện tại: <strong id="histCurrentBalance" style="color: #ffd700; font-size: 1.05rem;">0 Xu</strong>
                 </p>
@@ -430,9 +430,9 @@
                 <table class="admin-table" style="width: 100%; border-collapse: collapse; min-width: 0;">
                     <thead>
                         <tr style="background: #1a2438;">
-                            <th style="padding: 8px 6px; width: 85px; font-size: 0.82rem; text-align: center;">Thời Gian</th>
-                            <th style="padding: 8px 6px; font-size: 0.82rem; text-align: center;">Thao Tác</th>
-                            <th style="padding: 8px 6px; text-align: center; width: 110px; font-size: 0.82rem;">Biến Động / Dư</th>
+                            <th style="padding: 8px 6px; width: 85px; font-size: 0.82rem; text-align: center;">Thời gian</th>
+                            <th style="padding: 8px 6px; font-size: 0.82rem; text-align: center;">Thao tác</th>
+                            <th style="padding: 8px 6px; text-align: center; width: 110px; font-size: 0.82rem;">Biến động / Dư</th>
                         </tr>
                     </thead>
                     <tbody id="userCoinHistoryTableBody">
@@ -443,7 +443,7 @@
         </div>
     </div>
 
-    <!-- Modal Lá Quẻ Lục Hào (Đã gắn onclick closeModal và z-index chuẩn cho Nút X) -->
+    <!-- Modal Lá Quẻ Lục Hào -->
     <div id="hexModal" class="modal-overlay">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('hexModal')">&times;</span>

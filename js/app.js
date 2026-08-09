@@ -49,7 +49,7 @@ function initFormDefaults() {
             if (val === 30) cost = 12;
             if (val === 50) cost = 20;
 
-            btnSubmitSearch.innerHTML = `🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC (${cost} Xu)`;
+            btnSubmitSearch.innerHTML = `🔮 Gợi ý list SIM cát tường dịch học (${cost} Xu)`;
         });
     }
 }
