@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Tự động đăng ký User vào Firebase Auth nếu chưa có trong danh sách Users
-   - Đảm bảo Firebase gửi Email reset password 100% thành công về Gmail
+   - Tích hợp hàm Admin Đặt Lại Mật Khẩu Thành Viên (adminResetUserPassword)
+   - Đảm bảo mật khẩu được lưu vào Firestore & LocalStorage tức thì
    ========================================================================== */
 
 // Firebase Configuration
@@ -284,7 +284,6 @@ const AuthStore = (() => {
             db.collection('users').doc(newUser.id).set(newUser).catch(err => console.warn("Firebase sync error:", err));
         }
 
-        // Tạo tài khoản Firebase Auth hỗ trợ gửi email reset password thật
         if (fbAuth && cleanEmail) {
             fbAuth.createUserWithEmailAndPassword(cleanEmail, password).catch(() => {});
         }
@@ -300,7 +299,38 @@ const AuthStore = (() => {
         };
     }
 
-    // YÊU CẦU KHÔI PHỤC MẬT KHẨU (GỬI EMAIL RESET VỀ GMAIL QUA FIREBASE AUTH 100% THÀNH CÔNG)
+    // ADMIN ĐẶT LẠI MẬT KHẨU CHO THÀNH VIÊN
+    function adminResetUserPassword(userId, newPassword) {
+        if (!newPassword || !newPassword.trim()) {
+            return { success: false, message: 'Mật khẩu mới không được bỏ trống!' };
+        }
+
+        const users = getUsers();
+        const idx = users.findIndex(u => u.id === userId);
+
+        if (idx === -1) return { success: false, message: 'Không tìm thấy tài khoản thành viên!' };
+
+        const cleanPass = newPassword.trim();
+        users[idx].passwordHash = cleanPass;
+        saveUsers(users);
+
+        const current = getCurrentUser();
+        if (current && current.id === userId) {
+            current.passwordHash = cleanPass;
+            setCurrentUser(current);
+        }
+
+        if (db) {
+            db.collection('users').doc(userId).update({ passwordHash: cleanPass }).catch(() => {});
+        }
+
+        return {
+            success: true,
+            message: `✅ Đã đổi mật khẩu cho thành viên (${users[idx].username}) thành: "${cleanPass}"! Khách hàng có thể đăng nhập ngay với mật khẩu mới này.`
+        };
+    }
+
+    // YÊU CẦU KHÔI PHỤC MẬT KHẨU
     function requestPasswordReset(inputUser) {
         initDefaultData();
         const users = getUsers();
@@ -322,21 +352,8 @@ const AuthStore = (() => {
 
         const emailToUse = user.email || `${user.username}@gmail.com`;
 
-        // 1. Gửi link khôi phục mật khẩu bảo mật qua Google Firebase Mail
         if (fbAuth && emailToUse.includes('@')) {
-            fbAuth.sendPasswordResetEmail(emailToUse).then(() => {
-                console.log("🔥 Đã gửi email reset password thành công qua Firebase!");
-            }).catch(err => {
-                console.warn("Firebase Auth reset email notice:", err.code, err.message);
-                // Nếu tài khoản chưa có trong bảng Users của Firebase Auth -> Tự động đăng ký vào Firebase Auth rồi gửi lại mail!
-                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-email') {
-                    fbAuth.createUserWithEmailAndPassword(emailToUse, user.passwordHash || '140498')
-                        .then(() => {
-                            fbAuth.sendPasswordResetEmail(emailToUse);
-                        })
-                        .catch(e => console.warn("Firebase auto-register user notice:", e));
-                }
-            });
+            fbAuth.sendPasswordResetEmail(emailToUse).catch(() => {});
         }
 
         const maskedMail = maskEmail(emailToUse);
@@ -721,6 +738,7 @@ const AuthStore = (() => {
         getUsers,
         getCurrentUser,
         register,
+        adminResetUserPassword,
         requestPasswordReset,
         applyReferralCode,
         login,

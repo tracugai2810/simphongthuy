@@ -1,16 +1,16 @@
 /* ==========================================================================
    ADMIN CONTROL PANEL LOGIC PRO
-   - Xử lý đăng nhập Admin dambuicong / 281097
+   - Xử lý đăng nhập Admin dambuicong / 140498
    - Giao diện Obsidian Gold chuẩn phong cách Luxury
-   - Custom Modals thông báo & xác nhận sang trọng
+   - Custom Modals thông báo, xác nhận & ĐẶT LẠI MẬT KHẨU THÀNH VIÊN
    - Xử lý Duyệt đơn Donate
-   - Quản lý Thành Viên & Tùy Chỉnh Xu (Tab Tăng / Tab Giảm)
-   - Lịch sử giao dịch hiển thị Tên Khách Hàng thực tế (tra cứu từ User ID)
+   - Quản lý Thành Viên, Tùy Chỉnh Xu & Đổi Mật Khẩu cho Khách Hàng
    ========================================================================== */
 
 let pendingAdminConfirmCallback = null;
 let currentAdjustUserId = null;
 let currentAdjustMode = 'add';
+let currentResetUserId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAdminSession();
@@ -53,7 +53,7 @@ function setupLoginForm() {
         if (typeof AuthStore !== 'undefined') {
             const users = AuthStore.getUsers();
             const foundUser = users.find(usr => 
-                (usr.username.toLowerCase() === u.toLowerCase() || usr.email.toLowerCase() === u.toLowerCase()) && 
+                (usr.username.toLowerCase() === u.toLowerCase() || (usr.email && usr.email.toLowerCase() === u.toLowerCase())) && 
                 usr.passwordHash === p && 
                 (usr.isAdmin || usr.username.toLowerCase() === 'dambuicong')
             );
@@ -72,76 +72,32 @@ function setupLoginForm() {
 }
 
 function adminLogout() {
-    showAdminConfirm("Bạn có chắc chắn muốn thoát khỏi trang Quản trị?", () => {
-        localStorage.removeItem('sim_pt_admin_logged_in');
-        checkAdminSession();
-    });
-}
-
-function showAdminAlert(message, onOk = null) {
-    const modal = document.getElementById('adminAlertModal');
-    const msgElem = document.getElementById('adminAlertMsg');
-    const okBtn = document.getElementById('btnAdminAlertOk');
-
-    if (msgElem) msgElem.textContent = message;
-    if (modal) modal.classList.add('active');
-
-    if (okBtn) {
-        okBtn.onclick = () => {
-            if (modal) modal.classList.remove('active');
-            if (onOk) onOk();
-        };
-    }
-}
-
-function showAdminConfirm(message, onConfirm) {
-    const modal = document.getElementById('adminConfirmModal');
-    const msgElem = document.getElementById('adminConfirmMsg');
-    const yesBtn = document.getElementById('btnAdminConfirmYes');
-    const noBtn = document.getElementById('btnAdminConfirmNo');
-
-    if (msgElem) msgElem.textContent = message;
-    if (modal) modal.classList.add('active');
-
-    if (yesBtn) {
-        yesBtn.onclick = () => {
-            if (modal) modal.classList.remove('active');
-            if (onConfirm) onConfirm();
-        };
-    }
-
-    if (noBtn) {
-        noBtn.onclick = () => {
-            if (modal) modal.classList.remove('active');
-        };
-    }
-}
-
-function setupAdminModalEvents() {
-    const modals = document.querySelectorAll('.modal-overlay');
-    modals.forEach(m => {
-        m.addEventListener('click', (e) => {
-            if (e.target === m) m.classList.remove('active');
-        });
-    });
+    localStorage.removeItem('sim_pt_admin_logged_in');
+    checkAdminSession();
 }
 
 function switchAdminTab(tabName) {
-    document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.admin-tab-content').forEach(sec => sec.style.display = 'none');
+    const tabDonateBtn = document.getElementById('tabDonateBtn');
+    const tabUsersBtn = document.getElementById('tabUsersBtn');
+    const tabLogsBtn = document.getElementById('tabLogsBtn');
 
-    if (tabName === 'donate') {
-        document.getElementById('tabDonateBtn').classList.add('active');
-        document.getElementById('sectionDonate').style.display = 'block';
+    const adminTabDonates = document.getElementById('adminTabDonates');
+    const adminTabUsers = document.getElementById('adminTabUsers');
+    const adminTabLogs = document.getElementById('adminTabLogs');
+
+    [tabDonateBtn, tabUsersBtn, tabLogsBtn].forEach(b => b && b.classList.remove('active'));
+    [adminTabDonates, adminTabUsers, adminTabLogs].forEach(t => t && (t.style.display = 'none'));
+
+    if (tabName === 'donates') {
+        if (tabDonateBtn) tabDonateBtn.classList.add('active');
+        if (adminTabDonates) adminTabDonates.style.display = 'block';
     } else if (tabName === 'users') {
-        document.getElementById('tabUsersBtn').classList.add('active');
-        document.getElementById('sectionUsers').style.display = 'block';
+        if (tabUsersBtn) tabUsersBtn.classList.add('active');
+        if (adminTabUsers) adminTabUsers.style.display = 'block';
     } else if (tabName === 'logs') {
-        document.getElementById('tabLogsBtn').classList.add('active');
-        document.getElementById('sectionLogs').style.display = 'block';
+        if (tabLogsBtn) tabLogsBtn.classList.add('active');
+        if (adminTabLogs) adminTabLogs.style.display = 'block';
     }
-
-    loadAdminDashboardData();
 }
 
 function loadAdminDashboardData() {
@@ -230,18 +186,21 @@ function renderUsersList() {
     users.forEach(u => {
         const isAdmin = u.isAdmin || u.username.toLowerCase() === 'dambuicong';
         const deleteBtnHtml = isAdmin ? '' : `
-            <button class="btn-admin-reject" style="margin-left:6px;" onclick="handleDeleteUser('${u.id}', '${u.username}')">🗑️ Xóa</button>
+            <button class="btn-admin-reject" style="margin-left:4px;" onclick="handleDeleteUser('${u.id}', '${u.username}')">🗑️ Xóa</button>
         `;
 
         html += `
             <tr>
                 <td><strong>${u.username}</strong> ${isAdmin ? '<span class="badge-status status-approved">ADMIN</span>' : ''}</td>
-                <td>${u.email}</td>
+                <td>${u.email || u.username + '@gmail.com'}</td>
                 <td><code style="color:#ffd700;">${u.refCode}</code></td>
-                <td><strong style="color:#ffd700; font-size:1.1rem;">${u.coins} Xu</strong></td>
+                <td><strong style="color:#ffd700; font-size:1.05rem;">${u.coins} Xu</strong></td>
                 <td>
-                    <button class="btn-admin-adjust" onclick="openAdjustCoinsModal('${u.id}', '${u.username}', ${u.coins})">⚙️ Điều Chỉnh Xu</button>
-                    ${deleteBtnHtml}
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button class="btn-admin-adjust" onclick="openAdjustCoinsModal('${u.id}', '${u.username}', ${u.coins})">⚙️ Sửa Xu</button>
+                        <button class="btn-admin-adjust" style="background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color:#fff; border:none;" onclick="openAdminResetPasswordModal('${u.id}', '${u.username}')">🔑 Đổi Mật Khẩu</button>
+                        ${deleteBtnHtml}
+                    </div>
                 </td>
             </tr>
         `;
@@ -251,7 +210,7 @@ function renderUsersList() {
 }
 
 function handleDeleteUser(userId, username) {
-    showAdminConfirm(`Bạn có chắc chắn muốn XÓA thành viên "${username}"? Thao tác này không thể hoàn tác!`, () => {
+    showAdminConfirm(`Xác nhận XÓA vĩnh viễn tài khoản thành viên (${username}) khỏi hệ thống?`, () => {
         const res = AuthStore.deleteUser(userId);
         showAdminAlert(res.message, () => {
             loadAdminDashboardData();
@@ -259,49 +218,70 @@ function handleDeleteUser(userId, username) {
     });
 }
 
+// TÙY CHỈNH XU MÔ HÌNH POPUP
 function openAdjustCoinsModal(userId, username, currentCoins) {
     currentAdjustUserId = userId;
-    currentAdjustMode = 'add';
 
     document.getElementById('adjustTargetUsername').textContent = username;
     document.getElementById('adjustCurrentCoins').textContent = `${currentCoins} Xu`;
     document.getElementById('adjustCoinAmountInput').value = 5;
 
     switchAdjustTab('add');
+    document.getElementById('adminAdjustCoinsModal').classList.add('active');
+}
 
-    const modal = document.getElementById('adminAdjustCoinsModal');
-    if (modal) modal.classList.add('active');
+// ĐẶT LẠI MẬT KHẨU CHO THÀNH VIÊN
+function openAdminResetPasswordModal(userId, username) {
+    currentResetUserId = userId;
+
+    document.getElementById('resetTargetUsername').textContent = username;
+    const input = document.getElementById('adminNewPasswordInput');
+    if (input) input.value = '';
+
+    document.getElementById('adminResetPasswordModal').classList.add('active');
+}
+
+function submitAdminResetPassword() {
+    const input = document.getElementById('adminNewPasswordInput');
+    if (!input || !input.value.trim()) {
+        showAdminAlert("Vui lòng nhập mật khẩu mới!");
+        return;
+    }
+
+    const newPass = input.value.trim();
+    const res = AuthStore.adminResetUserPassword(currentResetUserId, newPass);
+
+    document.getElementById('adminResetPasswordModal').classList.remove('active');
+
+    showAdminAlert(res.message, () => {
+        loadAdminDashboardData();
+    });
 }
 
 function switchAdjustTab(mode) {
     currentAdjustMode = mode;
-    const tabAddBtn = document.getElementById('tabAdjustAdd');
-    const tabSubBtn = document.getElementById('tabAdjustSub');
+    const tabAdd = document.getElementById('tabAdjustAdd');
+    const tabSub = document.getElementById('tabAdjustSub');
     const presetBox = document.getElementById('adjustPresetButtons');
 
     if (mode === 'add') {
-        tabAddBtn.classList.add('active');
-        tabSubBtn.classList.remove('active');
-        presetBox.innerHTML = `
-            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(5)">+5 Xu</button>
-            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(10)">+10 Xu</button>
-            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(20)">+20 Xu</button>
-            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(50)">+50 Xu</button>
-        `;
+        if (tabAdd) tabAdd.classList.add('active');
+        if (tabSub) tabSub.classList.remove('active');
     } else {
-        tabSubBtn.classList.add('active');
-        tabAddBtn.classList.remove('active');
-        presetBox.innerHTML = `
-            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(2)">-2 Xu</button>
-            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(5)">-5 Xu</button>
-            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(10)">-10 Xu</button>
-            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(20)">-20 Xu</button>
-        `;
+        if (tabSub) tabSub.classList.add('active');
+        if (tabAdd) tabAdd.classList.remove('active');
     }
-}
 
-function setAdjustValue(val) {
-    document.getElementById('adjustCoinAmountInput').value = val;
+    const presets = [2, 5, 10, 20, 50];
+    let presetsHtml = '';
+    presets.forEach(p => {
+        presetsHtml += `
+            <button type="button" class="admin-tab-btn" style="padding:4px 10px; font-size:0.8rem;" onclick="document.getElementById('adjustCoinAmountInput').value = ${p}">
+                ${mode === 'add' ? '+' : '-'}${p} Xu
+            </button>
+        `;
+    });
+    if (presetBox) presetBox.innerHTML = presetsHtml;
 }
 
 function submitAdjustCoins() {
@@ -309,65 +289,121 @@ function submitAdjustCoins() {
 
     const val = parseInt(document.getElementById('adjustCoinAmountInput').value) || 0;
     if (val <= 0) {
-        showAdminAlert("Vui lòng nhập số Xu hợp lệ lớn hơn 0!");
+        showAdminAlert("Vui lòng nhập số Xu lớn hơn 0!");
         return;
     }
 
-    const delta = currentAdjustMode === 'add' ? val : -val;
-    const actionText = currentAdjustMode === 'add' ? `Admin cộng thêm +${val} Xu` : `Admin trừ ${val} Xu`;
+    const coinDelta = (currentAdjustMode === 'add') ? val : -val;
+    const actionLabel = (currentAdjustMode === 'add') ? `Admin cộng +${val} Xu` : `Admin trừ ${val} Xu`;
 
-    const res = AuthStore.adminAdjustCoins(currentAdjustUserId, delta, actionText);
+    const res = AuthStore.adminAdjustCoins(currentAdjustUserId, coinDelta, actionLabel);
 
-    const modal = document.getElementById('adminAdjustCoinsModal');
-    if (modal) modal.classList.remove('active');
+    document.getElementById('adminAdjustCoinsModal').classList.remove('active');
 
     showAdminAlert(res.message, () => {
         loadAdminDashboardData();
     });
 }
 
-// BẢNG NHẬT KÝ GIAO DỊCH (TỰ ĐỘNG TRA CỨU TÊN KHÁCH HÀNG TỪ USER ID)
+// THỐNG KÊ LỊCH SỬ TRA CỨU TÊN USER THỰC TẾ
 function renderLogsList() {
+    if (typeof AuthStore === 'undefined') return;
+
+    const logsStr = localStorage.getItem('sim_pt_coin_logs_v1');
+    let logs = [];
+    try {
+        logs = JSON.parse(logsStr) || [];
+    } catch (e) {}
+
+    const users = AuthStore.getUsers();
+    const userMap = {};
+    users.forEach(u => {
+        userMap[u.id] = u.username;
+    });
+
     const tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
 
-    let logs = [];
-    try {
-        logs = JSON.parse(localStorage.getItem('sim_pt_coin_logs_v1')) || [];
-    } catch (e) {}
-
-    const users = (typeof AuthStore !== 'undefined') ? AuthStore.getUsers() : [];
-
     if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có nhật ký giao dịch.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có nhật ký giao dịch nào.</td></tr>`;
         return;
     }
 
     let html = '';
     logs.forEach(l => {
         const timeStr = new Date(l.timestamp).toLocaleString('vi-VN');
-        const changeStr = l.change >= 0 ? `<span style="color:#4ade80; font-weight:bold;">+${l.change} Xu</span>` : `<span style="color:#f87171; font-weight:bold;">${l.change} Xu</span>`;
 
-        // Tự động tìm Tên Khách Hàng nếu log cũ lưu dạng ID
-        let displayName = l.username;
-        if (!displayName || displayName.startsWith('usr_')) {
-            const matchUser = users.find(u => u.id === l.userId);
-            if (matchUser) displayName = matchUser.username;
-            else displayName = l.username || l.userId || 'Khách';
+        let displayUsername = l.username;
+        if (!displayUsername || displayUsername === 'Khách' || displayUsername.startsWith('usr_')) {
+            if (l.userId && userMap[l.userId]) {
+                displayUsername = userMap[l.userId];
+            }
         }
 
-        const cleanAction = (l.action || '').replace(/Nạp Xu/gi, '').trim();
+        const changeHtml = (l.change >= 0) 
+            ? `<strong style="color:#4ade80;">+${l.change} Xu</strong>` 
+            : `<strong style="color:#f87171;">${l.change} Xu</strong>`;
 
         html += `
             <tr>
                 <td>${timeStr}</td>
-                <td><strong style="color:var(--gold-glow);">${displayName}</strong></td>
-                <td>${cleanAction}</td>
-                <td>${changeStr}</td>
-                <td><strong>${l.balanceAfter} Xu</strong></td>
+                <td><strong>${displayUsername || 'Khách'}</strong></td>
+                <td>${l.action}</td>
+                <td>${changeHtml}</td>
+                <td><span style="color:#ffd700;">${l.balanceAfter} Xu</span></td>
             </tr>
         `;
     });
 
     tbody.innerHTML = html;
+}
+
+// MODAL UTILS
+function showAdminAlert(message, callback = null) {
+    const msgElem = document.getElementById('adminAlertMsg');
+    if (msgElem) msgElem.innerHTML = message.replace(/\n/g, '<br/>');
+
+    const modal = document.getElementById('adminAlertModal');
+    if (modal) modal.classList.add('active');
+
+    const btnOk = document.getElementById('btnAdminAlertOk');
+    if (btnOk) {
+        btnOk.onclick = () => {
+            modal.classList.remove('active');
+            if (callback) callback();
+        };
+    }
+}
+
+function showAdminConfirm(message, onYesCallback) {
+    const msgElem = document.getElementById('adminConfirmMsg');
+    if (msgElem) msgElem.innerHTML = message.replace(/\n/g, '<br/>');
+
+    const modal = document.getElementById('adminConfirmModal');
+    if (modal) modal.classList.add('active');
+
+    const btnYes = document.getElementById('btnAdminConfirmYes');
+    const btnNo = document.getElementById('btnAdminConfirmNo');
+
+    if (btnYes) {
+        btnYes.onclick = () => {
+            modal.classList.remove('active');
+            if (onYesCallback) onYesCallback();
+        };
+    }
+
+    if (btnNo) {
+        btnNo.onclick = () => {
+            modal.classList.remove('active');
+        };
+    }
+}
+
+function setupAdminModalEvents() {
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+    });
 }
