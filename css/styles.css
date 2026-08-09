@@ -1,7 +1,7 @@
 /* ==========================================================================
-   SIM PHONG THỦY LỤC HÀO - STYLESHEET
+   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO
    Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
-   Tối ưu Mobile First cho Khách Hàng Đại Chúng & Chuẩn 10 Chữ Số SĐT VN
+   Tối ưu Mobile First & Thương Mại Hóa (Quản Lý Xu, Auth, Donate QR, Ref Code)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -46,6 +46,143 @@ body {
     padding: 0 15px;
 }
 
+/* ==========================================================================
+   TOP USER NAVIGATION BAR (THƯƠNG MẠI HÓA XU & AUTH)
+   ========================================================================== */
+.top-user-bar {
+    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--gold-glow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+}
+
+.user-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-auth-trigger {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
+}
+
+.btn-auth-trigger:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    transform: translateY(-1px);
+}
+
+.coin-badge {
+    background: rgba(217, 119, 6, 0.15);
+    border: 1px solid var(--gold-glow);
+    color: var(--gold-glow);
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.coin-badge:hover {
+    background: rgba(217, 119, 6, 0.3);
+    transform: scale(1.03);
+}
+
+.btn-earn-coins {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 8px rgba(22, 163, 74, 0.3);
+}
+
+.btn-earn-coins:hover {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    transform: translateY(-1px);
+}
+
+.ref-badge {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(243, 198, 105, 0.4);
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ref-badge:hover {
+    background: rgba(243, 198, 105, 0.2);
+    color: #ffffff;
+}
+
+.admin-link-btn {
+    background: #6b1a1a;
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid #dc2626;
+    transition: all 0.2s ease;
+}
+
+.admin-link-btn:hover {
+    background: #8b2525;
+    color: #ffffff;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border-color: #ef4444;
+}
+
 /* Glassmorphism Form Card */
 .form-card {
     background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
@@ -71,7 +208,7 @@ body {
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
     margin-bottom: 16px;
 }
@@ -83,9 +220,10 @@ body {
 }
 
 .form-group label {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #cbd5e1;
+    white-space: nowrap;
 }
 
 .form-control {
@@ -496,6 +634,165 @@ select.form-control option, select.prefix-select option {
     color: #e60000;
 }
 
+/* ==========================================================================
+   STYLES CHO CÁC MODAL THƯƠNG MẠI HÓA (AUTH, DONATE, REF)
+   ========================================================================== */
+.auth-modal-box, .confirm-modal-box, .donate-modal-box, .ref-modal-box {
+    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--border-gold) !important;
+    max-width: 480px !important;
+}
+
+.auth-modal-box .modal-close,
+.confirm-modal-box .modal-close,
+.donate-modal-box .modal-close,
+.ref-modal-box .modal-close {
+    color: #94a3b8 !important;
+}
+
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 18px;
+}
+
+.auth-tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.auth-tab-btn.active {
+    color: var(--gold-glow);
+    border-bottom-color: var(--gold-glow);
+}
+
+.donate-tier-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.donate-card {
+    background: #0c1222;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.donate-card.active, .donate-card:hover {
+    border-color: var(--gold-glow);
+    background: rgba(217, 119, 6, 0.15);
+    transform: translateY(-2px);
+}
+
+.donate-badge {
+    background: #16a34a;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.78rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.donate-price {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #ffffff;
+}
+
+.donate-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.qr-display-box {
+    background: #0c1222;
+    border: 1px dashed var(--border-gold);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.qr-code-img {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin: 0 auto;
+    display: block;
+}
+
+.ref-code-display-card {
+    background: #0c1222;
+    border: 1px solid var(--border-gold);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.ref-code-big {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--gold-glow);
+    letter-spacing: 2px;
+    margin: 4px 0;
+}
+
+.ref-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.ref-stat-card {
+    background: #0c1222;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 4px;
+    text-align: center;
+}
+
+.stat-num {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.ref-milestone-box {
+    background: rgba(217, 119, 6, 0.08);
+    border: 1px dashed var(--border-gold);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
 .hex-card-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -524,7 +821,6 @@ select.form-control option, select.prefix-select option {
     font-weight: 500;
 }
 
-/* Nút Tải/Chia Sẻ Ảnh Về iPhone Trên Mobile */
 .btn-mobile-share-ios {
     display: block;
     width: 100%;
@@ -712,7 +1008,6 @@ select.form-control option, select.prefix-select option {
     font-weight: 700;
 }
 
-/* Đánh Giá Cát Tường - Giao diện thân thiện Khách Hàng */
 .eval-box {
     margin-top: 15px;
     background: #ffffff;
@@ -748,6 +1043,26 @@ select.form-control option, select.prefix-select option {
 @media (max-width: 640px) {
     body { padding-top: 10px; }
     .container { padding: 0 10px; }
+
+    .top-user-bar {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .brand-title {
+        font-size: 1.05rem;
+        width: 100%;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        padding-bottom: 6px;
+    }
+
+    .user-nav-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
     .form-card { padding: 14px; }
 
     .digit-section {
@@ -813,6 +1128,10 @@ select.form-control option, select.prefix-select option {
     }
 
     .modal-content {
-        padding: 12px;
+        padding: 14px;
+    }
+
+    .donate-tier-grid {
+        grid-template-columns: 1fr;
     }
 }

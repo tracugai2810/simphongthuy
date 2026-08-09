@@ -1,8 +1,8 @@
 /* ==========================================================================
-   MAIN UI CONTROLLER - Website Sim Phong Thủy
+   MAIN UI CONTROLLER - Website Sim Phong Thủy Lục Hào Pro
    - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
-   - Đánh Giá SIM Đang Dùng (Lập quẻ & chấm điểm SĐT hiện tại)
-   - Tự động khởi tạo SIM Đại Cát tức thì kể cả khi để trống 10 ô vuông
+   - Tích hợp Thương Mại Hóa: Phân quyền Auth, Quản Lý Xu, Trừ Xu Tra Cứu
+   - Modal Xác Nhận Trừ Xu, Modal Donate QR Code, Modal Mã Giới Thiệu
    - Nút "Xem Chi Tiết":
      + Máy Tính: Mở Modal hiển thị ảnh lá quẻ, hỗ trợ chuột phải Sao chép / Lưu ảnh
      + Điện Thoại: Mở Modal hiển thị lá quẻ + Nút "📤 Chia Sẻ / Lưu Ảnh Về iPhone"
@@ -11,6 +11,8 @@
 
 let currentResults = [];
 let currentSimEvalItem = null;
+let pendingAction = null; // Thao tác chờ trừ Xu (evalCurrent hoặc searchSims)
+let selectedDonateTierKey = '50k';
 
 document.addEventListener('DOMContentLoaded', () => {
     initFormDefaults();
@@ -18,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormEvents();
     setupModalEvents();
     setupCurrentSimEval();
+    setupAuthAndCommerce();
+    detectRefQuery();
 });
 
 function isMobileDevice() {
@@ -32,6 +36,249 @@ function initFormDefaults() {
     const dateInput = document.getElementById('birthDate');
     if (dateInput) {
         dateInput.value = localISOTime;
+    }
+}
+
+// THƯƠNG MẠI HÓA & AUTH STORE UI SYNC
+function setupAuthAndCommerce() {
+    updateUserNavUI();
+
+    // Nút mở Auth
+    const btnOpenAuth = document.getElementById('btnOpenAuth');
+    if (btnOpenAuth) btnOpenAuth.addEventListener('click', () => openModal('authModal'));
+
+    // Nút mở Donate
+    const btnShowDonate = document.getElementById('btnShowDonate');
+    const btnEarnCoins = document.getElementById('btnEarnCoins');
+    if (btnShowDonate) btnShowDonate.addEventListener('click', () => openDonateModal());
+    if (btnEarnCoins) btnEarnCoins.addEventListener('click', () => openDonateModal());
+
+    // Nút mở Referral Modal
+    const btnShowRefModal = document.getElementById('btnShowRefModal');
+    if (btnShowRefModal) btnShowRefModal.addEventListener('click', () => openRefModal());
+
+    // Nút Đăng xuất
+    const btnLogout = document.getElementById('btnLogout');
+    if (btnLogout) btnLogout.addEventListener('click', () => {
+        AuthStore.logout();
+        updateUserNavUI();
+        showToast("Đã đăng xuất tài khoản!");
+    });
+
+    // Submit Form Login
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value;
+            const p = document.getElementById('loginPassword').value;
+
+            const res = AuthStore.login(u, p);
+            if (res.success) {
+                closeModal('authModal');
+                updateUserNavUI();
+                showToast(res.message);
+                if (pendingAction) {
+                    executePendingActionWithConfirm();
+                }
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    // Submit Form Register
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('regUsername').value;
+            const em = document.getElementById('regEmail').value;
+            const p = document.getElementById('regPassword').value;
+            const ref = document.getElementById('regRefCode').value;
+
+            const res = AuthStore.register(u, em, p, ref);
+            if (res.success) {
+                closeModal('authModal');
+                updateUserNavUI();
+                showToast(res.message);
+                if (pendingAction) {
+                    executePendingActionWithConfirm();
+                }
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    // Submit Donate Request
+    const btnSubmitDonateReq = document.getElementById('btnSubmitDonateReq');
+    if (btnSubmitDonateReq) {
+        btnSubmitDonateReq.addEventListener('click', () => {
+            const user = AuthStore.getCurrentUser();
+            if (!user) {
+                openModal('authModal');
+                return;
+            }
+
+            const res = AuthStore.createDonateRequest(user.id, selectedDonateTierKey);
+            if (res.success) {
+                closeModal('donateModal');
+                showToast(res.message);
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    // Confirm Deduct Coins Action
+    const btnConfirmDeductAction = document.getElementById('btnConfirmDeductAction');
+    if (btnConfirmDeductAction) {
+        btnConfirmDeductAction.addEventListener('click', () => {
+            if (!pendingAction) return;
+
+            const user = AuthStore.getCurrentUser();
+            if (!user) {
+                closeModal('confirmDeductModal');
+                openModal('authModal');
+                return;
+            }
+
+            const res = AuthStore.deductCoins(user.id, pendingAction.cost, pendingAction.actionName);
+            if (res.success) {
+                closeModal('confirmDeductModal');
+                updateUserNavUI();
+                showToast(`Đã trừ ${pendingAction.cost} Xu. Đang xử lý quẻ...`);
+
+                const act = pendingAction.type;
+                pendingAction = null;
+
+                if (act === 'evalCurrent') {
+                    executeEvalCurrentSim();
+                } else if (act === 'searchSims') {
+                    executeSearchSims();
+                }
+            } else {
+                closeModal('confirmDeductModal');
+                alert(res.message);
+                openDonateModal();
+            }
+        });
+    }
+
+    // Copy Referral Link
+    const btnCopyRefLink = document.getElementById('btnCopyRefLink');
+    if (btnCopyRefLink) {
+        btnCopyRefLink.addEventListener('click', () => {
+            const user = AuthStore.getCurrentUser();
+            if (!user) return;
+            const url = `${window.location.origin}${window.location.pathname}?ref=${user.refCode}`;
+            copySimNumberOnly(url);
+        });
+    }
+}
+
+// CẬP NHẬT GIAO DIỆN HEADER TÀI KHOẢN
+function updateUserNavUI() {
+    const user = AuthStore.getCurrentUser();
+    const guestNav = document.getElementById('guestUserNav');
+    const loggedInNav = document.getElementById('loggedInUserNav');
+    const coinSpan = document.getElementById('userCoinBalance');
+    const refCodeSpan = document.getElementById('userRefCode');
+    const adminLinkBtn = document.getElementById('adminLinkBtn');
+
+    if (!user) {
+        if (guestNav) guestNav.style.display = 'flex';
+        if (loggedInNav) loggedInNav.style.display = 'none';
+    } else {
+        if (guestNav) guestNav.style.display = 'none';
+        if (loggedInNav) loggedInNav.style.display = 'flex';
+
+        if (coinSpan) coinSpan.textContent = user.coins;
+        if (refCodeSpan) refCodeSpan.textContent = user.refCode || '---';
+
+        if (adminLinkBtn) {
+            adminLinkBtn.style.display = (user.username === 'dambuicong' || user.isAdmin) ? 'inline-block' : 'none';
+        }
+    }
+}
+
+// BẮT MÃ GIỚI THIỆU TỪ URL (?ref=CODE)
+function detectRefQuery() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref');
+    if (refParam) {
+        const regRefInput = document.getElementById('regRefCode');
+        if (regRefInput) regRefInput.value = refParam.toUpperCase();
+    }
+}
+
+function openDonateModal() {
+    const user = AuthStore.getCurrentUser();
+    if (!user) {
+        showToast("Vui lòng đăng nhập trước khi nạp Xu!");
+        openModal('authModal');
+        return;
+    }
+    selectDonateTier('50k', 2, 50000, document.querySelector('.donate-card'));
+    openModal('donateModal');
+}
+
+function selectDonateTier(tierKey, coins, amountVnd, elem) {
+    selectedDonateTierKey = tierKey;
+
+    document.querySelectorAll('.donate-card').forEach(c => c.classList.remove('active'));
+    if (elem) elem.classList.add('active');
+
+    const qrImg = document.getElementById('donateQrImg');
+    const memoText = document.getElementById('donateMemoText');
+    const user = AuthStore.getCurrentUser();
+    const username = user ? user.username : 'KHACH';
+
+    if (qrImg) {
+        qrImg.src = `${tierKey}.jfif`;
+        qrImg.alt = `QR Code Donate ${tierKey}`;
+    }
+
+    if (memoText) {
+        memoText.textContent = `DONATE ${username.toUpperCase()} ${tierKey.toUpperCase()}`;
+    }
+}
+
+function openRefModal() {
+    const user = AuthStore.getCurrentUser();
+    if (!user) {
+        openModal('authModal');
+        return;
+    }
+
+    const refCodeBig = document.getElementById('refCodeBig');
+    if (refCodeBig) refCodeBig.textContent = user.refCode || '---';
+
+    const stats = AuthStore.getReferralStats(user.id);
+    document.getElementById('statTotalRefs').textContent = stats.totalRefs;
+    document.getElementById('statQualRefs').textContent = stats.qualifiedRefs;
+    document.getElementById('statTotalEarned').textContent = stats.totalEarned;
+
+    openModal('refModal');
+}
+
+function switchAuthTab(tab) {
+    const tabLoginBtn = document.getElementById('tabLoginBtn');
+    const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+
+    if (tab === 'login') {
+        tabLoginBtn.classList.add('active');
+        tabRegisterBtn.classList.remove('active');
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+    } else {
+        tabRegisterBtn.classList.add('active');
+        tabLoginBtn.classList.remove('active');
+        registerForm.style.display = 'block';
+        loginForm.style.display = 'none';
     }
 }
 
@@ -85,16 +332,43 @@ function setupFormEvents() {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        processSearch();
+
+        const user = AuthStore.getCurrentUser();
+        if (!user) {
+            showToast("Vui lòng đăng nhập để gợi ý SIM!");
+            openModal('authModal');
+            return;
+        }
+
+        const limitVal = parseInt(document.getElementById('limitSelect').value) || 15;
+        let cost = 6;
+        if (limitVal === 5) cost = 2;
+        if (limitVal === 15) cost = 6;
+        if (limitVal === 30) cost = 12;
+        if (limitVal === 50) cost = 20;
+
+        pendingAction = {
+            type: 'searchSims',
+            cost,
+            actionName: `Gợi ý Top ${limitVal} SIM Đại Cát`
+        };
+
+        executePendingActionWithConfirm();
     });
 }
 
-// XỬ LÝ ĐÁNH GIÁ SIM ĐANG DÙNG (CHUẨN 10 SỐ)
 function setupCurrentSimEval() {
     const btn = document.getElementById('btnEvalCurrentSim');
     if (!btn) return;
 
     btn.addEventListener('click', () => {
+        const user = AuthStore.getCurrentUser();
+        if (!user) {
+            showToast("Vui lòng đăng nhập để đánh giá SIM!");
+            openModal('authModal');
+            return;
+        }
+
         const inputSim = document.getElementById('evalCurrentSim').value.trim();
         const rawSim = inputSim.replace(/[^0-9]/g, '');
 
@@ -103,74 +377,97 @@ function setupCurrentSimEval() {
             return;
         }
 
-        const birthDateVal = document.getElementById('birthDate').value;
-        if (!birthDateVal) {
-            alert("Vui lòng chọn ngày tháng năm sinh!");
-            return;
-        }
+        pendingAction = {
+            type: 'evalCurrent',
+            cost: 2,
+            actionName: `Đánh Giá SIM Đang Dùng (${formatSimNumber(rawSim)})`
+        };
 
-        const gender = document.querySelector('input[name="gender"]:checked').value;
-        const purpose = document.getElementById('purposeSelect').value;
-
-        const cal = calculateCanChi(birthDateVal);
-        const hexData = calculateSimHexagram(rawSim, cal);
-
-        if (!hexData) {
-            alert("Không thể lập quẻ từ dãy số này. Vui lòng kiểm tra lại SĐT!");
-            return;
-        }
-
-        const evaluation = evaluateSimFengShui(rawSim, hexData, cal, purpose, gender);
-
-        const currentSimBox = document.getElementById('currentSimResultBox');
-        const formattedSim = formatSimNumber(rawSim);
-        currentSimEvalItem = { sim: rawSim, hexData, evaluation };
-
-        currentSimBox.style.display = 'block';
-        currentSimBox.innerHTML = `
-            <div class="sim-card" style="border: 2px solid var(--gold-dark); background: #1a2438;">
-                <div class="sim-info">
-                    <div style="font-size: 0.95rem; color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;">
-                        📲 KẾT QUẢ ĐÁNH GIÁ SIM ĐANG DÙNG:
-                    </div>
-                    <div class="sim-number-display" style="font-size: 1.8rem;">
-                        <span class="highlight">${formattedSim}</span>
-                    </div>
-
-                    <div class="sim-badge-group">
-                        <span class="badge badge-score">${evaluation.score}/100 - ${evaluation.grade}</span>
-                        <span class="badge badge-hex">Quẻ Chủ: ${hexData.mainName} → ${hexData.changedName}</span>
-                    </div>
-
-                    <ul class="sim-reasons-list">
-                        ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
-                    </ul>
-                </div>
-
-                <div class="sim-actions">
-                    <button class="btn-action btn-view-hex" onclick="handleCurrentSimDetail()">
-                        🔍 Xem Chi Tiết
-                    </button>
-                </div>
-            </div>
-        `;
-
-        currentSimBox.scrollIntoView({ behavior: 'smooth' });
+        executePendingActionWithConfirm();
     });
 }
 
-function handleCurrentSimDetail() {
-    if (!currentSimEvalItem) return;
-    openHexModalDesktopObject(currentSimEvalItem);
-}
+function executePendingActionWithConfirm() {
+    if (!pendingAction) return;
 
-function processSearch() {
-    const birthDateVal = document.getElementById('birthDate').value;
-    if (!birthDateVal) {
-        alert("Vui lòng chọn ngày tháng năm sinh!");
+    const user = AuthStore.getCurrentUser();
+    if (!user) {
+        openModal('authModal');
         return;
     }
 
+    if (user.coins < pendingAction.cost) {
+        showToast(`Số dư không đủ! Bạn cần ${pendingAction.cost} Xu.`);
+        openDonateModal();
+        return;
+    }
+
+    const confirmText = document.getElementById('confirmDeductText');
+    if (confirmText) {
+        confirmText.innerHTML = `
+            Thao tác <strong>${pendingAction.actionName}</strong> sẽ tiêu tốn <strong style="color:#ffd700;">${pendingAction.cost} Xu</strong>.<br/>
+            Số dư hiện tại của bạn: <strong>${user.coins} Xu</strong> (Sau khi trừ còn: <strong>${user.coins - pendingAction.cost} Xu</strong>).
+        `;
+    }
+
+    openModal('confirmDeductModal');
+}
+
+function executeEvalCurrentSim() {
+    const inputSim = document.getElementById('evalCurrentSim').value.trim();
+    const rawSim = inputSim.replace(/[^0-9]/g, '');
+    const birthDateVal = document.getElementById('birthDate').value;
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const purpose = document.getElementById('purposeSelect').value;
+
+    const cal = calculateCanChi(birthDateVal);
+    const hexData = calculateSimHexagram(rawSim, cal);
+
+    if (!hexData) {
+        alert("Không thể lập quẻ từ dãy số này. Vui lòng kiểm tra lại SĐT!");
+        return;
+    }
+
+    const evaluation = evaluateSimFengShui(rawSim, hexData, cal, purpose, gender);
+
+    const currentSimBox = document.getElementById('currentSimResultBox');
+    const formattedSim = formatSimNumber(rawSim);
+    currentSimEvalItem = { sim: rawSim, hexData, evaluation };
+
+    currentSimBox.style.display = 'block';
+    currentSimBox.innerHTML = `
+        <div class="sim-card" style="border: 2px solid var(--gold-dark); background: #1a2438;">
+            <div class="sim-info">
+                <div style="font-size: 0.95rem; color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;">
+                    📲 KẾT QUẢ ĐÁNH GIÁ SIM ĐANG DÙNG:
+                </div>
+                <div class="sim-number-display" style="font-size: 1.8rem;">
+                    <span class="highlight">${formattedSim}</span>
+                </div>
+
+                <div class="sim-badge-group">
+                    <span class="badge badge-score">${evaluation.score}/100 - ${evaluation.grade}</span>
+                    <span class="badge badge-hex">Quẻ Chủ: ${hexData.mainName} → ${hexData.changedName}</span>
+                </div>
+
+                <ul class="sim-reasons-list">
+                    ${evaluation.reasons.map(r => `<li>${r}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div class="sim-actions">
+                <button class="btn-action btn-view-hex" onclick="handleCurrentSimDetail()">
+                    🔍 Xem Chi Tiết
+                </button>
+            </div>
+        </div>
+    `;
+
+    currentSimBox.scrollIntoView({ behavior: 'smooth' });
+}
+
+function executeSearchSims() {
+    const birthDateVal = document.getElementById('birthDate').value;
     const gender = document.querySelector('input[name="gender"]:checked').value;
     const purpose = document.getElementById('purposeSelect').value;
     const limitVal = parseInt(document.getElementById('limitSelect').value) || 15;
@@ -266,7 +563,7 @@ function formatSimNumber(sim) {
 function copySimNumberOnly(simStr) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(simStr).then(() => {
-            showToast(`Đã sao chép SĐT: ${simStr}`);
+            showToast(`Đã sao chép: ${simStr}`);
         }).catch(() => fallbackCopy(simStr));
     } else {
         fallbackCopy(simStr);
@@ -280,7 +577,7 @@ function fallbackCopy(text) {
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    showToast(`Đã sao chép SĐT: ${text}`);
+    showToast(`Đã sao chép: ${text}`);
 }
 
 function showToast(message) {
@@ -293,7 +590,7 @@ function showToast(message) {
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 2800);
+    }, 3000);
 }
 
 function renderHexVisual(lines, isChanged) {
@@ -313,6 +610,11 @@ function handleDetailClick(index) {
     const item = currentResults[index];
     if (!item) return;
     openHexModalDesktopObject(item);
+}
+
+function handleCurrentSimDetail() {
+    if (!currentSimEvalItem) return;
+    openHexModalDesktopObject(currentSimEvalItem);
 }
 
 function buildHexCardHTML(item) {
@@ -430,7 +732,6 @@ function buildHexCardHTML(item) {
     `;
 }
 
-// MỞ MODAL XEM ẢNH LÁ QUẺ (DÀNH CHO CẢ MÁY TÍNH VÀ ĐIỆN THOẠI)
 function openHexModalDesktopObject(item) {
     if (!item) return;
 
@@ -444,7 +745,7 @@ function openHexModalDesktopObject(item) {
             Đang tạo ảnh lá quẻ sắc nét...
         </div>
     `;
-    modal.classList.add('active');
+    openModal('hexModal');
 
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'absolute';
@@ -467,7 +768,6 @@ function openHexModalDesktopObject(item) {
 
             let bottomHtml = '';
             if (isMobile) {
-                // Trên Mobile: Nút bấm trực tiếp kích hoạt iOS Native Share Sheet / Tải file
                 bottomHtml = `
                     <button id="btnMobileShareTrigger" class="btn-mobile-share-ios">
                         📤 Chia Sẻ / Lưu Ảnh Về iPhone / Điện Thoại
@@ -504,7 +804,6 @@ function openHexModalDesktopObject(item) {
     }, 100);
 }
 
-// KÍCH HOẠT CHIA SẺ TRỰC TIẾP TRÊN EVENT TAP CỦA NGƯỜI DÙNG (IOS SAFARI COMPATIBLE)
 function triggerDirectShareOnUserGesture(canvas, simNumber) {
     const filename = `la-que-sim-${simNumber.replace(/[^0-9]/g, '')}-${Date.now()}.png`;
 
@@ -543,17 +842,21 @@ function fallbackDownloadBlob(blob, filename) {
     showToast(`Đã tải ảnh lá quẻ về máy thành công!`);
 }
 
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('active');
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('active');
+}
+
 function setupModalEvents() {
-    const modal = document.getElementById('hexModal');
-    const closeBtn = document.getElementById('modalClose');
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-    }
-
-    if (modal) {
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) modal.classList.remove('active');
         });
-    }
+    });
 }

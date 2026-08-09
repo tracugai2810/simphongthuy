@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị Admin - SIM Phong Thủy Lục Hào</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        <!-- ĐĂNG NHẬP ADMIN -->
+        <div id="adminLoginBox" class="login-admin-box">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 2.5rem;">⚙️</div>
+                <h2 style="color: var(--gold-glow); font-size: 1.3rem;">ĐĂNG NHẬP QUẢN TRỊ VIÊN</h2>
+                <p style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">Hệ thống Sim Phong Thủy Lục Hào</p>
+            </div>
+
+            <form id="adminLoginForm">
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 0.88rem; margin-bottom: 6px; font-weight: bold; color: #cbd5e1;">Tên quản trị viên:</label>
+                    <input type="text" id="adminUser" style="width: 100%; padding: 10px; background: #0c1222; border: 1px solid var(--border-color); color: #fff; border-radius: 8px;" placeholder="dambuicong" required>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 0.88rem; margin-bottom: 6px; font-weight: bold; color: #cbd5e1;">Mật khẩu:</label>
+                    <input type="password" id="adminPass" style="width: 100%; padding: 10px; background: #0c1222; border: 1px solid var(--border-color); color: #fff; border-radius: 8px;" placeholder="281097" required>
+                </div>
+                <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #fff; font-weight: bold; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer;">
+                    🚀 VÀO TRANG QUẢN TRỊ
+                </button>
+            </form>
+        </div>
+
+        <!-- BẢNG ĐIỀU KHIỂN ADMIN (KHI ĐÃ ĐĂNG NHẬP) -->
+        <div id="adminDashboard" class="admin-card" style="display: none;">
+            <div class="admin-header">
+                <div class="admin-title">
+                    ⚙️ BẢNG QUẢN TRỊ - SIM PHONG THỦY
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="../index.html" style="color: var(--gold-primary); text-decoration: none; font-size: 0.9rem; font-weight: bold;">
+                        🏠 Xem Trang Chủ Web
+                    </a>
+                    <button type="button" onclick="adminLogout()" style="background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                        🚪 Thoát Admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thanh Tabs Chức Năng -->
+            <div class="admin-nav-tabs">
+                <button type="button" class="admin-tab-btn active" id="tabDonateBtn" onclick="switchAdminTab('donate')">
+                    📋 Duyệt Đơn Nạp Donate (<span id="pendingCount">0</span>)
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">
+                    👥 Quản Lý Thành Viên & Xu
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabLogsBtn" onclick="switchAdminTab('logs')">
+                    📊 Thống Kê & Lịch Sử Giao Dịch
+                </button>
+            </div>
+
+            <!-- TAB 1: DUYỆT ĐƠN DONATE -->
+            <div id="sectionDonate" class="admin-tab-content">
+                <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">📋 DANH SÁCH YÊU CẦU NẠP XU DONATE CẦN DUYỆT</h3>
+                
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Thời Gian</th>
+                                <th>Khách Hàng</th>
+                                <th>Gói Nạp (VNĐ)</th>
+                                <th>Số Xu Cộng</th>
+                                <th>Trạng Thái</th>
+                                <th>Hành Động Duyệt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donateTableBody">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 2: QUẢN LÝ THÀNH VIÊN -->
+            <div id="sectionUsers" class="admin-tab-content" style="display: none;">
+                <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">👥 DANH SÁCH THÀNH VIÊN & ĐIỀU CHỈNH XU</h3>
+                
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Tên Đăng Nhập</th>
+                                <th>Email</th>
+                                <th>Mã Giới Thiệu</th>
+                                <th>Số Dư Xu</th>
+                                <th>Tùy Chỉnh Xu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: LỊCH SỬ GIAO DỊCH -->
+            <div id="sectionLogs" class="admin-tab-content" style="display: none;">
+                <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">📊 NHẬT KÝ GIAO DỊCH HỆ THỐNG</h3>
+                
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Thời Gian</th>
+                                <th>ID Thành Viên</th>
+                                <th>Hành Động</th>
+                                <th>Số Xu Biến Động</th>
+                                <th>Số Dư Sau Giao Dịch</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- Script Auth Store & Admin JS -->
+    <script src="../js/auth-store.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
