@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - EXACT DEVTOOLS CSS MATCH FROM ORIGINAL WEBSITE
    - Nút Đóng X Trên Tất Cả Modal Z-Index 100100 Hoạt Động 100%
-   - Phóng To Mã QR Donate (215px) Vừa Vặn 1 Màn Hình Chuẩn Không Thanh Cuộn
+   - Tối Ưu Popup Donate Trên Điện Thoại: 3 Gói Nằm Ngang (3 Cột) Vừa Khung Màn Hình
    - Nút Zalo Admin Tích Hợp Trên Popup Quên Mật Khẩu & Popup Donate
    ========================================================================== */
 
@@ -1192,8 +1192,44 @@ body {
         margin: auto !important;
     }
 
+    /* GIỮ 3 GÓI DONATE NẰM NGANG TRÊN 1 HÀNG TRÊN DI ĐỘNG KHÔNG BỊ XẾP CHỒNG CAO */
     .donate-tier-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 4px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .donate-card {
+        padding: 4px 2px !important;
+    }
+
+    .donate-badge {
+        font-size: 0.65rem !important;
+        padding: 1px 4px !important;
+    }
+
+    .donate-price {
+        font-size: 0.78rem !important;
+    }
+
+    .donate-desc {
+        font-size: 0.62rem !important;
+    }
+
+    .qr-display-box {
+        padding: 4px !important;
+        margin-top: 2px !important;
+    }
+
+    .qr-code-img {
+        max-height: 155px !important;
+        max-width: 165px !important;
+    }
+
+    .compact-donate-modal {
+        padding: 38px 10px 10px 10px !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
     }
 
     .ref-single-line-title {
