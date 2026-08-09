@@ -24,7 +24,19 @@ Trong Dịch Học Lục Hào, trình tự và trọng tâm đánh giá Vượng
 
 ---
 
-## 2. QUY TẮC ĐÁNH GIÁ NHẬP MỘ (TAM MỘ)
+## 2. QUY TẮC HÀO ĐỘNG TẠI GIAN HÀO (GÂY CẢN TRỞ - HUNG)
+
+- **Định nghĩa Gian Hào**: Các hào nằm ở giữa Hào Thế và Hào Ứng trong quẻ (ví dụ Thế ở hào 1, Ứng ở hào 4 ➔ Gian hào là Hào 2, Hào 3).
+- **Quy tắc Cản Trở Gian Hào**:
+  - Khi trong quẻ có **Hào Động nằm tại Gian Hào**.
+  - Hào động đó **KHÔNG tương tác với Dụng Thần** (không sinh, khắc, xung, hợp Dụng Thần).
+  - Hào động đó **KHÔNG tương tác (xung, hợp) với Nguyên Thần hay Kỵ Thần**.
+  - Hào động đó **KHÔNG tương tác với Hào Thế**.
+  ➔ **Kết luận**: Tính là **HUNG (XẤU / LOẠI BỎ 100%)**! Gian Hào lúc này biểu thị **sự cản trở, trung gian gây nhiễu, làm việc giữa chừng bị bế tắc, cản trở sự việc**.
+
+---
+
+## 3. QUY TẮC ĐÁNH GIÁ NHẬP MỘ (TAM MỘ)
 
 - **Mộ tại 3 vị trí chuẩn**: Nhật Mộ, Động Mộ, Động Hóa Mộ.
 - **Hào ĐỘNG Nhập Mộ / Hóa Mộ**: **Không sao** (tương tự Động bị xung hay Động Tuần Không).
@@ -35,7 +47,7 @@ Trong Dịch Học Lục Hào, trình tự và trọng tâm đánh giá Vượng
 
 ---
 
-## 3. QUY TẮC ĐẶC THÙ ĐỐI VỚI HÀO THẾ (BẢN MỆNH)
+## 4. QUY TẮC ĐẶC THÙ ĐỐI VỚI HÀO THẾ (BẢN MỆNH)
 
 1. **Hào Thế Hóa Phá ➔ KHÔNG SAO**.
 2. **Hào Thế Động Hóa Dụng Thần / Hóa Tử Tôn** (khi Tử Tôn không phải Kỵ Thần) ➔ **CÁT TƯỢNG (ĐẠI CÁT)**.
@@ -43,7 +55,7 @@ Trong Dịch Học Lục Hào, trình tự và trọng tâm đánh giá Vượng
 
 ---
 
-## 4. QUY TẮC ĐÁNH GIÁ HÀO KHÔNG VONG (TUẦN KHÔNG)
+## 5. QUY TẮC ĐÁNH GIÁ HÀO KHÔNG VONG (TUẦN KHÔNG)
 
 - **Hào ĐỘNG Không Vong**: **Không sao** (tương tự Động bị xung).
 - **Hào TĨNH Không Vong**:
@@ -52,7 +64,7 @@ Trong Dịch Học Lục Hào, trình tự và trọng tâm đánh giá Vượng
 
 ---
 
-## 5. NGUYÊN TẮC ƯU TIÊN XÁC ĐỊNH DỤNG THẦN (5 CẤP BẬC)
+## 6. NGUYÊN TẮC ƯU TIÊN XÁC ĐỊNH DỤNG THẦN (5 CẤP BẬC)
 
 1. Cấp 1: Hào Thế / Hào Ứng.
 2. Cấp 2: Hào Động / Hào Biến.
@@ -62,8 +74,8 @@ Trong Dịch Học Lục Hào, trình tự và trọng tâm đánh giá Vượng
 
 ---
 
-## 6. ĐIỀU KIỆN ĐÃI LỌC SIM CÁT TƯỜNG TỔNG THỂ
+## 7. ĐIỀU KIỆN ĐÃI LỌC SIM CÁT TƯỜNG TỔNG THỂ
 
-1. **ĐỘNG BIẾN CÁT TƯỜNG (YẾU TỐ QUYẾT ĐỊNH)**: Hào Động không tương khắc Dụng Thần / Hào Thế; Dụng Thần động không hóa suy bại; Hào Động hữu dụng sinh trợ cho Dụng Thần và Hào Thế.
+1. **ĐỘNG BIẾN CÁT TƯỜNG (YẾU TỐ QUYẾT ĐỊNH)**: Hào Động không tương khắc Dụng Thần / Hào Thế; Dụng Thần động không hóa suy bại; Hào Động hữu dụng sinh trợ cho Dụng Thần và Hào Thế; Không bị Gian Hào Động cản trở.
 2. **NỀN TẢNG NHẬT NGUYỆT BỔ TRỢ**: Dụng Thần đắc thế Vượng tại Nguyệt/Động; Hào Thế tối thiểu đắc thế Hưng; KHÔNG phạm Chân Không, Chân Mộ hay Tùy Nguyệt phá nhập Nhật mộ.
 3. **ƯU TIÊN CÁT TƯỜNG HIGHEST**: Hào Thế động hóa Dụng Thần / Tử Tôn, Dụng Thần động sinh Thế, Hào Động vượng sinh Thế ➔ Đạt điểm Đại Cát Top 1.
