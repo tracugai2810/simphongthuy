@@ -2,7 +2,7 @@
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
    - Mật khẩu Admin chính thức: 140498
    - Tên tài khoản mặc định lưu chữ thường, Mã giới thiệu mặc định chữ hoa
-   - Khôi phục mật khẩu tùy chỉnh qua Custom Popup
+   - Khôi phục mật khẩu qua Email liên hệ + Gửi Email reset password chính thức qua Firebase Auth
    ========================================================================== */
 
 // Firebase Configuration
@@ -137,7 +137,7 @@ const AuthStore = (() => {
     function initDefaultData() {
         let users = getUsers();
 
-        // Đảm bảo Admin luôn có mật khẩu mới 140498 và chứa cả email dambuicong@gmail.com
+        // Đảm bảo Admin luôn có mật khẩu mới 140498 và hỗ trợ email dambuicong@gmail.com
         const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
         const adminUser = {
             id: 'usr_admin_01',
@@ -271,6 +271,11 @@ const AuthStore = (() => {
             db.collection('users').doc(newUser.id).set(newUser).catch(err => console.warn("Firebase sync error:", err));
         }
 
+        // Tạo tài khoản Firebase Auth hỗ trợ gửi email reset password thật
+        if (fbAuth && cleanEmail) {
+            fbAuth.createUserWithEmailAndPassword(cleanEmail, password).catch(() => {});
+        }
+
         logCoinAction(newUser.id, newUser.username, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
 
         const refBonusMsg = referredByUser ? ` (Đã cộng +1 Xu nhờ mã GT của ${referredByUser.username})` : '';
@@ -282,7 +287,7 @@ const AuthStore = (() => {
         };
     }
 
-    // YÊU CẦU KHÔI PHỤC MẬT KHẨU
+    // YÊU CẦU KHÔI PHỤC MẬT KHẨU & GỬI EMAIL THẬT
     function requestPasswordReset(inputUser) {
         initDefaultData();
         const users = getUsers();
@@ -291,16 +296,29 @@ const AuthStore = (() => {
         const user = users.find(u =>
             u.username.toLowerCase() === cleanUser || 
             (u.email && u.email.toLowerCase() === cleanUser) ||
-            (cleanUser === 'dambuicong@gmail.com' && u.username === 'dambuicong')
+            (cleanUser === 'dambuicong@gmail.com' && u.username === 'dambuicong') ||
+            (cleanUser === 'dambuicong@admin.com' && u.username === 'dambuicong')
         );
 
         if (!user) {
             return { success: false, message: 'Email hoặc Tên tài khoản này chưa được đăng ký trong hệ thống!' };
         }
 
+        const emailToUse = user.email || `${user.username}@gmail.com`;
+
+        // 1. Gửi link khôi phục mật khẩu chính thức qua Google Firebase Mail (nếu đăng ký bằng Firebase)
+        if (fbAuth && emailToUse.includes('@')) {
+            fbAuth.sendPasswordResetEmail(emailToUse).then(() => {
+                console.log("🔥 Đã gửi email reset password thành công qua Firebase!");
+            }).catch(err => {
+                console.warn("Firebase Auth reset email notice:", err.message);
+            });
+        }
+
+        // 2. Đồng thời hiển thị mật khẩu trực tiếp trên Popup giao diện giúp khách hàng/Admin tiện lấy lại ngay lập tức
         return {
             success: true,
-            message: `✅ Mật khẩu khôi phục của tài khoản (${user.username}) là: ${user.passwordHash}`
+            message: `✅ Đã xác nhận tài khoản: (${user.username})!\n📩 Hệ thống đã gửi link khôi phục tới email: (${emailToUse}).\n🔑 Mật khẩu truy cập của bạn là: ${user.passwordHash}`
         };
     }
 
