@@ -1,13 +1,10 @@
 /* ==========================================================================
-   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO (EXACT ORIGINAL DESIGN RESTORED)
-   Aesthetics: Luxury Obsidian & Dark Red Frame, White Digit Boxes, Gold Accents
-   - Phông chữ Inter hiện đại 100% (Loại bỏ toàn bộ Charm gây rối mắt)
-   - Khung Đỏ Đô "Nhập số thuê bao mong muốn" với 10 ô vuông Nền Trắng Chữ Đỏ
-   - Form Grid 3 cột trên máy tính, Tự động thu 1 cột trên điện thoại
-   - Tối ưu Mobile First & Tách biệt Nút Đóng Modal
+   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO (UNIFIED ORIGINAL SANS-SERIF FONT)
+   Aesthetics: 100% Đồng bộ phông chữ Inter / System Sans-Serif sắc nét chuẩn web cũ
+   Áp dụng đồng bộ 100% cho Trang Chủ, Khung SĐT Đỏ Đô, Popups Đăng Nhập/Đăng Ký
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
     --bg-dark: #0c1222;
@@ -21,14 +18,16 @@
     --text-muted: #94a3b8;
     --border-color: #2d3a52;
     --border-gold: rgba(243, 198, 105, 0.4);
-    --font-title: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-title: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: var(--font-main) !important;
 }
 
 html, body {
@@ -44,7 +43,7 @@ body {
     background: linear-gradient(135deg, #0c1222 0%, #0a0f1a 50%, #0c1222 100%);
     background-attachment: fixed;
     color: var(--text-light);
-    font-family: var(--font-body);
+    font-family: var(--font-main) !important;
     line-height: 1.6;
     min-height: 100vh;
     padding-top: 15px;
@@ -85,6 +84,7 @@ body {
     align-items: center;
     gap: 8px;
     letter-spacing: 0.5px;
+    font-family: var(--font-main) !important;
 }
 
 .user-nav-group {
@@ -97,7 +97,7 @@ body {
 .btn-auth-trigger {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.92rem;
     padding: 8px 16px;
     border-radius: 8px;
@@ -105,6 +105,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
+    font-family: var(--font-main) !important;
 }
 
 .btn-auth-trigger:hover {
@@ -122,6 +123,7 @@ body {
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: var(--font-main) !important;
 }
 
 .coin-badge:hover {
@@ -132,7 +134,7 @@ body {
 .btn-earn-coins {
     background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.88rem;
     padding: 7px 14px;
     border-radius: 8px;
@@ -140,6 +142,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 3px 8px rgba(22, 163, 74, 0.3);
+    font-family: var(--font-main) !important;
 }
 
 .btn-earn-coins:hover {
@@ -152,10 +155,12 @@ body {
     border: 1px solid rgba(243, 198, 105, 0.4);
     color: #cbd5e1;
     font-size: 0.85rem;
+    font-weight: 700;
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: var(--font-main) !important;
 }
 
 .ref-badge:hover {
@@ -168,11 +173,12 @@ body {
     border: 1px solid var(--gold-dark);
     color: var(--gold-primary);
     font-size: 0.85rem;
-    font-weight: bold;
+    font-weight: 800;
     padding: 6px 12px;
     border-radius: 8px;
     text-decoration: none;
     transition: all 0.2s ease;
+    font-family: var(--font-main) !important;
 }
 
 .admin-link-btn:hover {
@@ -185,10 +191,12 @@ body {
     border: 1px solid var(--border-color);
     color: #94a3b8;
     font-size: 0.85rem;
+    font-weight: 700;
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: var(--font-main) !important;
 }
 
 .btn-logout:hover {
@@ -219,6 +227,7 @@ body {
     gap: 10px;
     border-bottom: 2px solid var(--gold-dark);
     padding-bottom: 10px;
+    font-family: var(--font-main) !important;
 }
 
 .form-grid {
@@ -238,6 +247,7 @@ body {
     font-weight: 700;
     color: #cbd5e1;
     margin-bottom: 8px;
+    font-family: var(--font-main) !important;
 }
 
 .form-control {
@@ -250,7 +260,7 @@ body {
     border-radius: 10px;
     outline: none;
     transition: all 0.3s ease;
-    font-family: var(--font-body);
+    font-family: var(--font-main) !important;
 }
 
 .form-control:focus {
@@ -286,6 +296,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    font-family: var(--font-main) !important;
 }
 
 .btn-eval-current:hover {
@@ -294,10 +305,10 @@ body {
 }
 
 /* ==========================================================================
-   DIGIT SELECTOR (KHUNG ĐỎ ĐÔ ĐẶC TRƯNG CHUẨN GIAO DIỆN CỦ GẮN O VUÔNG TRẮNG)
+   DIGIT SELECTOR (KHUNG ĐỎ ĐÔ DÀNH CHO SĐT CHUẨN NGUYÊN BẢN CŨ)
    ========================================================================== */
 .digit-section {
-    background: #7a1c1c; /* Màu Đỏ Đô Sang Trọng Độc Bản Chuẩn Giao Diện Cũ */
+    background: #7a1c1c;
     border: 1px solid var(--gold-dark);
     border-radius: 16px;
     padding: 22px 18px 18px 18px;
@@ -313,6 +324,7 @@ body {
     margin-bottom: 8px;
     text-align: center;
     letter-spacing: 0.5px;
+    font-family: var(--font-main) !important;
 }
 
 .prefix-selector-group {
@@ -327,6 +339,7 @@ body {
     font-size: 0.9rem;
     color: #ffd700;
     font-weight: 700;
+    font-family: var(--font-main) !important;
 }
 
 .prefix-select {
@@ -337,6 +350,7 @@ body {
     border-radius: 8px;
     outline: none;
     font-weight: 700;
+    font-family: var(--font-main) !important;
 }
 
 .digit-boxes-container {
@@ -350,16 +364,16 @@ body {
 .digit-box {
     width: 44px;
     height: 48px;
-    background: #ffffff !important; /* Ô vuông Nền Trắng tinh */
+    background: #ffffff !important;
     border: 1.5px solid var(--gold-dark) !important;
-    color: #8b2525 !important; /* Chữ Đỏ Đô nổi bật */
+    color: #8b2525 !important;
     font-size: 1.35rem;
     font-weight: 900;
     text-align: center;
     border-radius: 8px;
     outline: none;
     transition: all 0.2s ease;
-    font-family: monospace;
+    font-family: monospace, var(--font-main) !important;
 }
 
 .digit-box:focus {
@@ -379,6 +393,7 @@ body {
     line-height: 1.4;
     max-width: 700px;
     margin: 0 auto;
+    font-family: var(--font-main) !important;
 }
 
 /* NÚT SUBMIT CHÍNH AMBER ORANGE */
@@ -396,6 +411,7 @@ body {
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    font-family: var(--font-main) !important;
 }
 
 .btn-submit:hover {
@@ -445,6 +461,7 @@ body {
     color: #ffffff;
     letter-spacing: 1px;
     margin-bottom: 6px;
+    font-family: var(--font-main) !important;
 }
 
 .sim-number-display .highlight {
@@ -465,6 +482,7 @@ body {
     border-radius: 12px;
     display: inline-flex;
     align-items: center;
+    font-family: var(--font-main) !important;
 }
 
 .badge-score {
@@ -483,6 +501,7 @@ body {
     list-style: none;
     font-size: 0.88rem;
     color: #cbd5e1;
+    font-family: var(--font-main) !important;
 }
 
 .sim-reasons-list li {
@@ -508,7 +527,7 @@ body {
 .btn-action {
     padding: 10px 16px;
     border-radius: 8px;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.88rem;
     border: none;
     cursor: pointer;
@@ -518,6 +537,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    font-family: var(--font-main) !important;
 }
 
 .btn-view-hex {
@@ -541,7 +561,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (SANG TRỌNG & NÚT ĐÓNG TÁCH BIỆT TRONG PADDING)
+   MODALS POPUP (SANG TRỌNG & TẤT CẢ FONT INTER ĐỒNG BỘ 100%)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -576,6 +596,7 @@ body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     margin: auto;
+    font-family: var(--font-main) !important;
 }
 
 .modal-close {
@@ -619,11 +640,12 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: #cbd5e1;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.92rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: var(--font-main) !important;
 }
 
 .auth-tab-btn.active, .auth-tab-btn:hover {
@@ -793,6 +815,7 @@ body {
     box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
     transition: all 0.2s ease;
     text-align: center;
+    font-family: var(--font-main) !important;
 }
 
 .btn-mobile-share-ios:active {
@@ -1005,7 +1028,7 @@ body {
     padding: 12px 24px;
     border-radius: 30px;
     font-size: 0.92rem;
-    font-weight: 700;
+    font-weight: 800;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
     z-index: 10000;
     opacity: 0;
@@ -1013,6 +1036,7 @@ body {
     pointer-events: none;
     text-align: center;
     max-width: 90vw;
+    font-family: var(--font-main) !important;
 }
 
 .toast-notification.show {
