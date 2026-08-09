@@ -2,7 +2,7 @@
    MAIN UI CONTROLLER - Website Sim Phong Thủy Lục Hào Pro
    - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
    - Tích hợp Thương Mại Hóa: Phân quyền Auth, Quản Lý Xu, Trừ Xu Tra Cứu
-   - Modal Lịch Sử Tiêu Dùng Xu, Modal Donate QR Code, Modal Mã Giới Thiệu
+   - Modal Lịch Sử Tiêu Dùng Xu, Modal Donate QR Code, Modal Mã Giới Thiệu (Nhập bổ sung mã GT)
    - Tối Ưu Mobile First Toàn Bộ Trang Web
    ========================================================================== */
 
@@ -35,7 +35,6 @@ function initFormDefaults() {
         dateInput.value = localISOTime;
     }
 
-    // Lắng nghe sự kiện thay đổi số lượng SIM để tự động cập nhật số Xu trên nút bấm
     const limitSelect = document.getElementById('limitSelect');
     const btnSubmitSearch = document.getElementById('btnSubmitSearch');
 
@@ -57,23 +56,18 @@ function initFormDefaults() {
 function setupAuthAndCommerce() {
     updateUserNavUI();
 
-    // Nút mở Auth
     const btnOpenAuth = document.getElementById('btnOpenAuth');
     if (btnOpenAuth) btnOpenAuth.addEventListener('click', () => openModal('authModal'));
 
-    // Nút mở Donate & Kiếm Xu
     const btnEarnCoins = document.getElementById('btnEarnCoins');
     if (btnEarnCoins) btnEarnCoins.addEventListener('click', () => openDonateModal());
 
-    // Nút xem Lịch sử Xu khi bấm vào số Xu
     const btnShowCoinHistory = document.getElementById('btnShowCoinHistory');
     if (btnShowCoinHistory) btnShowCoinHistory.addEventListener('click', () => openUserCoinHistoryModal());
 
-    // Nút mở Referral Modal
     const btnShowRefModal = document.getElementById('btnShowRefModal');
     if (btnShowRefModal) btnShowRefModal.addEventListener('click', () => openRefModal());
 
-    // Nút Đăng xuất
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) btnLogout.addEventListener('click', () => {
         AuthStore.logout();
@@ -81,7 +75,7 @@ function setupAuthAndCommerce() {
         showToast("Đã đăng xuất tài khoản!");
     });
 
-    // Submit Form Login
+    // Form Đăng Nhập
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -103,7 +97,7 @@ function setupAuthAndCommerce() {
         });
     }
 
-    // Submit Form Register
+    // Form Đăng Ký
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', (e) => {
@@ -121,6 +115,29 @@ function setupAuthAndCommerce() {
                 if (pendingAction) {
                     executePendingActionWithConfirm();
                 }
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    // NÚT BẤM BỔ SUNG MÃ GIỚI THIỆU
+    const btnApplyRefCode = document.getElementById('btnApplyRefCode');
+    if (btnApplyRefCode) {
+        btnApplyRefCode.addEventListener('click', () => {
+            const user = AuthStore.getCurrentUser();
+            if (!user) {
+                openModal('authModal');
+                return;
+            }
+
+            const inputRef = document.getElementById('inputApplyRefCode').value;
+            const res = AuthStore.applyReferralCode(user.id, inputRef);
+
+            if (res.success) {
+                updateUserNavUI();
+                openRefModal();
+                showToast(res.message);
             } else {
                 alert(res.message);
             }
@@ -219,7 +236,7 @@ function updateUserNavUI() {
     }
 }
 
-// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Tối ưu giao diện & Đã lọc sạch chữ Nạp Xu)
+// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Tối ưu 3 cột cho Mobile & Desktop)
 function openUserCoinHistoryModal() {
     const user = AuthStore.getCurrentUser();
     if (!user) {
@@ -235,28 +252,31 @@ function openUserCoinHistoryModal() {
     if (!tbody) return;
 
     if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:24px; color:#94a3b8;">Chưa có lịch sử tiêu dùng Xu.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:24px; color:#94a3b8;">Chưa có lịch sử tiêu dùng Xu.</td></tr>`;
     } else {
         let html = '';
         logs.forEach(l => {
             const dt = new Date(l.timestamp);
             const timeStr = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const formattedTime = `<div style="font-weight:700; font-size:0.85rem; color:#f1f5f9; white-space:nowrap;">${timeStr}</div><div style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;">${dateStr}</div>`;
+            const dateStr = dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+            const formattedTime = `<div style="font-weight:700; font-size:0.82rem; color:#f1f5f9; white-space:nowrap;">${timeStr}</div><div style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;">${dateStr}</div>`;
 
-            // Loại bỏ hoàn toàn chữ Nạp Xu khỏi hiển thị
             const cleanAction = (l.action || '').replace(/Nạp Xu/gi, '').trim();
 
-            const changeStr = l.change >= 0 
-                ? `<span style="color:#4ade80; font-weight:800; font-size:0.92rem; white-space:nowrap;">+${l.change} Xu</span>` 
-                : `<span style="color:#f87171; font-weight:800; font-size:0.92rem; white-space:nowrap;">${l.change} Xu</span>`;
+            const changeBadge = l.change >= 0 
+                ? `<span style="color:#4ade80; font-weight:800; font-size:0.9rem; white-space:nowrap;">+${l.change} Xu</span>` 
+                : `<span style="color:#f87171; font-weight:800; font-size:0.9rem; white-space:nowrap;">${l.change} Xu</span>`;
+
+            const balanceStr = `<div style="font-size:0.75rem; color:#ffd700; font-weight:bold;">(Dư ${l.balanceAfter} Xu)</div>`;
 
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
                     <td style="padding: 10px 6px; vertical-align: middle;">${formattedTime}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; color:#cbd5e1; font-size:0.88rem; line-height:1.4;">${cleanAction}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; text-align:center;">${changeStr}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; text-align:center; font-weight:bold; color:#ffd700; font-size:0.9rem; white-space:nowrap;">${l.balanceAfter} Xu</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; color:#cbd5e1; font-size:0.86rem; line-height:1.4;">${cleanAction}</td>
+                    <td style="padding: 10px 6px; vertical-align: middle; text-align:right;">
+                        ${changeBadge}
+                        ${balanceStr}
+                    </td>
                 </tr>
             `;
         });
@@ -273,6 +293,9 @@ function detectRefQuery() {
     if (refParam) {
         const regRefInput = document.getElementById('regRefCode');
         if (regRefInput) regRefInput.value = refParam.toUpperCase();
+
+        const inputApplyRefCode = document.getElementById('inputApplyRefCode');
+        if (inputApplyRefCode) inputApplyRefCode.value = refParam.toUpperCase();
     }
 }
 
@@ -308,6 +331,7 @@ function selectDonateTier(tierKey, coins, amountVnd, elem) {
     }
 }
 
+// MỞ MODAL MÃ GIỚI THIỆU (KIỂM TRA HIỂN THỊ Ô NHẬP BỔ SUNG MÃ GT)
 function openRefModal() {
     const user = AuthStore.getCurrentUser();
     if (!user) {
@@ -322,6 +346,22 @@ function openRefModal() {
     document.getElementById('statTotalRefs').textContent = stats.totalRefs;
     document.getElementById('statQualRefs').textContent = stats.qualifiedRefs;
     document.getElementById('statTotalEarned').textContent = stats.totalEarned;
+
+    // Kiểm tra đã áp dụng Mã GT chưa
+    const refApplySection = document.getElementById('refApplySection');
+    const refAppliedBadge = document.getElementById('refAppliedBadge');
+    const refAppliedName = document.getElementById('refAppliedName');
+
+    if (stats.referredBy || user.referredBy) {
+        if (refApplySection) refApplySection.style.display = 'none';
+        if (refAppliedBadge) {
+            refAppliedBadge.style.display = 'block';
+            if (refAppliedName) refAppliedName.textContent = stats.referrerName || 'Người Giới Thiệu';
+        }
+    } else {
+        if (refApplySection) refApplySection.style.display = 'block';
+        if (refAppliedBadge) refAppliedBadge.style.display = 'none';
+    }
 
     openModal('refModal');
 }

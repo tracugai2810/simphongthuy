@@ -2,15 +2,15 @@
    ADMIN CONTROL PANEL LOGIC PRO
    - Xử lý đăng nhập Admin dambuicong / 281097
    - Giao diện Obsidian Gold chuẩn phong cách Luxury
-   - Custom Modals thông báo & xác nhận sang trọng (Không dùng alert/confirm trình duyệt)
-   - Xử lý Duyệt đơn Donate (Tự động cộng Xu & Tự động trích 50% hoa hồng)
-   - Quản lý Thành Viên: Popup Tùy Chỉnh Xu (Tab Tăng / Tab Giảm) & Nút Xóa Thành Viên
-   - Lịch sử giao dịch hiển thị Tên Khách Hàng thay vì ID
+   - Custom Modals thông báo & xác nhận sang trọng
+   - Xử lý Duyệt đơn Donate
+   - Quản lý Thành Viên & Tùy Chỉnh Xu (Tab Tăng / Tab Giảm)
+   - Lịch sử giao dịch hiển thị Tên Khách Hàng thực tế (tra cứu từ User ID)
    ========================================================================== */
 
 let pendingAdminConfirmCallback = null;
 let currentAdjustUserId = null;
-let currentAdjustMode = 'add'; // 'add' hoặc 'sub'
+let currentAdjustMode = 'add';
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAdminSession();
@@ -78,7 +78,6 @@ function adminLogout() {
     });
 }
 
-// CUSTOM OBSIDIAN GOLD MODAL SYSTEM FOR ADMIN
 function showAdminAlert(message, onOk = null) {
     const modal = document.getElementById('adminAlertModal');
     const msgElem = document.getElementById('adminAlertMsg');
@@ -220,7 +219,6 @@ function handleReject(reqId) {
     });
 }
 
-// BẢNG QUẢN LÝ THÀNH VIÊN (KÈM NÚT XÓA THÀNH VIÊN VÀ ĐIỀU CHỈNH XU CÓ TAB TĂNG/GIẢM)
 function renderUsersList() {
     if (typeof AuthStore === 'undefined') return;
 
@@ -252,7 +250,6 @@ function renderUsersList() {
     tbody.innerHTML = html;
 }
 
-// XÓA THÀNH VIÊN (CÓ POPUP XÁC NHẬN)
 function handleDeleteUser(userId, username) {
     showAdminConfirm(`Bạn có chắc chắn muốn XÓA thành viên "${username}"? Thao tác này không thể hoàn tác!`, () => {
         const res = AuthStore.deleteUser(userId);
@@ -262,7 +259,6 @@ function handleDeleteUser(userId, username) {
     });
 }
 
-// MỞ POPUP TÙY CHỈNH XU CÓ TAB TĂNG VÀ GIẢM RIÊNG (Theo Ảnh 5)
 function openAdjustCoinsModal(userId, username, currentCoins) {
     currentAdjustUserId = userId;
     currentAdjustMode = 'add';
@@ -330,7 +326,7 @@ function submitAdjustCoins() {
     });
 }
 
-// BẢNG NHẬT KÝ GIAO DỊCH (HIỂN THỊ TÊN KHÁCH HÀNG THAY VÌ ID)
+// BẢNG NHẬT KÝ GIAO DỊCH (TỰ ĐỘNG TRA CỨU TÊN KHÁCH HÀNG TỪ USER ID)
 function renderLogsList() {
     const tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
@@ -339,6 +335,8 @@ function renderLogsList() {
     try {
         logs = JSON.parse(localStorage.getItem('sim_pt_coin_logs_v1')) || [];
     } catch (e) {}
+
+    const users = (typeof AuthStore !== 'undefined') ? AuthStore.getUsers() : [];
 
     if (logs.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có nhật ký giao dịch.</td></tr>`;
@@ -349,13 +347,22 @@ function renderLogsList() {
     logs.forEach(l => {
         const timeStr = new Date(l.timestamp).toLocaleString('vi-VN');
         const changeStr = l.change >= 0 ? `<span style="color:#4ade80; font-weight:bold;">+${l.change} Xu</span>` : `<span style="color:#f87171; font-weight:bold;">${l.change} Xu</span>`;
-        const displayName = l.username || l.userId || 'Khách';
+
+        // Tự động tìm Tên Khách Hàng nếu log cũ lưu dạng ID
+        let displayName = l.username;
+        if (!displayName || displayName.startsWith('usr_')) {
+            const matchUser = users.find(u => u.id === l.userId);
+            if (matchUser) displayName = matchUser.username;
+            else displayName = l.username || l.userId || 'Khách';
+        }
+
+        const cleanAction = (l.action || '').replace(/Nạp Xu/gi, '').trim();
 
         html += `
             <tr>
                 <td>${timeStr}</td>
                 <td><strong style="color:var(--gold-glow);">${displayName}</strong></td>
-                <td>${l.action}</td>
+                <td>${cleanAction}</td>
                 <td>${changeStr}</td>
                 <td><strong>${l.balanceAfter} Xu</strong></td>
             </tr>

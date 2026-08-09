@@ -1,11 +1,8 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
    - Tích hợp kết nối Google Firebase (Cloud Firestore & Auth) vĩnh viễn
-   - Tự động Đồng Bộ Dữ Liệu Realtime 2 chiều giữa Điện Thoại và Máy Tính Admin
-   - Quản lý Đăng Nhập / Đăng Ký (Check trùng tuyệt đối, mã GT không phân biệt hoa thường)
-   - Quản lý Số Dư Xu, Trừ Xu Tra Cứu, Donate QR Code
-   - Mã Giới Thiệu Độc Bản, Tự Động Trích 50% Hoa Hồng Cho Người Giới Thiệu
-   - Lịch Sử Tiêu Dùng Xu Khách Hàng & Quản Lý Admin
+   - Đồng Bộ Dữ Liệu Realtime 3 chiều (Users, Donate, Coin Logs) giữa Điện Thoại và Admin
+   - Tự động thay thế User ID cũ trong Logs bằng Tên Khách Hàng thực tế
    ========================================================================== */
 
 // Firebase Configuration (Chuỗi mã hóa tránh GitHub Scanner Alert)
@@ -41,11 +38,11 @@ const AuthStore = (() => {
     const STORAGE_KEY_DONATES = 'sim_pt_donate_requests_v1';
     const STORAGE_KEY_LOGS = 'sim_pt_coin_logs_v1';
 
-    // ĐỒNG BỘ REALTIME DỮ LIỆU TỪ FIREBASE SANG LOCALSTORAGE (GIỮA ĐIỆN THOẠI & PC)
+    // ĐỒNG BỘ REALTIME DỮ LIỆU TỪ FIREBASE SANG LOCALSTORAGE
     function setupFirebaseRealtimeSync() {
         if (!db) return;
 
-        // 1. Lắng nghe thay đổi Thành viên (Users)
+        // 1. Đồng bộ Thành Viên
         db.collection('users').onSnapshot(snapshot => {
             if (snapshot.empty) return;
             let localUsers = getUsers();
@@ -78,7 +75,7 @@ const AuthStore = (() => {
             }
         }, err => console.warn("Firebase users sync warning:", err));
 
-        // 2. Lắng nghe thay đổi Đơn Donate
+        // 2. Đồng bộ Đơn Donate
         db.collection('donate_requests').onSnapshot(snapshot => {
             if (snapshot.empty) return;
             let localReqs = getDonateRequests();
@@ -104,9 +101,39 @@ const AuthStore = (() => {
                 if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
             }
         }, err => console.warn("Firebase donates sync warning:", err));
+
+        // 3. Đồng bộ Nhật Ký Giao Dịch (Coin Logs) Realtime!
+        db.collection('coin_logs').onSnapshot(snapshot => {
+            if (snapshot.empty) return;
+            let localLogs = [];
+            try {
+                localLogs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
+            } catch (e) {}
+            let hasChanges = false;
+
+            snapshot.forEach(doc => {
+                const fbLog = doc.data();
+                const idx = localLogs.findIndex(l => l.id === fbLog.id);
+
+                if (idx === -1) {
+                    localLogs.push(fbLog);
+                    hasChanges = true;
+                } else {
+                    if (JSON.stringify(localLogs[idx]) !== JSON.stringify(fbLog)) {
+                        localLogs[idx] = fbLog;
+                        hasChanges = true;
+                    }
+                }
+            });
+
+            if (hasChanges) {
+                localLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(localLogs.slice(0, 300)));
+                if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
+            }
+        }, err => console.warn("Firebase logs sync warning:", err));
     }
 
-    // Khởi tạo Admin dambuicong mặc định nếu chưa có
     function initDefaultData() {
         let users = getUsers();
         if (users.length === 0) {
@@ -184,7 +211,7 @@ const AuthStore = (() => {
         return code;
     }
 
-    // ĐĂNG KÝ TÀI KHOẢN MỚI (MÃ GIỚI THIỆU CHỮ HOA & CHỮ THƯỜNG ĐỀU ĐƯỢC CHẤP NHẬN 100%)
+    // ĐĂNG KÝ TÀI KHOẢN MỚI
     function register(username, email, password, inputRefCode = '') {
         initDefaultData();
         const users = getUsers();
@@ -203,7 +230,6 @@ const AuthStore = (() => {
         let cleanEmail = (email || '').trim();
         if (!cleanEmail) cleanEmail = `${lowerUsername}@simpt.local`;
 
-        // Nhận diện mã giới thiệu (KHÔNG PHÂN BIỆT CHỮ HOA CHỮ THƯỜNG)
         let referredByUser = null;
         if (inputRefCode && inputRefCode.trim()) {
             const cleanRef = inputRefCode.trim().toUpperCase();
@@ -215,7 +241,6 @@ const AuthStore = (() => {
             newRefCode = generateRefCode();
         }
 
-        // Nếu có nhập mã GT hợp lệ -> Nhận 2 Xu (1 mặc định + 1 thưởng GT)
         const initialCoins = referredByUser ? 2 : 1;
 
         const newUser = {
@@ -234,11 +259,11 @@ const AuthStore = (() => {
         saveUsers(users);
         setCurrentUser(newUser);
 
-        // Đồng bộ tức thì lên Google Firebase Firestore
         if (db) {
             db.collection('users').doc(newUser.id).set(newUser).catch(err => console.warn("Firebase sync error:", err));
         }
 
+        // Đảm bảo lưu đúng username vào nhật ký giao dịch
         logCoinAction(newUser.id, newUser.username, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
 
         const refBonusMsg = referredByUser ? ` (Đã cộng thêm +1 Xu nhờ mã GT của ${referredByUser.username})` : '';
@@ -247,6 +272,60 @@ const AuthStore = (() => {
             success: true,
             user: newUser,
             message: `Đăng ký thành công! Bạn nhận được +${initialCoins} Xu vĩnh viễn!${refBonusMsg}`
+        };
+    }
+
+    // NHẬP BỔ SUNG MÃ GIỚI THIỆU
+    function applyReferralCode(userId, inputRefCode) {
+        if (!inputRefCode || !inputRefCode.trim()) {
+            return { success: false, message: 'Vui lòng nhập mã giới thiệu!' };
+        }
+
+        const users = getUsers();
+        const userIdx = users.findIndex(u => u.id === userId);
+        if (userIdx === -1) return { success: false, message: 'Thành viên không tồn tại!' };
+
+        const user = users[userIdx];
+        if (user.referredBy) {
+            return { success: false, message: 'Tài khoản này đã áp dụng mã giới thiệu từ trước!' };
+        }
+
+        const cleanRef = inputRefCode.trim().toUpperCase();
+
+        if (user.refCode && user.refCode.trim().toUpperCase() === cleanRef) {
+            return { success: false, message: 'Bạn không thể tự nhập mã giới thiệu của chính mình!' };
+        }
+
+        const referrer = users.find(u => u.refCode && u.refCode.trim().toUpperCase() === cleanRef);
+        if (!referrer) {
+            return { success: false, message: 'Mã giới thiệu này không tồn tại trong hệ thống!' };
+        }
+
+        users[userIdx].referredBy = referrer.id;
+        users[userIdx].coins += 1;
+        saveUsers(users);
+
+        const current = getCurrentUser();
+        if (current && current.id === userId) {
+            current.referredBy = referrer.id;
+            current.coins = users[userIdx].coins;
+            setCurrentUser(current);
+        }
+
+        if (db) {
+            db.collection('users').doc(userId).update({
+                referredBy: referrer.id,
+                coins: users[userIdx].coins
+            }).catch(() => {});
+        }
+
+        logCoinAction(userId, user.username, `Bổ Sung Mã GT của ${referrer.username}`, 1, users[userIdx].coins);
+
+        return {
+            success: true,
+            newBalance: users[userIdx].coins,
+            referrerName: referrer.username,
+            message: `Áp dụng thành công mã GT của ${referrer.username}! Bạn nhận được +1 Xu thưởng!`
         };
     }
 
@@ -348,7 +427,7 @@ const AuthStore = (() => {
         };
     }
 
-    // ADMIN DUYỆT YÊU CẦU DONATE (CỘNG XU + CỘNG 50% HOA HỒNG CHO NGƯỜI GIỚI THIỆU)
+    // ADMIN DUYỆT YÊU CẦU DONATE
     function approveDonateRequest(requestId) {
         const reqs = getDonateRequests();
         const reqIdx = reqs.findIndex(r => r.id === requestId);
@@ -414,7 +493,6 @@ const AuthStore = (() => {
         };
     }
 
-    // ADMIN TỪ CHỐI DONATE
     function rejectDonateRequest(requestId) {
         const reqs = getDonateRequests();
         const reqIdx = reqs.findIndex(r => r.id === requestId);
@@ -433,7 +511,6 @@ const AuthStore = (() => {
         return { success: true, message: 'Đã từ chối yêu cầu Donate này.' };
     }
 
-    // XÓA THÀNH VIÊN
     function deleteUser(userId) {
         const users = getUsers();
         const user = users.find(u => u.id === userId);
@@ -486,7 +563,6 @@ const AuthStore = (() => {
         });
     }
 
-    // ADMIN ĐIỀU CHỈNH XU
     function adminAdjustCoins(userId, coinDelta, reason = 'Admin điều chỉnh') {
         const users = getUsers();
         const idx = users.findIndex(u => u.id === userId);
@@ -552,8 +628,16 @@ const AuthStore = (() => {
         const userLogs = logs.filter(l => l.userId === userId && l.action.includes('Hoa Hồng 50%'));
         const totalEarned = userLogs.reduce((sum, l) => sum + (l.change || 0), 0);
 
+        let referrerName = '';
+        if (user.referredBy) {
+            const refUser = users.find(u => u.id === user.referredBy);
+            if (refUser) referrerName = refUser.username;
+        }
+
         return {
             refCode: user.refCode,
+            referredBy: user.referredBy,
+            referrerName,
             totalRefs: myRefs.length,
             qualifiedRefs,
             totalEarned
@@ -565,6 +649,7 @@ const AuthStore = (() => {
         getUsers,
         getCurrentUser,
         register,
+        applyReferralCode,
         login,
         logout,
         deductCoins,

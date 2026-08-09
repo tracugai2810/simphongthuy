@@ -1,8 +1,7 @@
 /* ==========================================================================
-   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO
-   Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web)
-   Tối ưu Mobile First Toàn Diện: Khóa 100% Khung Hiển Thị Không Bị Shift/Zoom
-   Nút Bấm Modal Cực Dễ Bấm Trên Điện Thoại & Mã Giới Thiệu Chữ Hoa/Thường
+   SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO (ELEGANT LUXURY CLASSIC AESTHETICS)
+   Aesthetics: Luxury Obsidian & Dark Red + Google Fonts 'Charm' (Font Chữ Phong Thủy Cổ Điển)
+   Đồng bộ 100% Tiêu đề, Thương hiệu, Nút bấm & Bảng Quẻ
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -18,7 +17,7 @@
     --text-light: #f1f5f9;
     --text-muted: #94a3b8;
     --border-color: #2d3a52;
-    --border-gold: rgba(243, 198, 105, 0.3);
+    --border-gold: rgba(243, 198, 105, 0.4);
     --font-title: 'Charm', cursive, serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
@@ -76,13 +75,15 @@ body {
 }
 
 .brand-title {
-    font-size: 1.15rem;
-    font-weight: 800;
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    font-weight: 700;
     color: var(--gold-glow);
     display: flex;
     align-items: center;
     gap: 8px;
     letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .user-nav-group {
@@ -209,7 +210,7 @@ body {
 
 .section-title {
     font-family: var(--font-title);
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: var(--gold-glow);
     margin-bottom: 20px;
@@ -218,6 +219,7 @@ body {
     gap: 10px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .form-grid {
@@ -233,7 +235,7 @@ body {
 }
 
 .form-group label {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: #cbd5e1;
     margin-bottom: 8px;
@@ -273,9 +275,10 @@ body {
 .btn-eval-current {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
+    font-family: var(--font-title);
     font-weight: 700;
-    font-size: 0.92rem;
-    padding: 12px 18px;
+    font-size: 1.3rem;
+    padding: 10px 18px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
@@ -285,6 +288,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-eval-current:hover {
@@ -304,12 +308,13 @@ body {
 }
 
 .digit-section-title {
-    font-size: 0.95rem;
+    font-family: var(--font-title);
+    font-size: 1.4rem;
     font-weight: 700;
-    color: var(--gold-primary);
+    color: var(--gold-glow);
     margin-bottom: 12px;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .prefix-selector-group {
@@ -381,14 +386,16 @@ body {
     padding: 16px;
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
-    font-weight: 800;
-    font-size: 1.1rem;
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 1.5rem;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-submit:hover {
@@ -534,7 +541,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (TỐI ƯU CỰC NÉT TRÊN ĐIỆN THOẠI)
+   MODALS POPUP (TỐI ƯU CỰC NÉT VÀ CHỐNG CHE NÚT ĐÓNG)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -560,7 +567,7 @@ body {
     background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
     border: 1px solid var(--border-gold);
     border-radius: 18px;
-    padding: 24px 20px;
+    padding: 42px 18px 20px 18px !important;
     max-width: 520px;
     width: 100%;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
@@ -571,26 +578,25 @@ body {
     margin: auto;
 }
 
-/* Nút Đóng Modal To Rõ Chống Bị Che Trên Mobile */
 .modal-close {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
     text-align: center;
     background: rgba(255, 255, 255, 0.12);
     border-radius: 50%;
     color: #ffffff;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     cursor: pointer;
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .modal-close:hover, .modal-close:active {
@@ -677,13 +683,13 @@ body {
     background: #0c1222;
     border: 1px dashed var(--border-gold);
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px;
     text-align: center;
     margin-top: 10px;
 }
 
 .qr-code-img {
-    max-width: 220px;
+    max-width: 200px;
     width: 100%;
     height: auto;
     border-radius: 8px;
@@ -697,24 +703,24 @@ body {
     background: #0c1222;
     border: 1px solid var(--border-gold);
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .ref-code-big {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 900;
     color: var(--gold-glow);
     letter-spacing: 2px;
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .ref-stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .ref-stat-card {
@@ -726,7 +732,7 @@ body {
 }
 
 .stat-num {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: #ffffff;
 }
@@ -778,8 +784,9 @@ body {
     margin-top: 14px;
     background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
     color: #ffffff;
+    font-family: var(--font-title);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.2rem;
     padding: 12px 16px;
     border-radius: 10px;
     border: none;
@@ -787,6 +794,7 @@ body {
     box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
     transition: all 0.2s ease;
     text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-mobile-share-ios:active {
@@ -1015,10 +1023,9 @@ body {
 }
 
 /* ==========================================================================
-   MOBILE FIRST RESPONSIVE BREAKPOINTS (KHÓA LỆCH MÀN HÌNH & TỐI ƯU BUTTONS)
+   MOBILE FIRST RESPONSIVE BREAKPOINTS
    ========================================================================== */
 @media (max-width: 768px) {
-    /* Đảm bảo Font 16px cho tất cả Input để không bị iOS Safari Auto-Zoom */
     input, select, textarea {
         font-size: 16px !important;
     }
@@ -1036,7 +1043,7 @@ body {
     }
 
     .brand-title {
-        font-size: 1.05rem;
+        font-size: 1.3rem;
         width: 100%;
         border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
         padding-bottom: 6px;
@@ -1082,6 +1089,11 @@ body {
         padding: 12px;
         width: 100%;
         justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .btn-submit {
+        font-size: 1.25rem;
     }
 
     .sim-card {
@@ -1111,9 +1123,8 @@ body {
         font-size: 0.88rem;
     }
 
-    /* Modal Responsive Mobile */
     .modal-content {
-        padding: 24px 14px 18px 14px !important;
+        padding: 42px 12px 16px 12px !important;
         max-width: 95% !important;
         margin: auto !important;
     }
@@ -1123,7 +1134,7 @@ body {
     }
 
     .ref-single-line-title {
-        font-size: 0.95rem;
+        font-size: 1.1rem;
         white-space: normal;
     }
 }
