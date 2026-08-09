@@ -285,7 +285,10 @@ function setupAuthAndCommerce() {
         btnCopyRefLink.addEventListener('click', () => {
             const user = AuthStore.getCurrentUser();
             if (!user) return;
-            const url = `${window.location.origin}${window.location.pathname}?ref=${user.refCode}`;
+            const origin = (window.location.origin && window.location.origin.includes('simphongthuy.io.vn')) 
+                ? 'http://simphongthuy.io.vn' 
+                : window.location.origin;
+            const url = `${origin}/?ref=${user.refCode}`;
             copySimNumberOnly(url);
         });
     }

@@ -1,17 +1,20 @@
 # BẢNG PHÂN LOẠI & THUẬT TOÁN ĐÁNH GIÁ LỤC HÀO SIM PHONG THỦY CHUẨN XÁC PRO
 
+> **Website Chính Thức**: [http://simphongthuy.io.vn](http://simphongthuy.io.vn)  
+> **Hệ Thống**: Thuật toán Chấm Điểm & Đãi Lọc SIM Phong Thủy Lục Hào Pro theo Kinh Dịch 2026.
+
 Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI** và **VƯỢNG CÁT** đối với Hào Động, Hào Tĩnh và Hào Thế trong Thuật toán Chấm Điểm & Đãi Lọc SIM Phong Thủy.
 
 ---
 
-## 🛑 TRÌNH TỰ ĐÃI LỌC BẮT BUỘC (MỚI NHẤT):
+## 🛑 TRÌNH TỰ ĐÃI LỌC BẮT BUỘC (MỚI):
 1. **XÉT HÀO THẾ ĐẦU TIÊN (HÀO THẾ VƯỢNG MỚI XÉT ĐẾN DỤNG THẦN)**:
    - Hào Thế đại diện cho Bản Mệnh. Bản mệnh chưa vượng thì không tiếp nhận được vận lộc.
    - **Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%)**, không cần xét tiếp các yếu tố khác.
 2. **HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN**:
    - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Bị Nhật Hợp, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%)**.
 3. **HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT**:
-   - Khi và chỉ khi **CẢ HÀO THẾ VƯỢNG VÀ DỤNG THẦN VƯỢNG** ➔ Mới đạt tiêu chuẩn SIM Cát Tường để gợi ý cho khách hàng!
+   - Khi và chỉ khi **CẢ HÀO THẾ VƯỢNG VÀ DỤNG THẦN VƯỢNG** ➔ Mới đạt tiêu chuẩn SIM Cát Tường để gợi ý cho khách hàng tại [simphongthuy.io.vn](http://simphongthuy.io.vn)!
 
 ---
 
@@ -33,8 +36,6 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
 12. **Mộ Tại Nhật Thần**: Ngũ hành hào động bị nhập Mộ tại chi của Nhật Thần.
 13. **Bị Nguyệt Hợp Mà Hợp Tàng Khắc**: Hào động bị Nguyệt Lệnh hợp nhưng bản chất ngũ hành tương khắc (Ví dụ: Nguyệt Mão hợp Hào Tuất ➔ Mão Mộc khắc Tuất Thổ).
 
-> **Lưu ý**: Các trường hợp hào động **KHÔNG rơi vào các trường hợp suy bại trên** ➔ TỰ ĐỘNG TÍNH LÀ **VƯỢNG & HỮU DỤNG (CÁT)**.
-
 ---
 
 ## II. QUY TẮC ĐÁNH GIÁ HÀO TĨNH (DỤNG THẦN)
@@ -48,8 +49,6 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
 5. **Dụng Thần Bị Hào Động Khắc**: Trong quẻ có Hào Động mang ngũ hành tương khắc Dụng Thần.
 6. **Dụng Thần Bị Hào Động Xung Hoặc Hợp**: Có Hào Động mang chi xung hoặc hợp với Dụng Thần.
 7. **Bị Nhật Hợp Hoặc Nguyệt Hợp Mà Hợp Tàng Khắc**: Dụng Thần được Nhật/Nguyệt hợp nhưng thuộc cặp Lục Hợp tàng khắc (Ví dụ: Mão-Tuất, Tỵ-Thân, Tý-Sửu).
-
-> **Lưu ý**: Nếu Dụng Thần tĩnh KHÔNG rơi vào các trường hợp suy bại trên ➔ Dụng Thần đạt thế **VƯỢNG & HỮU DỤNG (CÁT)**.
 
 ---
 
@@ -87,12 +86,8 @@ Trong Lục Hợp, có 3 cặp Lục Hợp mang bản chất **Tàng Khắc** (V
 
 ---
 
-## V. CÁC QUY TẮC BỔ TRỢ KHÁC
-
-1. **Gian Hào Động Cản Trở (Hung)**: Hào động nằm giữa Thế và Ứng không tương tác với Dụng/Nguyên/Kỵ/Thế ➔ Cản trở công việc (Loại bỏ 100%).
-2. **Hào Thế Động Hóa Dụng / Tử Tôn**: Hào Thế động hóa Dụng Thần hoặc Tử Tôn ➔ Mẫu quẻ Đại Cát Top 1.
-3. **Thang Điểm Phân Hạng**:
-   - **>= 90 điểm**: Đại Cát (Top 1)
-   - **>= 85 điểm**: Thượng Cát
-   - **>= 75 điểm**: Trung Cát
-   - **>= 70 điểm**: Cát Tường
+## V. TỐI ƯU CẤU TRÚC DỮ LIỆU SEO & AI OVERVIEWS (GEO)
+Website chính thức: `http://simphongthuy.io.vn` đã được trang bị:
+- XML Sitemap: `http://simphongthuy.io.vn/sitemap.xml`
+- Robots.txt: Mở đường cho Google-Extended, GPTBot, ClaudeBot, PerplexityBot.
+- Schema.org: JSON-LD WebSite, WebApplication, FAQPage, Organization, Breadcrumb.

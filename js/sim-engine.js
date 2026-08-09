@@ -590,7 +590,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                     reasons.push(`⚠️ Nguyên Thần (${dL.relation} - ${dL.chi}) động Hóa Suy Bại (Không sinh trợ được Dụng Thần).`);
                 } else {
                     dungThanScore += 25;
-                    reasons.push(`🔥 Quẻ có Hào Động Nguyên Thần sinh Dụng Thần (${targetRel}) - Lực sinh trợ mạnh nhất (Đại Cát).`);
+                    reasons.push(`🔥 Quẻ có Hào Động Nguyên Thần sinh Dụng Thần (${targetRel}) - Lực sinh trợ đắc lực (Đại Cát).`);
                 }
             }
         });
@@ -612,7 +612,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
     totalScore = Math.min(100, Math.max(0, totalScore));
 
     let grade = 'Đại Cát';
-    if (totalScore >= 90) grade = 'Đại Cát (Top 1)';
+    if (totalScore >= 90) grade = 'Đại Cát (Ưu Tú)';
     else if (totalScore >= 85) grade = 'Thượng Cát';
     else if (totalScore >= 75) grade = 'Trung Cát';
     else grade = 'Cát Tường';
