@@ -1069,11 +1069,38 @@ function openModal(modalId) {
 }
 
 function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.remove('active');
+    if (typeof modalId === 'string') {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.classList.remove('active');
+    } else if (modalId && modalId.target) {
+        const modal = modalId.target.closest('.modal-overlay');
+        if (modal) modal.classList.remove('active');
+    } else {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    }
 }
 
+window.openModal = openModal;
+window.closeModal = closeModal;
+
 function setupModalEvents() {
+    // 1. Gắn trực tiếp sự kiện cho tất cả nút .modal-close
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        const handleClose = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const modal = btn.closest('.modal-overlay');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        };
+
+        btn.addEventListener('click', handleClose);
+    });
+
+    // 2. Chạm vùng tối ngoài popup để tắt
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
@@ -1081,6 +1108,7 @@ function setupModalEvents() {
         });
     });
 
+    // 3. Phím Escape để tắt
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.active').forEach(modal => {
