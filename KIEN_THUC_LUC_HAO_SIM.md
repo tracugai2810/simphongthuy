@@ -9,7 +9,7 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
    - Hào Thế đại diện cho Bản Mệnh. Bản mệnh chưa vượng thì không tiếp nhận được vận lộc.
    - **Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%)**, không cần xét tiếp các yếu tố khác.
 2. **HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN**:
-   - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY ➔ CŨNG BỎ (Loại bỏ 100%)**.
+   - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%)**.
 3. **HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT**:
    - Khi và chỉ khi **CẢ HÀO THẾ VƯỢNG VÀ DỤNG THẦN VƯỢNG** ➔ Mới đạt tiêu chuẩn SIM Cát Tường để gợi ý cho khách hàng!
 
@@ -25,7 +25,7 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
 4. **Hóa Mộ**: Hào biến nhập Mộ của ngũ hành hào chính.
 5. **Hóa Phá**: Hào biến bị Nhật xung hoặc Nguyệt xung.
 6. **Bị Nhật / Nguyệt Xung**: Hào động chính bị Nhật Thần hoặc Nguyệt Lệnh xung phá.
-7. **Hóa Không Vong**: Hào biến rơi vào Tuần Không.
+7. **Hóa Không Vong**: Hào biến rơi vào Tuần Không (Ví dụ: Ngọ Hóa Sửu mà Sửu là Tuần Không ➔ **Hóa Không Vong ➔ SUY BẠI / LOẠI BỎ 100%**).
 8. **Hào Động Không Vong**: Hào động chính rơi vào Tuần Không.
 9. **Hóa Hợp Với Nhật / Nguyệt**: Hào biến hợp với chi của Nhật Thần hoặc Nguyệt Lệnh.
 10. **Hóa Hợp Với Hào Động Khác**: Hào biến hợp với địa chi của một Hào Động khác trong quẻ.
@@ -43,7 +43,7 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
 1. **Không được Nguyệt Sinh Phò**: Nguyệt Lệnh không sinh phò cho Dụng Thần (*Lưu ý: Lúc này Nhật Thần sinh phò cũng KHÔNG có tác dụng, trừ khi Nhật Thần vừa sinh vừa HỢP với Dụng Thần*).
 2. **Dụng Thần Nhập Mộ Tại Nhật**: Chi Nhật Thần là chi Mộ của Dụng Thần.
 3. **Dụng Thần Nhập Mộ Tại Hào Động**: Có Hào Động trong quẻ mang chi Mộ của Dụng Thần.
-4. **Dụng Thần Không Vong**: Hào tĩnh Dụng Thần nằm trong Tuần Không.
+4. **Dụng Thần Không Vong**: Hào tĩnh Dụng Thần nằm trong Tuần Không (➔ **SUY BẠI / LOẠI BỎ 100%**).
 5. **Dụng Thần Bị Hào Động Khắc**: Trong quẻ có Hào Động mang ngũ hành tương khắc Dụng Thần.
 6. **Dụng Thần Bị Hào Động Xung Hoặc Hợp**: Có Hào Động mang chi xung hoặc hợp với Dụng Thần.
 7. **Bị Nhật Hợp Hoặc Nguyệt Hợp Mà Hợp Tàng Khắc**: Dụng Thần được Nhật/Nguyệt hợp nhưng thuộc cặp Lục Hợp tàng khắc (Ví dụ: Mão-Tuất, Tỵ-Thân, Tý-Sửu).

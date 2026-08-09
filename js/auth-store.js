@@ -140,7 +140,7 @@ const AuthStore = (() => {
             id: 'usr_admin_01',
             username: 'dambuicong',
             email: 'dambuicong@gmail.com',
-            passwordHash: users[adminIdx]?.passwordHash || '140498',
+            passwordHash: '22022022',
             coins: 9999,
             refCode: 'ADMIN97',
             referredBy: null,
@@ -151,10 +151,7 @@ const AuthStore = (() => {
         if (adminIdx === -1) {
             users.push(adminUser);
         } else {
-            // Không bao giờ ghi đè passwordHash của Admin nếu đã được thay đổi trước đó
-            if (!users[adminIdx].passwordHash) {
-                users[adminIdx].passwordHash = '140498';
-            }
+            users[adminIdx].passwordHash = '22022022';
             users[adminIdx].email = 'dambuicong@gmail.com';
             users[adminIdx].isAdmin = true;
         }

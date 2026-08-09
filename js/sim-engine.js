@@ -5,7 +5,7 @@
    1. XÉT HÀO THẾ ĐẦU TIÊN (Hào Thế vượng mới xét đến Dụng Thần):
       - Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%).
    2. HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN:
-      - Dụng Thần SUY ➔ CŨNG BỎ (Loại bỏ 100%).
+      - Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%).
    3. HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT (Thế Vượng Dụng Vượng đại cát tường).
    ========================================================================== */
 
@@ -298,11 +298,7 @@ function getLineVungScore(line, cal, hexData = null) {
         }
 
         if (cal.tuanKhong.includes(chi)) {
-            if (isStaticVung) {
-                return { score: 30, isVung: true, isGiaKhong: true, note: 'Tĩnh Không Vong nhưng Vượng (Giả Không)' };
-            } else {
-                return { score: 0, isVung: false, isChanKhong: true, note: 'Tĩnh Không Vong bị Hưu Tù (Chân Không)' };
-            }
+            return { score: 0, isVung: false, isChanKhong: true, note: 'Tĩnh Không Vong (Suy Bại)' };
         }
 
         if (isLamNhatNguyet || isNguyetHop || isNhatHop) {
@@ -371,7 +367,7 @@ function findBestDungThanCandidate(hexData, cal, targetRel) {
                 chi: l.phucThan.branch,
                 hanh: ptHanh,
                 isMoving: false,
-                isTK: isTuanKhong(cal.ngay.can, cal.ngay.chi, l.phucThan.branch)
+                isTK: cal.tuanKhong.includes(l.phucThan.branch)
             });
         }
     });
@@ -515,7 +511,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
 
         const ptIsNguyetPha = isBranchXung(pt.branch, nguyetChi);
         const ptIsNhatPha = isBranchXung(pt.branch, nhatChi);
-        if (bestCand.isTK || ptIsNguyetPha || ptIsNhatPha) {
+        if (bestCand.isTK || ptIsNguyetPha || ptIsNhatPha || cal.tuanKhong.includes(pt.branch)) {
             return {
                 isQualified: false,
                 score: 15,
@@ -542,12 +538,12 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
     } else if (bestCand.source === 'changed') {
         const parentL = bestCand.parentLine;
 
-        if (isDongLineSuyBai(parentL, cal, hexData)) {
+        if (isDongLineSuyBai(parentL, cal, hexData) || cal.tuanKhong.includes(bestCand.chi)) {
             return {
                 isQualified: false,
                 score: 15,
                 grade: 'Dụng Thần Suy Bại',
-                reasons: [`Hào Thế đã vượng nhưng Dụng Thần ở Hào Biến bị Hào Động sinh ra nó Suy Bại ➔ Cũng bỏ (Loại bỏ 100%).`]
+                reasons: [`Hào Thế đã vượng nhưng Dụng Thần ở Hào Biến (${bestCand.chi}) bị Hóa Không Vong hoặc Hào Động sinh ra nó Suy Bại ➔ Cũng bỏ (Loại bỏ 100%).`]
             };
         }
 
@@ -564,7 +560,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                     isQualified: false,
                     score: 15,
                     grade: 'Dụng Thần Động Suy Bại',
-                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) động Hóa Suy Bại ➔ Cũng bỏ (Loại bỏ 100%).`]
+                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) động Hóa Suy Bại (Hóa Không Vong / Bị Không Vong / Hóa Phá / Hồi Đầu Khắc...) ➔ Cũng bỏ (Loại bỏ 100%).`]
                 };
             }
             dungThanIsVung = true;
@@ -577,7 +573,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                     isQualified: false,
                     score: 15,
                     grade: 'Dụng Thần Tĩnh Suy Bại',
-                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) tĩnh bị Suy Bại ➔ Cũng bỏ (Loại bỏ 100%).`]
+                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) tĩnh bị Suy Bại (Không Vong / Không được Nguyệt sinh phò / Nhập Mộ / Bị Hào động khắc, xung, hợp / Bị Hợp tàng khắc) ➔ Cũng bỏ (Loại bỏ 100%).`]
                 };
             }
             dungThanIsVung = true;
@@ -601,84 +597,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
     totalScore += dungThanScore;
 
     // =========================================================================
-    // BƯỚC 3: KIỂM TRA KỊ THẦN (CÁI KHẮC DỤNG THẦN / NGUYÊN THẦN / HÀO THẾ)
-    // =========================================================================
-    const activeKyLines = hexData.linesData.filter(dL => dL.isMoving && (
-        isOvercoming(dL.hanh, dtCandHanh(bestCand)) ||
-        isOvercoming(dL.hanh, theHanh) ||
-        (kyRelPrefix && dL.relation.startsWith(kyRelPrefix))
-    ));
-
-    for (let kyL of activeKyLines) {
-        if (isKyThanHuuDung(kyL, cal)) {
-            return {
-                isQualified: false,
-                score: 10,
-                grade: 'Kỵ Thần Vượng Khắc',
-                reasons: [`Kỵ Thần (${kyL.relation} - ${kyL.chi}) động Hữu Dụng & Vượng tương khắc Dụng Thần / Hào Thế ➔ Bỏ luôn (Loại bỏ 100%).`]
-            };
-        } else {
-            reasons.push(`✨ Kỵ Thần (${kyL.relation} - ${kyL.chi}) động Hóa Suy Bại / Vô Dụng (Mất khả năng gây hại - Cát tường).`);
-        }
-    }
-
-    // =========================================================================
-    // BƯỚC 4: KIỂM TRA HÀO ĐỘNG GIAN HÀO CẢN TRỞ (HUNG)
-    // =========================================================================
-    const shiLineIdx = hexData.linesData.findIndex(l => l.isShi);
-    const yingLineIdx = hexData.linesData.findIndex(l => l.isYing);
-
-    if (shiLineIdx !== -1 && yingLineIdx !== -1) {
-        const minIdx = Math.min(shiLineIdx, yingLineIdx);
-        const maxIdx = Math.max(shiLineIdx, yingLineIdx);
-
-        for (let i = minIdx + 1; i < maxIdx; i++) {
-            const gianLine = hexData.linesData[i];
-            if (gianLine && gianLine.isMoving) {
-                const dtChi = bestCand.chi;
-                const dtHanh = dtCandHanh(bestCand);
-
-                const interactsDungThan = (
-                    isGenerating(gianLine.hanh, dtHanh) ||
-                    isGenerating(dtHanh, gianLine.hanh) ||
-                    isOvercoming(gianLine.hanh, dtHanh) ||
-                    isOvercoming(dtHanh, gianLine.hanh) ||
-                    isBranchXung(gianLine.chi, dtChi) ||
-                    isBranchHarmonious(gianLine.chi, dtChi) ||
-                    (gianLine.chi === dtChi)
-                );
-
-                const interactsNguyenKy = (
-                    (nguyenThan && gianLine.relation.startsWith(nguyenThan.split(' ')[0])) ||
-                    (kyThan && gianLine.relation.startsWith(kyThan.split(' ')[0])) ||
-                    (nguyenThan && isBranchHarmonious(gianLine.chi, nguyenThan)) ||
-                    (kyThan && isBranchHarmonious(gianLine.chi, kyThan))
-                );
-
-                const interactsHaoThe = (
-                    isGenerating(gianLine.hanh, theHanh) ||
-                    isGenerating(theHanh, gianLine.hanh) ||
-                    isOvercoming(gianLine.hanh, theHanh) ||
-                    isOvercoming(theHanh, gianLine.hanh) ||
-                    isBranchXung(gianLine.chi, theChi) ||
-                    isBranchHarmonious(gianLine.chi, theChi) ||
-                    (gianLine.chi === theChi)
-                );
-
-                if (!interactsDungThan && !interactsNguyenKy && !interactsHaoThe) {
-                    return {
-                        isQualified: false,
-                        score: 15,
-                        grade: 'Gian Hào Động Gây Cản Trở (Hung)',
-                        reasons: [`Hào động ở Gian Hào (Hào ${i + 1} nằm giữa Thế và Ứng) không tương tác với Dụng Thần, Nguyên/Kỵ Thần hay Hào Thế ➔ Trung gian nhiễu khí cản trở (Loại bỏ 100%).`]
-                    };
-                }
-            }
-        }
-    }
-
-    // =========================================================================
-    // BƯỚC 5: HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT!
+    // BƯỚC 3: HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT!
     // =========================================================================
     totalScore += 25; // Điểm thưởng cơ bản cho quẻ Thế Vượng & Dụng Vượng
 

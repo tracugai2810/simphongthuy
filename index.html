@@ -185,7 +185,7 @@
     <!-- MODAL 1: ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="authModal" class="modal-overlay">
         <div class="modal-content auth-modal-box">
-            <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('authModal')">&times;</button>
+            <button type="button" class="modal-close" aria-label="Close" onclick="event.preventDefault(); event.stopPropagation(); closeModal('authModal'); return false;">&times;</button>
             
             <div class="auth-tabs">
                 <button type="button" class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">

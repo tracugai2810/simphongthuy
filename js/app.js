@@ -1098,6 +1098,8 @@ function setupModalEvents() {
         };
 
         btn.addEventListener('click', handleClose);
+        btn.addEventListener('touchend', handleClose);
+        btn.addEventListener('pointerdown', handleClose);
     });
 
     // 2. Chạm vùng tối ngoài popup để tắt
