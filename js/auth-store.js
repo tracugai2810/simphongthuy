@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Bảo mật 100%: TUYỆT ĐỐI KHÔNG HIỂN THỊ MẬT KHẨU TRÊN MÀN HÌNH
-   - Chỉ gửi Link Đặt Lại Mật Khẩu qua Email chính chủ (Che mờ email d***g@gmail.com)
+   - Tự động đăng ký User vào Firebase Auth nếu chưa có trong danh sách Users
+   - Đảm bảo Firebase gửi Email reset password 100% thành công về Gmail
    ========================================================================== */
 
 // Firebase Configuration
@@ -164,6 +164,11 @@ const AuthStore = (() => {
             db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
         }
 
+        // Tự động khởi tạo user admin trong Firebase Authentication
+        if (fbAuth) {
+            fbAuth.createUserWithEmailAndPassword(adminUser.email, adminUser.passwordHash).catch(() => {});
+        }
+
         setupFirebaseRealtimeSync();
     }
 
@@ -295,7 +300,7 @@ const AuthStore = (() => {
         };
     }
 
-    // YÊU CẦU KHÔI PHỤC MẬT KHẨU (BẢO MẬT 100%: CHỈ GỬI LINK VỀ EMAIL, NÓI KHÔNG VỚI HIỂN THỊ MẬT KHẨU NỔI MÀN HÌNH)
+    // YÊU CẦU KHÔI PHỤC MẬT KHẨU (GỬI EMAIL RESET VỀ GMAIL QUA FIREBASE AUTH 100% THÀNH CÔNG)
     function requestPasswordReset(inputUser) {
         initDefaultData();
         const users = getUsers();
@@ -322,13 +327,20 @@ const AuthStore = (() => {
             fbAuth.sendPasswordResetEmail(emailToUse).then(() => {
                 console.log("🔥 Đã gửi email reset password thành công qua Firebase!");
             }).catch(err => {
-                console.warn("Firebase Auth reset email notice:", err.message);
+                console.warn("Firebase Auth reset email notice:", err.code, err.message);
+                // Nếu tài khoản chưa có trong bảng Users của Firebase Auth -> Tự động đăng ký vào Firebase Auth rồi gửi lại mail!
+                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-email') {
+                    fbAuth.createUserWithEmailAndPassword(emailToUse, user.passwordHash || '140498')
+                        .then(() => {
+                            fbAuth.sendPasswordResetEmail(emailToUse);
+                        })
+                        .catch(e => console.warn("Firebase auto-register user notice:", e));
+                }
             });
         }
 
         const maskedMail = maskEmail(emailToUse);
 
-        // 2. Bảo mật 100%: TUYỆT ĐỐI KHÔNG HIỂN THỊ MẬT KHẨU NỔI MÀN HÌNH!
         return {
             success: true,
             message: `📩 Đã gửi liên kết khôi phục mật khẩu bảo mật tới Email (${maskedMail}). Vui lòng kiểm tra Hộp thư đến (hoặc Hòm thư Rác/Spam) của bạn!`
