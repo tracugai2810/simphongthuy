@@ -1,81 +1,97 @@
-# BẢNG NGUYÊN TẮC & THUẬT TOÁN ĐÁNH GIÁ LỤC HÀO SIM PHONG THỦY
+# BẢNG PHÂN LOẠI & THUẬT TOÁN ĐÁNH GIÁ LỤC HÀO SIM PHONG THỦY CHUẨN XÁC PRO
 
-Tài liệu này hệ thống hóa toàn bộ kiến thức Dịch Học Lục Hào áp dụng cho Thuật toán Chấm Điểm & Đãi Lọc SIM Phong Thủy.
-
----
-
-## 1. NGUYÊN TẮC QUYẾT ĐỊNH CÁT HUNG CUỐI CÙNG: ĐỘNG BIẾN TRONG QUẺ LÀ QUAN TRỌNG NHẤT
-
-Trong Dịch Học Lục Hào, trình tự và trọng tâm đánh giá Vượng Suy cuối cùng được quy định như sau:
-
-### 1.1 Trình Tự Đánh Giá Vượng Suy
-- **Bước 1 (Nền tảng bổ trợ)**: Xem xét mức độ vượng suy cơ bản của Hào tại Nhật Thần & Nguyệt Lệnh. Nhật Nguyệt đóng vai trò là thời tiết / môi trường bổ trợ khí tiết.
-- **Bước 2 (Yếu tố QUYẾT ĐỊNH Cát Hung)**: Xem xét tương tác của **HÀO ĐỘNG & HÀO BIẾN TRONG QUẺ**.
-  - **Hào Động tương tác là QUAN TRỌNG NHẤT!**
-  - Nhật Nguyệt chỉ mang tính chất bổ trợ thêm; sự phát động và động biến trong quẻ mới là yếu tố quyết định Cát Hung cuối cùng.
-
-### 1.2 Các Quy Tắc Chi Nối Về Động Biến Đột Phá Nhật Nguyệt
-1. **Dù Vượng Tại Nhật Nguyệt Nhưng Bị Hào Động Khắc ➔ VẪN LÀ XẤU (LOẠI BỎ 100%)**:
-   - Cho dù Dụng Thần hoặc Hào Thế có đắc Nguyệt Lệnh hay Lâm Nhật Thần vượng đến đâu, nhưng trong quẻ xuất hiện Hào Động tương khắc ➔ Hào Động sẽ tiêu diệt vượng khí ➔ **VẪN TÍNH LÀ SUY BẠI / XẤU, LOẠI BỎ 100%**.
-2. **Dụng Thần Là Hào Động Nhưng Động Hóa Suy Bại ➔ VẪN LÀ XẤU (LOẠI BỎ 100%)**:
-   - Nếu Dụng Thần là Hào Động nhưng động Hóa Hồi Đầu Khắc, Hóa Thoái Thần, Hóa Tuyệt, Hóa Phá ➔ Vượng khí ban đầu bị triệt tiêu ➔ **SUY BẠI NẶNG, LOẠI BỎ 100%**.
-3. **Hào Động Tương Sinh Là Lực Tác Đụng Mạnh Nhất**:
-   - Quẻ có Hào Động hữu dụng vượng tương sinh cho Dụng Thần hoặc Hào Thế ➔ Lực sinh trợ của Hào Động mạnh hơn cả Nhật Nguyệt ➔ **QUYẾT ĐỊNH ĐẠI CÁT TƯỜNG HÀNG ĐẦU**.
+Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI** và **VƯỢNG CÁT** đối với Hào Động, Hào Tĩnh và Hào Thế trong Thuật toán Chấm Điểm & Đãi Lọc SIM Phong Thủy.
 
 ---
 
-## 2. QUY TẮC HÀO ĐỘNG TẠI GIAN HÀO (GÂY CẢN TRỞ - HUNG)
-
-- **Định nghĩa Gian Hào**: Các hào nằm ở giữa Hào Thế và Hào Ứng trong quẻ (ví dụ Thế ở hào 1, Ứng ở hào 4 ➔ Gian hào là Hào 2, Hào 3).
-- **Quy tắc Cản Trở Gian Hào**:
-  - Khi trong quẻ có **Hào Động nằm tại Gian Hào**.
-  - Hào động đó **KHÔNG tương tác với Dụng Thần** (không sinh, khắc, xung, hợp Dụng Thần).
-  - Hào động đó **KHÔNG tương tác (xung, hợp) với Nguyên Thần hay Kỵ Thần**.
-  - Hào động đó **KHÔNG tương tác với Hào Thế**.
-  ➔ **Kết luận**: Tính là **HUNG (XẤU / LOẠI BỎ 100%)**! Gian Hào lúc này biểu thị **sự cản trở, trung gian gây nhiễu, làm việc giữa chừng bị bế tắc, cản trở sự việc**.
-
----
-
-## 3. QUY TẮC ĐÁNH GIÁ NHẬP MỘ (TAM MỘ)
-
-- **Mộ tại 3 vị trí chuẩn**: Nhật Mộ, Động Mộ, Động Hóa Mộ.
-- **Hào ĐỘNG Nhập Mộ / Hóa Mộ**: **Không sao** (tương tự Động bị xung hay Động Tuần Không).
-- **Hào TĨNH Nhập Mộ**:
-  - *Khi Vượng* (Nguyệt sinh, Lâm Hợp Nguyệt, Hào động sinh) ➔ **Không sao (Giả Mộ - Cát)**.
-  - *Khi Hưu Tù* ➔ **XẤU NẶNG (Mộ Hưu Tù - LOẠI BỎ 100%)**.
-- **Trường hợp duy nhất Hào Động VÔ DỤNG**: Hào Động bị **Nguyệt Phá** đồng thời **Mộ tại Nhật Thần** ➔ **TÙY NGUYỆT PHÁ NHẬP NHẬT MỘ = VÔ DỤNG HOÀN TOÀN** (Loại bỏ 100%).
+## 🛑 TRÌNH TỰ ĐÃI LỌC BẮT BUỘC (MỚI NHẤT):
+1. **XÉT HÀO THẾ ĐẦU TIÊN (HÀO THẾ VƯỢNG MỚI XÉT ĐẾN DỤNG THẦN)**:
+   - Hào Thế đại diện cho Bản Mệnh. Bản mệnh chưa vượng thì không tiếp nhận được vận lộc.
+   - **Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%)**, không cần xét tiếp các yếu tố khác.
+2. **HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN**:
+   - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY ➔ CŨNG BỎ (Loại bỏ 100%)**.
+3. **HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT**:
+   - Khi và chỉ khi **CẢ HÀO THẾ VƯỢNG VÀ DỤNG THẦN VƯỢNG** ➔ Mới đạt tiêu chuẩn SIM Cát Tường để gợi ý cho khách hàng!
 
 ---
 
-## 4. QUY TẮC ĐẶC THÙ ĐỐI VỚI HÀO THẾ (BẢN MỆNH)
+## I. QUY TẮC ĐÁNH GIÁ HÀO ĐỘNG (DỤNG THẦN, NGUYÊN THẦN, HÀO THẾ)
 
-1. **Hào Thế Hóa Phá ➔ KHÔNG SAO**.
-2. **Hào Thế Động Hóa Dụng Thần / Hóa Tử Tôn** (khi Tử Tôn không phải Kỵ Thần) ➔ **CÁT TƯỢNG (ĐẠI CÁT)**.
-3. **Hào Thế Động Hóa Kỵ Thần / Hóa Quan Quỷ** (khi Quan Quỷ không phải Dụng Thần) ➔ **SUY BẠI (LOẠI BỎ 100%)**.
+Đối với Hào Động (áp dụng cho **Dụng Thần**, **Nguyên Thần** - hào sinh Dụng Thần, và **Hào Thế**), nếu rơi vào 1 trong các trường hợp sau ➔ TÍNH LÀ **SUY BẠI (XẤU / LOẠI BỎ 100%)**:
 
----
+1. **Hóa Hồi Đầu Khắc**: Ngũ hành hào biến tương khắc với hào chính.
+2. **Hóa Thoái Thần**: Địa chi hào biến thoái lùi (Mão➔Dần, Ngọ➔Tị, Dậu➔Thân, Tý➔Hợi, Thìn➔Sửu, Mùi➔Thìn, Tuất➔Mùi, Sửu➔Tuất).
+3. **Hóa Tuyệt**: Địa chi hào biến rơi vào cung Tuyệt trong 12 Vòng Trường Sinh.
+4. **Hóa Mộ**: Hào biến nhập Mộ của ngũ hành hào chính.
+5. **Hóa Phá**: Hào biến bị Nhật xung hoặc Nguyệt xung.
+6. **Bị Nhật / Nguyệt Xung**: Hào động chính bị Nhật Thần hoặc Nguyệt Lệnh xung phá.
+7. **Hóa Không Vong**: Hào biến rơi vào Tuần Không.
+8. **Hào Động Không Vong**: Hào động chính rơi vào Tuần Không.
+9. **Hóa Hợp Với Nhật / Nguyệt**: Hào biến hợp với chi của Nhật Thần hoặc Nguyệt Lệnh.
+10. **Hóa Hợp Với Hào Động Khác**: Hào biến hợp với địa chi của một Hào Động khác trong quẻ.
+11. **Mộ Tại Nhật Thần**: Ngũ hành hào động bị nhập Mộ tại chi của Nhật Thần.
+12. **Bị Nguyệt Hợp Mà Hợp Tàng Khắc**: Hào động bị Nguyệt Lệnh hợp nhưng bản chất ngũ hành tương khắc (Ví dụ: Nguyệt Mão hợp Hào Tuất ➔ Mão Mộc khắc Tuất Thổ).
 
-## 5. QUY TẮC ĐÁNH GIÁ HÀO KHÔNG VONG (TUẦN KHÔNG)
-
-- **Hào ĐỘNG Không Vong**: **Không sao** (tương tự Động bị xung).
-- **Hào TĨNH Không Vong**:
-  - *Khi Vượng* (Nguyệt sinh, Lâm Hợp Nguyệt, Hào động sinh) ➔ **Giả Không (Cát)**.
-  - *Khi Hưu Tù* ➔ **Chân Không (Loại bỏ 100%)**.
-
----
-
-## 6. NGUYÊN TẮC ƯU TIÊN XÁC ĐỊNH DỤNG THẦN (5 CẤP BẬC)
-
-1. Cấp 1: Hào Thế / Hào Ứng.
-2. Cấp 2: Hào Động / Hào Biến.
-3. Cấp 3: Hào bị Nguyệt/Nhật phá, Nguyệt/Nhật hợp, Không Vong.
-4. Cấp 4: Hào Lâm Nhật / Nguyệt.
-5. Cấp 5: Phục Thần.
+> **Lưu ý**: Các trường hợp hào động **KHÔNG rơi vào các trường hợp suy bại trên** ➔ TỰ ĐỘNG TÍNH LÀ **VƯỢNG & HỮU DỤNG (CÁT)**.
 
 ---
 
-## 7. ĐIỀU KIỆN ĐÃI LỌC SIM CÁT TƯỜNG TỔNG THỂ
+## II. QUY TẮC ĐÁNH GIÁ HÀO TĨNH (DỤNG THẦN)
 
-1. **ĐỘNG BIẾN CÁT TƯỜNG (YẾU TỐ QUYẾT ĐỊNH)**: Hào Động không tương khắc Dụng Thần / Hào Thế; Dụng Thần động không hóa suy bại; Hào Động hữu dụng sinh trợ cho Dụng Thần và Hào Thế; Không bị Gian Hào Động cản trở.
-2. **NỀN TẢNG NHẬT NGUYỆT BỔ TRỢ**: Dụng Thần đắc thế Vượng tại Nguyệt/Động; Hào Thế tối thiểu đắc thế Hưng; KHÔNG phạm Chân Không, Chân Mộ hay Tùy Nguyệt phá nhập Nhật mộ.
-3. **ƯU TIÊN CÁT TƯỜNG HIGHEST**: Hào Thế động hóa Dụng Thần / Tử Tôn, Dụng Thần động sinh Thế, Hào Động vượng sinh Thế ➔ Đạt điểm Đại Cát Top 1.
+Đối với Hào Tĩnh (khi Dụng Thần là Hào Tĩnh), nếu rơi vào 1 trong các trường hợp sau ➔ TÍNH LÀ **SUY BẠI (XẤU / LOẠI BỎ 100%)**:
+
+1. **Không được Nguyệt Sinh Phò**: Nguyệt Lệnh không sinh phò cho Dụng Thần (*Lưu ý: Lúc này Nhật Thần sinh phò cũng KHÔNG có tác dụng, trừ khi Nhật Thần vừa sinh vừa HỢP với Dụng Thần*).
+2. **Dụng Thần Nhập Mộ Tại Nhật**: Chi Nhật Thần là chi Mộ của Dụng Thần.
+3. **Dụng Thần Nhập Mộ Tại Hào Động**: Có Hào Động trong quẻ mang chi Mộ của Dụng Thần.
+4. **Dụng Thần Không Vong**: Hào tĩnh Dụng Thần nằm trong Tuần Không.
+5. **Dụng Thần Bị Hào Động Khắc**: Trong quẻ có Hào Động mang ngũ hành tương khắc Dụng Thần.
+6. **Dụng Thần Bị Hào Động Xung Hoặc Hợp**: Có Hào Động mang chi xung hoặc hợp với Dụng Thần.
+7. **Bị Nhật Hợp Hoặc Nguyệt Hợp Mà Hợp Tàng Khắc**: Dụng Thần được Nhật/Nguyệt hợp nhưng thuộc cặp Lục Hợp tàng khắc (Ví dụ: Mão-Tuất, Tỵ-Thân, Tý-Sửu).
+
+> **Lưu ý**: Nếu Dụng Thần tĩnh KHÔNG rơi vào các trường hợp suy bại trên ➔ Dụng Thần đạt thế **VƯỢNG & HỮU DỤNG (CÁT)**.
+
+---
+
+## III. QUY TẮC ĐÁNH GIÁ HÀO THẾ (BẢN MỆNH)
+
+### 1. Khi Hào Thế Chính Là Dụng Thần:
+- Áp dụng 100% các quy tắc đánh giá Dụng Thần (Như ở Phần I nếu động, hoặc Phần II nếu tĩnh).
+
+### 2. Khi Dụng Thần Đã Vượng & Hào Thế KHÔNG Phải Là Dụng Thần:
+
+#### A. Hào Thế VƯỢNG (CÁT TƯỜNG):
+- Hào Thế được **1 trong 3 yếu tố sinh cho**:
+  - Nhật Thần sinh phò, OR
+  - Nguyệt Lệnh sinh phò, OR
+  - Hào Động trong quẻ sinh phò.
+  ➔ Hào Thế đạt thế **VƯỢNG ➔ CÁT TƯỜNG**.
+
+#### B. Hào Thế SUY BẠI (XẤU / LOẠI BỎ 100%):
+Hào Thế rơi vào 1 trong các trường hợp sau ➔ TÍNH LÀ **SUY BẠI** (Ngoài các TH này ra thì tự động là Vượng):
+1. **Không được Nhật Nguyệt sinh cho**: Cả Nhật Thần lẫn Nguyệt Lệnh đều không sinh phò.
+2. **Hào Thế Không Vong**: Hào Thế nằm trong Tuần Không.
+3. **Hào Thế Nhập Mộ Tại Nhật**: Hào Thế bị nhập Mộ tại chi của Nhật Thần.
+4. **Hào Thế Bị Hào Động Khắc**: Trong quẻ có Hào Động khắc Hào Thế (*Lưu ý: Chỉ áp dụng khi Hào Động đó KHÔNG tương tác với Dụng Thần*).
+5. **Hào Thế Nhập Mộ Tại Hào Động**: Có Hào Động làm Hào Thế nhập Mộ (*Lưu ý: Chỉ áp dụng khi Hào Động đó KHÔNG tương tác với Dụng Thần*).
+6. **Bị Nhật Xung, Nguyệt Xung, Hoặc Hợp Tàng Khắc**: Hào Thế bị Nhật/Nguyệt xung hoặc bị Nhật/Nguyệt hợp nhưng tàng khắc.
+
+---
+
+## IV. QUY TẮC NGUYỆT HỢP & NHẬT HỢP TÀNG KHẮC (HIDDEN OVERCOMING)
+
+Trong Lục Hợp, có 3 cặp Lục Hợp mang bản chất **Tàng Khắc** (Vừa hợp vừa khắc):
+1. **Mão - Tuất**: Mão Mộc khắc Tuất Thổ (Nguyệt/Nhật Mão hợp Hào Tuất ➔ **Tàng Khắc - Suy Bại**).
+2. **Tỵ - Thân**: Tỵ Hỏa khắc Thân Kim (Nguyệt/Nhật Tỵ hợp Hào Thân ➔ **Tàng Khắc - Suy Bại**).
+3. **Tý - Sửu**: Sửu Thổ khắc Tý Thủy (Nguyệt/Nhật Sửu hợp Hào Tý ➔ **Tàng Khắc - Suy Bại**).
+
+---
+
+## V. CÁC QUY TẮC BỔ TRỢ KHÁC
+
+1. **Gian Hào Động Cản Trở (Hung)**: Hào động nằm giữa Thế và Ứng không tương tác với Dụng/Nguyên/Kỵ/Thế ➔ Cản trở công việc (Loại bỏ 100%).
+2. **Hào Thế Động Hóa Dụng / Tử Tôn**: Hào Thế động hóa Dụng Thần hoặc Tử Tôn ➔ Mẫu quẻ Đại Cát Top 1.
+3. **Thang Điểm Phân Hạng**:
+   - **>= 90 điểm**: Đại Cát (Top 1)
+   - **>= 85 điểm**: Thượng Cát
+   - **>= 75 điểm**: Trung Cát
+   - **>= 70 điểm**: Cát Tường
