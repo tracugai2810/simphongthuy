@@ -1,8 +1,11 @@
 /* ==========================================================================
    SIM PHONG THỦY ENGINE & EVALUATOR - CHUẨN ĐÃI LỌC DỊCH HỌC LỤC HÀO PRO
-   - Đảm bảo 100% SIM 10 Chữ Số chuẩn Việt Nam.
-   - Thuật toán khởi tạo кандидат thông minh: Đảm bảo khi để trống ô (0*********)
-     vẫn tìm ra đầy đủ Danh sách SIM Đại Cát tức thì.
+   - Tam Mộ: Nhật Mộ, Động Mộ, Hóa Mộ.
+   - Hào Động bị Nguyệt phá + Mộ tại Nhật -> Vô dụng hoàn toàn!
+   - Hào Động Hóa Suy Bại vs Hữu Dụng.
+   - Hào Thế Hóa Phá (Không sao).
+   - Hào Thế Hóa Kỵ Thần / Hóa Quan Quỷ -> Suy Bại (Bỏ 100%).
+   - Hào Thế Hóa Dụng Thần / Hóa Tử Tôn -> Cát Tường.
    ========================================================================== */
 
 const ELEMENTS = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
@@ -51,6 +54,18 @@ function isRegressingBranch(bMain, bChanged) {
     return reg[bMain] === bChanged;
 }
 
+// Hàm xác định Chi Mộ của Ngũ Hành (Tam Mộ)
+function getTombBranch(hanh) {
+    switch (hanh) {
+        case 'Mộc': return 'Mùi';
+        case 'Hỏa': return 'Tuất';
+        case 'Kim': return 'Sửu';
+        case 'Thủy':
+        case 'Thổ': return 'Thìn';
+        default: return 'Thìn';
+    }
+}
+
 function getTargetRelation(purpose, gender) {
     switch (purpose) {
         case 'cautai': return 'Thê Tài';
@@ -76,8 +91,11 @@ function getNguyenAndKyThan(targetRel) {
     };
 }
 
-function getLineVungScore(line, cal) {
-    const chi = line.chi;
+/* ==========================================================================
+   HÀM TÍNH MỨC ĐỘ VƯỢNG SUY, KHÔNG VONG & NHẬP MỘ CỦA HÀO
+   ========================================================================== */
+function getLineVungScore(line, cal, hexData = null) {
+    const chi = line.chi || line.branch;
     const hanh = line.hanh;
     const nhatChi = cal.ngay.chi;
     const nhatHanh = cal.ngay.hanh;
@@ -92,10 +110,27 @@ function getLineVungScore(line, cal) {
 
     const isNguyetXung = isBranchXung(chi, nguyetChi);
     const isNhatXung = isBranchXung(chi, nhatChi);
+    const isTK = line.isTK || false;
+
+    // Kiểm tra Tam Mộ
+    const tombBranch = getTombBranch(hanh);
+    const isNhatMo = (nhatChi === tombBranch);
+    const isHoaMo = line.isMoving && line.changed && (line.changed.branch === tombBranch);
+    let isDongMo = false;
+    if (hexData && hexData.linesData) {
+        isDongMo = hexData.linesData.some(dL => dL.isMoving && dL.chi === tombBranch);
+    }
+    const isMo = (isNhatMo || isHoaMo || isDongMo);
 
     if (line.isMoving) {
-        const hoiDauSinh = isGenerating(line.changed.hanh, hanh);
-        const hoaTien = isProgressingBranch(chi, line.changed.branch);
+        // HÀO ĐỘNG NHẬP MỘ / KHÔNG VONG: Không sao, tính mức tương tự Động bị xung
+        // Ngoại lệ duy nhất: Động bị Nguyệt phá + Mộ tại Nhật -> Vô dụng hoàn toàn!
+        if (isNguyetXung && isNhatMo) {
+            return { score: 0, isVung: false, isVoDung: true, note: 'Tùy Nguyệt Phá Nhập Nhật Mộ - Vô dụng hoàn toàn' };
+        }
+
+        const hoiDauSinh = line.changed ? isGenerating(line.changed.hanh, hanh) : false;
+        const hoaTien = line.changed ? isProgressingBranch(chi, line.changed.branch) : false;
 
         if (hoiDauSinh || hoaTien) {
             let baseScore = 50;
@@ -103,26 +138,47 @@ function getLineVungScore(line, cal) {
             else if (isNguyetSinhPho) baseScore += 15;
             else if (isNhatSinhPho) baseScore += 10;
 
-            if (isNguyetXung || isNhatXung) baseScore -= 10;
+            if (isNguyetXung || isNhatXung || isTK || isMo) baseScore -= 10;
             return {
                 score: baseScore,
                 isVung: true,
-                note: `Động hóa sinh trợ vượng khí${isNguyetXung || isNhatXung ? ' (Nhật/Nguyệt xung nhẹ)' : ''}`
+                note: `Động hóa sinh trợ vượng khí${isMo ? ' (Động Nhập Mộ - Không sao)' : ''}`
             };
         } else {
             if (isLamNhatNguyet || isNguyetHop) return { score: 35, isVung: true, note: 'Lâm/Hợp Nhật Nguyệt vượng khí' };
             if (isNguyetSinhPho) {
-                let score = (isNguyetXung || isNhatXung) ? 20 : 28;
+                let score = (isNguyetXung || isNhatXung || isTK || isMo) ? 20 : 28;
                 return { score, isVung: true, note: 'Nguyệt Lệnh sinh phò vượng khí' };
             }
             return { score: 0, isVung: false, note: 'Bị hưu tù suy vi' };
         }
     } else {
+        // HÀO TĨNH NHẬP MỘ & KHÔNG VONG:
+        // - Nếu Vượng (Nguyệt sinh phò / Lâm Hợp Nguyệt) -> Không sao (Giả Không / Mộ Vượng Cát)
+        // - Nếu Hưu tù -> Xấu nặng (Loại bỏ 100%)
+        const isStaticVung = (isLamNhatNguyet || isNguyetHop || isNhatHop || isNguyetSinhPho);
+
         if (isNguyetXung) {
-            return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nguyệt Xung (Nguyệt Phá - Xấu nặng tương đương Hóa Bại)' };
+            return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nguyệt Xung (Nguyệt Phá - Xấu nặng)' };
         }
         if (isNhatXung) {
-            return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nhật Xung (Ám Xung - Tính là suy hưu tù, xấu)' };
+            return { score: 0, isVung: false, isXungPha: true, note: 'Bị Nhật Xung (Ám Xung - Suy hưu tù)' };
+        }
+
+        if (isMo) {
+            if (isStaticVung) {
+                return { score: 30, isVung: true, isGiaMo: true, note: 'Tĩnh Nhập Mộ nhưng Vượng (Mộ Vượng - Vẫn vượng khí Cát)' };
+            } else {
+                return { score: 0, isVung: false, isChanMo: true, note: 'Tĩnh Nhập Mộ bị Hưu Tù (Mộ Hưu Tù - Xấu nặng)' };
+            }
+        }
+
+        if (isTK) {
+            if (isStaticVung) {
+                return { score: 30, isVung: true, isGiaKhong: true, note: 'Tĩnh Không Vong nhưng Vượng (Giả Không - Vượng khí Cát)' };
+            } else {
+                return { score: 0, isVung: false, isChanKhong: true, note: 'Tĩnh Không Vong bị Hưu Tù (Chân Không - Xấu nặng)' };
+            }
         }
 
         if (isLamNhatNguyet || isNguyetHop || isNhatHop) {
@@ -137,7 +193,107 @@ function getLineVungScore(line, cal) {
 }
 
 /* ==========================================================================
-   HÀM ĐÁNH GIÁ PHONG THỦY SIM - DỄ HIỂU CHO KHÁCH HÀNG
+   HÀM TÌM DỤNG THẦN TỐI ƯU THEO THỨ TỰ UYÊN THÂM 5 BẬC
+   ========================================================================== */
+function findBestDungThanCandidate(hexData, cal, targetRel) {
+    const nhatChi = cal.ngay.chi;
+    const nguyetChi = cal.thang.chi;
+    const candidates = [];
+
+    // 1. Quẻ chính
+    hexData.linesData.forEach((l, idx) => {
+        if (l.relation.startsWith(targetRel)) {
+            candidates.push({
+                source: 'main',
+                line: l,
+                index: idx,
+                chi: l.chi,
+                hanh: l.hanh,
+                isShi: l.isShi,
+                isYing: l.isYing,
+                isMoving: l.isMoving,
+                isTK: l.isTK,
+                isClashed: isBranchXung(l.chi, nhatChi) || isBranchXung(l.chi, nguyetChi),
+                isHarmonious: isBranchHarmonious(l.chi, nguyetChi) || (!l.isMoving && isBranchHarmonious(l.chi, nhatChi)),
+                isLamNhatNguyet: l.chi === nhatChi || l.chi === nguyetChi
+            });
+        }
+    });
+
+    // 2. Hào Biến
+    hexData.linesData.forEach((l, idx) => {
+        if (l.isMoving && l.changed && l.changed.relation.startsWith(targetRel)) {
+            candidates.push({
+                source: 'changed',
+                line: l.changed,
+                parentLine: l,
+                index: idx,
+                chi: l.changed.branch,
+                hanh: l.changed.hanh,
+                isShi: false,
+                isYing: false,
+                isMoving: true,
+                isTK: l.isCTK,
+                isClashed: isBranchXung(l.changed.branch, nhatChi) || isBranchXung(l.changed.branch, nguyetChi),
+                isHarmonious: isBranchHarmonious(l.changed.branch, nguyetChi),
+                isLamNhatNguyet: l.changed.branch === nhatChi || l.changed.branch === nguyetChi
+            });
+        }
+    });
+
+    // 3. Phục Thần
+    if (candidates.length === 0) {
+        hexData.linesData.forEach((l, idx) => {
+            if (l.phucThan && l.phucThan.rel.startsWith(targetRel)) {
+                candidates.push({
+                    source: 'phucThan',
+                    phucThan: l.phucThan,
+                    phiThan: l,
+                    index: idx,
+                    chi: l.phucThan.branch,
+                    hanh: l.phucThan.hanh,
+                    isShi: l.isShi,
+                    isYing: l.isYing,
+                    isMoving: false,
+                    isTK: l.isTK,
+                    isClashed: isBranchXung(l.phucThan.branch, nhatChi) || isBranchXung(l.phucThan.branch, nguyetChi),
+                    isHarmonious: isBranchHarmonious(l.phucThan.branch, nguyetChi),
+                    isLamNhatNguyet: l.phucThan.branch === nhatChi || l.phucThan.branch === nguyetChi
+                });
+            }
+        });
+    }
+
+    if (candidates.length === 0) return null;
+
+    candidates.forEach(cand => {
+        let score = 0;
+        if (cand.isShi || cand.isYing) {
+            score += 1000;
+            if (cand.isMoving) score += 500;
+        }
+        if (cand.isMoving || cand.source === 'changed') {
+            score += 500;
+        }
+        if (cand.isClashed || cand.isHarmonious || cand.isTK) {
+            score += 250;
+        }
+        if (cand.isLamNhatNguyet) {
+            score += 100;
+        }
+        if (cand.source === 'phucThan') {
+            score += 10;
+        }
+
+        cand.priorityScore = score;
+    });
+
+    candidates.sort((a, b) => b.priorityScore - a.priorityScore);
+    return candidates[0];
+}
+
+/* ==========================================================================
+   HÀM ĐÁNH GIÁ PHONG THỦY SIM - ĐÃI LỌC DỊCH HỌC PRO
    ========================================================================== */
 function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     if (!hexData) return { isQualified: false, score: 0, grade: 'Không hợp lệ', reasons: ['Không thể lập quẻ.'] };
@@ -160,15 +316,25 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
 
     const targetRel = getTargetRelation(purpose, gender);
     const { nguyenThan, kyThan } = getNguyenAndKyThan(targetRel);
+    const dtRelPrefix = targetRel.split(' ')[0];
+    const kyRelPrefix = kyThan ? kyThan.split(' ')[0] : '';
 
-    let dungThanLines = [];
+    // 1. TÌM DỤNG THẦN THEO CHUẨN ƯU TIÊN 5 BẤC
+    let bestCand = null;
     if (targetRel === 'Thế') {
-        dungThanLines = [haoThe];
+        bestCand = {
+            source: 'main',
+            line: haoThe,
+            chi: haoThe.chi,
+            hanh: haoThe.hanh,
+            isShi: true,
+            isMoving: haoThe.isMoving
+        };
     } else {
-        dungThanLines = hexData.linesData.filter(l => l.relation.startsWith(targetRel));
+        bestCand = findBestDungThanCandidate(hexData, cal, targetRel);
     }
 
-    if (dungThanLines.length === 0 && targetRel !== 'Thế') {
+    if (!bestCand) {
         return {
             isQualified: false,
             score: 15,
@@ -177,27 +343,138 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
-    const dungThanStaticXung = dungThanLines.find(dt => !dt.isMoving && (isBranchXung(dt.chi, nguyetChi) || isBranchXung(dt.chi, nhatChi)));
-    if (dungThanStaticXung) {
-        return {
-            isQualified: false,
-            score: 15,
-            grade: 'Dụng Thần Bị Xung Phá',
-            reasons: [`Dụng Thần (${targetRel}) bị xung phá (Khí lộc bị tổn hại nặng, không phù hợp).`]
-        };
-    }
+    let dungThanIsVung = false;
+    let dungThanScore = 0;
+    let dungThanNote = '';
 
-    for (let dt of dungThanLines) {
-        if (dt.isMoving) {
-            const dtHoiDauSinh = isGenerating(dt.changed.hanh, dt.hanh);
-            const dtHoiDauKhac = isOvercoming(dt.changed.hanh, dt.hanh);
-            const dtHoaTien = isProgressingBranch(dt.chi, dt.changed.branch);
-            const dtHoaThoai = isRegressingBranch(dt.chi, dt.changed.branch);
-            const dtHoaTuyet = (getLifeStage(dt.hanh, dt.changed.branch) === 'Tuyệt');
+    // 2. ĐÁNH GIÁ DỤNG THẦN
+    if (bestCand.source === 'phucThan') {
+        const pt = bestCand.phucThan;
+        const phi = bestCand.phiThan;
 
-            const isNguyetPha = isBranchXung(dt.changed.branch, cal.thang.chi);
-            const changedVung = getLineVungScore({ chi: dt.changed.branch, hanh: dt.changed.hanh, isMoving: false }, cal);
-            const isNhatPha = isBranchXung(dt.changed.branch, cal.ngay.chi) && !changedVung.isVung;
+        const ptIsNguyetPha = isBranchXung(pt.branch, nguyetChi);
+        const ptIsNhatPha = isBranchXung(pt.branch, nhatChi);
+        if (bestCand.isTK || ptIsNguyetPha || ptIsNhatPha) {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Phục Thần Suy Bại',
+                reasons: [`Dụng Thần ở Phục Thần bị Không Vong hoặc Nguyệt/Nhật Phá (Suy bại hoàn toàn, không có lực tác dụng).`]
+            };
+        }
+
+        const phiVung = getLineVungScore(phi, cal, hexData);
+        const ptSinhPhi = isGenerating(pt.hanh, phi.hanh);
+        const phiSinhPt = isGenerating(phi.hanh, pt.hanh);
+
+        if (ptSinhPhi) {
+            const phiBiDongKhac = hexData.linesData.some(dL => dL.isMoving && isOvercoming(dL.hanh, phi.hanh));
+            const ptIsNguyetVung = (pt.hanh === nguyetHanh || isGenerating(nguyetHanh, pt.hanh) || pt.branch === nhatChi || pt.branch === nguyetChi || isBranchHarmonious(pt.branch, nguyetChi));
+            const phiKhacPt = isOvercoming(phi.hanh, pt.hanh);
+            const phiXungPt = isBranchXung(phi.branch, pt.branch);
+
+            if ((phi.isMoving && !phiVung.isVung) || phiBiDongKhac) {
+                dungThanIsVung = true;
+                dungThanScore = 35;
+                dungThanNote = 'Phục Thần xuất khí thoát tiết, vượng tướng Cát tường';
+            } else if (!phi.isMoving && ptIsNguyetVung && !phiKhacPt && !phiXungPt) {
+                dungThanIsVung = true;
+                dungThanScore = 30;
+                dungThanNote = 'Phục Thần vượng tướng tại Nguyệt Lệnh & không bị Phi Thần tĩnh khắc/phá';
+            } else {
+                return {
+                    isQualified: false,
+                    score: 15,
+                    grade: 'Phục Thần Suy Bại',
+                    reasons: [`Phục Thần (${pt.branch}) bị tiết khí và không đạt vượng tướng tại Nguyệt Lệnh hoặc bị Phi Thần khắc phá.`]
+                };
+            }
+        } else if (phiSinhPt) {
+            if (phiVung.isVung) {
+                dungThanIsVung = true;
+                dungThanScore = 40;
+                dungThanNote = 'Phi Thần sinh Phục Thần (Trường Sinh vượng khí)';
+            } else {
+                return {
+                    isQualified: false,
+                    score: 15,
+                    grade: 'Phi Thần Suy',
+                    reasons: [`Dụng Thần Phục Thần được Phi Thần sinh nhưng Phi Thần suy vi (Không sinh nổi Phục Thần).`]
+                };
+            }
+        } else {
+            const ptIsNguyetVung = (pt.hanh === nguyetHanh || isGenerating(nguyetHanh, pt.hanh) || pt.branch === nhatChi || pt.branch === nguyetChi || isBranchHarmonious(pt.branch, nguyetChi));
+            const phiKhacPt = isOvercoming(phi.hanh, pt.hanh);
+            const phiXungPt = isBranchXung(phi.branch, pt.branch);
+
+            if (phiVung.isVung && ptIsNguyetVung && !phiKhacPt && !phiXungPt) {
+                dungThanIsVung = true;
+                dungThanScore = 30;
+                dungThanNote = 'Phục Thần & Phi Thần đều vượng khí';
+            } else {
+                return {
+                    isQualified: false,
+                    score: 15,
+                    grade: 'Phục Thần Suy',
+                    reasons: [`Dụng Thần ở Phục Thần bị suy vi tại Phi Thần.`]
+                };
+            }
+        }
+
+        reasons.push(`Dụng Thần ở Phục Thần (${pt.branch}) đắc lực: ${dungThanNote}.`);
+    } else if (bestCand.source === 'changed') {
+        const parentL = bestCand.parentLine;
+        const parentVung = getLineVungScore(parentL, cal, hexData);
+
+        const hoiDauKhacParent = isOvercoming(parentL.changed.hanh, parentL.hanh);
+        const hoaThoaiParent = isRegressingBranch(parentL.chi, parentL.changed.branch);
+
+        if (!parentVung.isVung || hoiDauKhacParent || hoaThoaiParent || parentVung.isVoDung) {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Dụng Thần Biến Suy',
+                reasons: [`Dụng Thần ở Hào Biến bị Hào Động sinh ra nó suy bại (Vận may bị suy giảm).`]
+            };
+        }
+
+        dungThanIsVung = true;
+        dungThanScore = 40;
+        dungThanNote = 'Dụng Thần ở Hào Biến được Hào Động vượng sinh ra (Vượng khí rất tốt)';
+        reasons.push(`Dụng Thần ở Hào Biến (${bestCand.chi}) vượng khí: ${dungThanNote}.`);
+    } else {
+        const dtLine = bestCand.line;
+        const vInfo = getLineVungScore(dtLine, cal, hexData);
+
+        // Trường hợp duy nhất Hào Động Vô Dụng: Nguyệt phá + Mộ tại Nhật
+        if (vInfo.isVoDung) {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Dụng Thần Vô Dụng',
+                reasons: [`Dụng Thần bị Nguyệt Phá lại Nhập Nhật Mộ (Thuộc thế vô dụng hoàn toàn, loại bỏ 100%).`]
+            };
+        }
+
+        if (!dtLine.isMoving && bestCand.isClashed) {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Dụng Thần Bị Xung Phá',
+                reasons: [`Dụng Thần (${targetRel}) bị Nguyệt/Nhật xung phá (Khí lộc bị tổn hại nặng, không phù hợp).`]
+            };
+        }
+
+        if (dtLine.isMoving) {
+            const dtHoiDauSinh = isGenerating(dtLine.changed.hanh, dtLine.hanh);
+            const dtHoiDauKhac = isOvercoming(dtLine.changed.hanh, dtLine.hanh);
+            const dtHoaTien = isProgressingBranch(dtLine.chi, dtLine.changed.branch);
+            const dtHoaThoai = isRegressingBranch(dtLine.chi, dtLine.changed.branch);
+            const dtHoaTuyet = (getLifeStage(dtLine.hanh, dtLine.changed.branch) === 'Tuyệt');
+
+            const isNguyetPha = isBranchXung(dtLine.changed.branch, cal.thang.chi);
+            const changedVung = getLineVungScore({ chi: dtLine.changed.branch, hanh: dtLine.changed.hanh, isMoving: false }, cal);
+            const isNhatPha = isBranchXung(dtLine.changed.branch, cal.ngay.chi) && !changedVung.isVung;
             const dtHoaPha = (isNguyetPha || isNhatPha);
 
             if (dtHoiDauKhac || dtHoaThoai || dtHoaTuyet || dtHoaPha) {
@@ -209,54 +486,42 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
                 };
             }
         }
-    }
 
-    const dongKhacDung = hexData.linesData.find(dL => dL.isMoving && dungThanLines.some(dt => isOvercoming(dL.hanh, dt.hanh)));
-    if (dongKhacDung) {
-        return {
-            isQualified: false,
-            score: 15,
-            grade: 'Dụng Thần Bị Khắc',
-            reasons: [`Dụng Thần (${targetRel}) bị Hào Động tương khắc (Cản trở vận may, không tốt).`]
-        };
-    }
-
-    let maxDungScore = 0;
-    let maxDungNote = '';
-    let dungThanBestLine = null;
-    let dungThanDuocDongSinh = false;
-    let dungThanIsVung = false;
-
-    dungThanLines.forEach(dt => {
-        const vInfo = getLineVungScore(dt, cal);
-        if (vInfo.score > maxDungScore) {
-            maxDungScore = vInfo.score;
-            maxDungNote = vInfo.note;
-            dungThanBestLine = dt;
-        }
-        if (vInfo.isVung) {
-            dungThanIsVung = true;
-        }
+        dungThanScore = vInfo.score;
+        dungThanNote = vInfo.note;
+        dungThanIsVung = vInfo.isVung;
 
         hexData.linesData.forEach(dL => {
-            if (dL.isMoving && isGenerating(dL.hanh, dt.hanh)) {
-                dungThanDuocDongSinh = true;
-                reasons.push(`🔥 Quẻ có Hào Động tương sinh Dụng Thần (${targetRel}) - Mang lại vận may rất lớn.`);
+            if (dL.isMoving && isGenerating(dL.hanh, dtLine.hanh)) {
+                const dLVung = getLineVungScore(dL, cal, hexData);
+                if (!dLVung.isVoDung) {
+                    dungThanIsVung = true;
+                    dungThanScore += 20;
+                    reasons.push(`🔥 Quẻ có Hào Động tương sinh Dụng Thần (${targetRel}) - Mang lại vận may rất lớn.`);
+                }
             }
         });
-    });
 
-    if (!dungThanIsVung && !dungThanDuocDongSinh) {
-        return {
-            isQualified: false,
-            score: 20,
-            grade: 'Dụng Thần Suy',
-            reasons: [`Dụng Thần (${targetRel}) bị suy vi (Khí vận cầu công danh/tài lộc chưa đủ vượng).`]
-        };
+        if (!dungThanIsVung) {
+            return {
+                isQualified: false,
+                score: 20,
+                grade: 'Dụng Thần Suy',
+                reasons: [`Dụng Thần (${targetRel}) bị suy vi (Khí vận cầu công danh/tài lộc chưa đủ vượng).`]
+            };
+        }
+
+        if (vInfo.isGiaKhong) {
+            reasons.push(`Dụng Thần (${targetRel}) tuy gặp Không Vong nhưng được vượng khí tại Nguyệt Lệnh (Giả Không - Vẫn đắc lực cát tường).`);
+        } else {
+            reasons.push(`Dụng Thần (${targetRel}) vượng khí, trợ vận may phát triển tốt.`);
+        }
     }
 
-    reasons.push(`Dụng Thần (${targetRel}) vượng khí, trợ vận may phát triển tốt.`);
-    totalScore += maxDungScore;
+    totalScore += dungThanScore;
+
+    // 3. ĐÁNH GIÁ HÀO THẾ (BẢN MỆNH & ĐẶC THÙ HÓA CÁT / SUY)
+    const theVungInfo = getLineVungScore(haoThe, cal, hexData);
 
     if (!haoThe.isMoving && (isBranchXung(theChi, nguyetChi) || isBranchXung(theChi, nhatChi))) {
         return {
@@ -267,7 +532,14 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
-    const theVungInfo = getLineVungScore(haoThe, cal);
+    if (!haoThe.isMoving && (theVungInfo.isChanKhong || theVungInfo.isChanMo)) {
+        return {
+            isQualified: false,
+            score: 10,
+            grade: 'Hào Thế Suy Hưu Tù',
+            reasons: [`Hào Thế (bản mệnh) bị Chân Không hoặc Nhập Mộ Hưu Tù (Bản mệnh suy vi không tiếp nhận được vận lộc).`]
+        };
+    }
 
     const bịNhậtKhắc = isOvercoming(nhatHanh, theHanh);
     const bịNguyệtKhắc = isOvercoming(nguyetHanh, theHanh);
@@ -282,13 +554,35 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         };
     }
 
+    // ĐẶC THÙ HÀO THẾ ĐỘNG HÓA (Hóa Kỵ Thần, Hóa Quan Quỷ, Hóa Tử Tôn, Hóa Dụng Thần)
     if (haoThe.isMoving) {
         const hoiDauKhac = isOvercoming(haoThe.changed.hanh, theHanh);
         const hoaThoai = isRegressingBranch(theChi, haoThe.changed.branch);
         const hoaTuyet = (getLifeStage(theHanh, haoThe.changed.branch) === 'Tuyệt');
-        const hoaKyThan = (kyThan && haoThe.changed.relation.startsWith(kyThan.split(' ')[0]));
+        const changedRelPrefix = haoThe.changed.relation.split(' ')[0];
 
-        if (hoiDauKhac || hoaThoai || hoaTuyet || hoaKyThan) {
+        // Hào Thế hóa Phá -> KHÔNG SAO!
+        // Hào Thế hóa Kỵ Thần -> BẠI LUÔN
+        if (kyRelPrefix && changedRelPrefix === kyRelPrefix) {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Thế Hóa Kỵ Thần',
+                reasons: [`Hào Thế động Hóa Kỵ Thần (Thuộc thế suy bại hoàn toàn, loại bỏ 100%).`]
+            };
+        }
+
+        // Hào Thế hóa Quan Quỷ (khi Quan Quỷ KHÔNG PHẢI Dụng Thần / Kỵ Thần)
+        if (changedRelPrefix === 'Quan' && dtRelPrefix !== 'Quan' && kyRelPrefix !== 'Quan') {
+            return {
+                isQualified: false,
+                score: 15,
+                grade: 'Thế Hóa Quan Quỷ',
+                reasons: [`Hào Thế động Hóa Quan Quỷ (Bản mệnh gặp suy vi, loại bỏ 100%).`]
+            };
+        }
+
+        if (hoiDauKhac || hoaThoai || hoaTuyet) {
             return {
                 isQualified: false,
                 score: 15,
@@ -296,15 +590,26 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
                 reasons: [`Hào Thế (bản mệnh) bị suy biến (Vận trình bản thân thiếu sự vững vàng).`]
             };
         }
+
+        // Hào Thế hóa Dụng Thần -> CÁT
+        if (changedRelPrefix === dtRelPrefix) {
+            totalScore += 25;
+            reasons.push(`🌟 Hào Thế động Hóa Dụng Thần (${targetRel}) - Mẫu quẻ đại cát tường!`);
+        }
+        // Hào Thế hóa Tử Tôn (khi Tử Tôn KHÔNG PHẢI Dụng Thần / Kỵ Thần) -> CÁT
+        else if (changedRelPrefix === 'Tử' && dtRelPrefix !== 'Tử' && kyRelPrefix !== 'Tử') {
+            totalScore += 20;
+            reasons.push(`✨ Hào Thế động Hóa Tử Tôn (Bản mệnh đắc phúc đức, vượng cát).`);
+        }
     }
 
     const isTheNhatSinh = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
     const isTheNguyetSinh = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
     const isTheLamNguyetHop = (theChi === nhatChi || theChi === nguyetChi || isBranchHarmonious(theChi, nguyetChi) || (!haoThe.isMoving && isBranchHarmonious(theChi, nhatChi)));
-    const isTheHung = (theVungInfo.isVung || isTheNhatSinh || isTheNguyetSinh || isTheLamNguyetHop) && !(!haoThe.isMoving && (isBranchXung(theChi, nguyetChi) || isBranchXung(theChi, nhatChi)));
+    const isTheHung = (theVungInfo.isVung || isTheNhatSinh || isTheNguyetSinh || isTheLamNguyetHop) && !(!haoThe.isMoving && (isBranchXung(theChi, nguyetChi) || isBranchXung(theChi, nhatChi))) && !theVungInfo.isChanKhong && !theVungInfo.isChanMo;
 
     if (targetRel === 'Thế') {
-        if (!theVungInfo.isVung && !dungThanDuocDongSinh) {
+        if (!theVungInfo.isVung) {
             return {
                 isQualified: false,
                 score: 15,
@@ -327,8 +632,9 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         }
     }
 
-    const dungKhacThe = dungThanLines.find(dt => dt.isMoving && isOvercoming(dt.hanh, theHanh));
-    if (dungKhacThe) {
+    const dtChi = bestCand.chi;
+    const dtHanh = bestCand.hanh;
+    if (bestCand.isMoving && isOvercoming(dtHanh, theHanh)) {
         if (purpose === 'cautai') {
             const theNhatSinh = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
             const theNguyetSinh = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
@@ -354,8 +660,8 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         }
     }
 
-    const dtXungThe = dungThanLines.find(dt => isBranchXung(dt.chi, theChi));
-    const dtHopThe = dungThanLines.find(dt => isBranchHarmonious(dt.chi, theChi));
+    const dtXungThe = isBranchXung(dtChi, theChi);
+    const dtHopThe = isBranchHarmonious(dtChi, theChi);
 
     if (dtXungThe || dtHopThe) {
         if (!isTheHung) {
@@ -374,9 +680,8 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     totalScore += theVungInfo.score || 20;
 
     if (haoThe.isMoving) {
-        const hoiDauSinhDung = dungThanLines.some(dt => haoThe.changed.relation.startsWith(dt.relation.split(' ')[0]) && isGenerating(haoThe.changed.hanh, theHanh));
+        const hoiDauSinhDung = isGenerating(haoThe.changed.hanh, theHanh);
         const hoaTien = isProgressingBranch(theChi, haoThe.changed.branch);
-        const hoaDungThan = dungThanLines.some(dt => haoThe.changed.relation.startsWith(dt.relation.split(' ')[0]));
 
         if (hoiDauSinhDung) {
             totalScore += 30;
@@ -384,9 +689,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         } else if (hoaTien) {
             totalScore += 25;
             reasons.push(`✨ Hào Thế động Hóa Tiến Thần (Vận trình bản thân ngày càng thăng tiến).`);
-        } else if (hoaDungThan) {
-            totalScore += 20;
-            reasons.push(`Hào Thế động Hóa Dụng Thần (Hỗ trợ mục đích cầu thành công).`);
         } else {
             reasons.push(`Hào Thế (bản mệnh) động sinh trợ vượng khí.`);
         }
@@ -396,9 +698,12 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
         let hasGenDynamic = false;
         hexData.linesData.forEach(dL => {
             if (dL.isMoving && !dL.isShi && isGenerating(dL.hanh, theHanh)) {
-                hasGenDynamic = true;
-                totalScore += 25;
-                reasons.push(`🔥 Quẻ có Hào Động tương sinh Hào Thế (Bình an, sức khỏe dồi dào, đại cát).`);
+                const dLVung = getLineVungScore(dL, cal, hexData);
+                if (!dLVung.isVoDung) {
+                    hasGenDynamic = true;
+                    totalScore += 25;
+                    reasons.push(`🔥 Quẻ có Hào Động tương sinh Hào Thế (Bình an, sức khỏe dồi dào, đại cát).`);
+                }
             }
         });
         if (!hasGenDynamic && haoThe.isMoving) {
@@ -407,14 +712,17 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     } else {
         hexData.linesData.forEach(dL => {
             if (dL.isMoving) {
-                if (isGenerating(dL.hanh, theHanh)) {
-                    totalScore += 25;
-                    reasons.push(`🔥 Quẻ có Hào Động tương sinh Hào Thế (Bản mệnh có quý nhân phù trợ, đại cát).`);
-                }
+                const dLVung = getLineVungScore(dL, cal, hexData);
+                if (!dLVung.isVoDung) {
+                    if (isGenerating(dL.hanh, theHanh)) {
+                        totalScore += 25;
+                        reasons.push(`🔥 Quẻ có Hào Động tương sinh Hào Thế (Bản mệnh có quý nhân phù trợ, đại cát).`);
+                    }
 
-                if (nguyenThan && dL.relation.startsWith(nguyenThan.split(' ')[0])) {
-                    totalScore += 15;
-                    reasons.push(`Hào Động sinh trợ Nguyên Thần (Nuôi dưỡng vận lộc rất tốt).`);
+                    if (nguyenThan && dL.relation.startsWith(nguyenThan.split(' ')[0])) {
+                        totalScore += 15;
+                        reasons.push(`Hào Động sinh trợ Nguyên Thần (Nuôi dưỡng vận lộc rất tốt).`);
+                    }
                 }
             }
         });
@@ -442,9 +750,6 @@ function evaluateSimFengShui(simStr, hexData, cal, purpose, gender) {
     };
 }
 
-/* ==========================================================================
-   HÀM KHỞI TẠO VÀ ĐÃI LỌC KẾT QUẢ SIM (CHUẨN 10 CHỮ SỐ VIỆT NAM)
-   ========================================================================== */
 function generateMatchingSims(pattern, dateInput, gender, purpose, maxCount = 15) {
     const cal = calculateCanChi(dateInput);
     if (!cal) return [];
