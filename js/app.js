@@ -348,7 +348,13 @@ function updateUserNavUI() {
         if (guestNav) guestNav.style.display = 'none';
         if (loggedInNav) loggedInNav.style.display = 'flex';
 
-        if (coinSpan) coinSpan.textContent = user.coins;
+        let actualCoins = user.coins;
+        const logs = AuthStore.getUserLogs(user.id);
+        if (logs && logs.length > 0 && logs[0].balanceAfter !== undefined) {
+            actualCoins = logs[0].balanceAfter;
+        }
+
+        if (coinSpan) coinSpan.textContent = actualCoins;
         if (refCodeSpan) refCodeSpan.textContent = user.refCode || '---';
 
         if (adminLinkBtn) {
@@ -365,11 +371,26 @@ function openUserCoinHistoryModal() {
         return;
     }
 
-    document.getElementById('histCurrentBalance').textContent = `${user.coins} Xu`;
-
     const logs = AuthStore.getUserLogs(user.id);
-    const tbody = document.getElementById('userCoinHistoryTableBody');
 
+    // Tự động lấy số dư chính xác 100% từ log mới nhất hoặc user.coins
+    let actualCoins = user.coins;
+    if (logs && logs.length > 0 && logs[0].balanceAfter !== undefined) {
+        actualCoins = logs[0].balanceAfter;
+    }
+
+    const histBalanceEl = document.getElementById('histCurrentBalance');
+    if (histBalanceEl) {
+        histBalanceEl.textContent = `${actualCoins} Xu`;
+    }
+
+    // Cập nhật cả số dư trên thanh Header Nav
+    const userCoinBalanceEl = document.getElementById('userCoinBalance');
+    if (userCoinBalanceEl) {
+        userCoinBalanceEl.textContent = actualCoins;
+    }
+
+    const tbody = document.getElementById('userCoinHistoryTableBody');
     if (!tbody) return;
 
     if (logs.length === 0) {
