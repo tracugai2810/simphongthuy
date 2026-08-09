@@ -1,8 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Mật khẩu Admin chính thức: 140498
-   - Tên tài khoản mặc định lưu chữ thường, Mã giới thiệu mặc định chữ hoa
-   - Khôi phục mật khẩu qua Email liên hệ + Gửi Email reset password chính thức qua Firebase Auth
+   - Bảo mật 100%: TUYỆT ĐỐI KHÔNG HIỂN THỊ MẬT KHẨU TRÊN MÀN HÌNH
+   - Chỉ gửi Link Đặt Lại Mật Khẩu qua Email chính chủ (Che mờ email d***g@gmail.com)
    ========================================================================== */
 
 // Firebase Configuration
@@ -137,7 +136,7 @@ const AuthStore = (() => {
     function initDefaultData() {
         let users = getUsers();
 
-        // Đảm bảo Admin luôn có mật khẩu mới 140498 và hỗ trợ email dambuicong@gmail.com
+        // Đảm bảo Admin dambuicong có mật khẩu 140498 & email dambuicong@gmail.com
         const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
         const adminUser = {
             id: 'usr_admin_01',
@@ -220,6 +219,15 @@ const AuthStore = (() => {
         return code;
     }
 
+    function maskEmail(email) {
+        if (!email || !email.includes('@')) return '***@gmail.com';
+        const parts = email.split('@');
+        const name = parts[0];
+        const domain = parts[1];
+        if (name.length <= 2) return `${name}***@${domain}`;
+        return `${name.slice(0, 2)}***${name.slice(-1)}@${domain}`;
+    }
+
     // ĐĂNG KÝ TÀI KHOẢN MỚI
     function register(username, email, password, inputRefCode = '') {
         initDefaultData();
@@ -287,7 +295,7 @@ const AuthStore = (() => {
         };
     }
 
-    // YÊU CẦU KHÔI PHỤC MẬT KHẨU & GỬI EMAIL THẬT
+    // YÊU CẦU KHÔI PHỤC MẬT KHẨU (BẢO MẬT 100%: CHỈ GỬI LINK VỀ EMAIL, NÓI KHÔNG VỚI HIỂN THỊ MẬT KHẨU NỔI MÀN HÌNH)
     function requestPasswordReset(inputUser) {
         initDefaultData();
         const users = getUsers();
@@ -301,12 +309,15 @@ const AuthStore = (() => {
         );
 
         if (!user) {
-            return { success: false, message: 'Email hoặc Tên tài khoản này chưa được đăng ký trong hệ thống!' };
+            return { 
+                success: false, 
+                message: 'Tài khoản hoặc Email này chưa được đăng ký trong hệ thống!' 
+            };
         }
 
         const emailToUse = user.email || `${user.username}@gmail.com`;
 
-        // 1. Gửi link khôi phục mật khẩu chính thức qua Google Firebase Mail (nếu đăng ký bằng Firebase)
+        // 1. Gửi link khôi phục mật khẩu bảo mật qua Google Firebase Mail
         if (fbAuth && emailToUse.includes('@')) {
             fbAuth.sendPasswordResetEmail(emailToUse).then(() => {
                 console.log("🔥 Đã gửi email reset password thành công qua Firebase!");
@@ -315,10 +326,12 @@ const AuthStore = (() => {
             });
         }
 
-        // 2. Đồng thời hiển thị mật khẩu trực tiếp trên Popup giao diện giúp khách hàng/Admin tiện lấy lại ngay lập tức
+        const maskedMail = maskEmail(emailToUse);
+
+        // 2. Bảo mật 100%: TUYỆT ĐỐI KHÔNG HIỂN THỊ MẬT KHẨU NỔI MÀN HÌNH!
         return {
             success: true,
-            message: `✅ Đã xác nhận tài khoản: (${user.username})!\n📩 Hệ thống đã gửi link khôi phục tới email: (${emailToUse}).\n🔑 Mật khẩu truy cập của bạn là: ${user.passwordHash}`
+            message: `📩 Đã gửi liên kết khôi phục mật khẩu bảo mật tới Email (${maskedMail}). Vui lòng kiểm tra Hộp thư đến (hoặc Hòm thư Rác/Spam) của bạn!`
         };
     }
 
@@ -669,7 +682,7 @@ const AuthStore = (() => {
         const reqs = getDonateRequests().filter(r => r.status === 'approved');
         const approvedUserIds = new Set(reqs.map(r => r.userId));
 
-        const qualifiedRefs = myRefs.filter(u => approvedUserIds.has(u.id)).length;
+        const qualifiedReferrals = myRefs.filter(u => approvedUserIds.has(u.id)).length;
 
         const logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
         const userLogs = logs.filter(l => l.userId === userId && l.action.includes('Hoa Hồng 50%'));
@@ -686,7 +699,7 @@ const AuthStore = (() => {
             referredBy: user.referredBy,
             referrerName,
             totalRefs: myRefs.length,
-            qualifiedRefs,
+            qualifiedRefs: qualifiedReferrals,
             totalEarned
         };
     }
