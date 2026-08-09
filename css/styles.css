@@ -1,7 +1,8 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - STYLESHEET PRO
-   Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web cũ)
-   Tối ưu Mobile First & Thương Mại Hóa (Quản Lý Xu, Auth, Donate QR, Ref Code)
+   Aesthetics: Luxury Obsidian & Dark Red (Đồng bộ 100% Tone màu & Font Web)
+   Tối ưu Mobile First Toàn Diện: Khóa 100% Khung Hiển Thị Không Bị Shift/Zoom
+   Nút Bấm Modal Cực Dễ Bấm Trên Điện Thoại & Mã Giới Thiệu Chữ Hoa/Thường
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -28,6 +29,15 @@
     padding: 0;
 }
 
+html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    position: relative;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     background: linear-gradient(135deg, #0c1222 0%, #0a0f1a 50%, #0c1222 100%);
     background-attachment: fixed;
@@ -44,6 +54,8 @@ body {
     max-width: 960px;
     margin: 0 auto;
     padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* ==========================================================================
@@ -150,28 +162,28 @@ body {
 }
 
 .admin-link-btn {
-    background: #6b1a1a;
-    color: #ffd700;
-    font-weight: bold;
+    background: rgba(217, 119, 6, 0.2);
+    border: 1px solid var(--gold-dark);
+    color: var(--gold-primary);
     font-size: 0.85rem;
+    font-weight: bold;
     padding: 6px 12px;
     border-radius: 8px;
     text-decoration: none;
-    border: 1px solid #dc2626;
     transition: all 0.2s ease;
 }
 
 .admin-link-btn:hover {
-    background: #8b2525;
+    background: var(--gold-dark);
     color: #ffffff;
 }
 
 .btn-logout {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
     color: #94a3b8;
-    border: 1px solid rgba(255, 255, 255, 0.15);
     font-size: 0.85rem;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -183,58 +195,61 @@ body {
     border-color: #ef4444;
 }
 
-/* Glassmorphism Form Card */
+/* ==========================================================================
+   FORM NHẬP THÔNG TIN
+   ========================================================================== */
 .form-card {
     background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 20px 24px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    margin-bottom: 25px;
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
 .section-title {
-    font-family: var(--font-body);
-    font-size: 1.25rem;
+    font-family: var(--font-title);
+    font-size: 1.6rem;
     font-weight: 700;
-    color: var(--gold-primary);
-    margin-bottom: 18px;
+    color: var(--gold-glow);
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    border-bottom: 2px solid var(--gold-dark);
-    padding-bottom: 8px;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
 }
 
 .form-group label {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: #cbd5e1;
-    white-space: nowrap;
+    margin-bottom: 8px;
 }
 
 .form-control {
+    width: 100%;
+    padding: 12px 14px;
     background: #0c1222;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 14px;
-    color: var(--text-light);
-    font-size: 0.95rem;
+    color: #ffffff;
+    font-size: 1rem;
+    border-radius: 10px;
     outline: none;
     transition: all 0.3s ease;
+    font-family: var(--font-body);
 }
 
 .form-control:focus {
@@ -242,54 +257,32 @@ body {
     box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
 }
 
-/* Dropdown Menu Styling */
-select.form-control option, select.prefix-select option {
-    background: #151d30 !important;
-    color: #f3c669 !important;
-    padding: 8px 12px;
-    font-weight: 500;
-}
-
-/* Khung Đánh Giá SIM Đang Dùng */
+/* ĐÁNH GIÁ SIM ĐANG DÙNG */
 .current-sim-group {
-    border: 1px dashed rgba(243, 198, 105, 0.4);
-    padding: 14px 18px;
-    border-radius: 12px;
-    background: rgba(217, 119, 6, 0.08);
-    margin-top: 4px;
-}
-
-.current-sim-group label {
-    color: #ffd700 !important;
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 6px;
+    background: rgba(12, 18, 34, 0.6);
+    border: 1px dashed var(--border-gold);
+    padding: 16px;
+    border-radius: 14px;
 }
 
 .current-sim-input-wrapper {
     display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.current-sim-input-wrapper input {
-    flex: 1;
-    height: 44px;
+    gap: 10px;
 }
 
 .btn-eval-current {
-    height: 44px;
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
     font-weight: 700;
-    padding: 0 20px;
-    border-radius: 8px;
+    font-size: 0.92rem;
+    padding: 12px 18px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
-    font-size: 0.95rem;
     white-space: nowrap;
     transition: all 0.2s ease;
-    display: flex;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+    display: inline-flex;
     align-items: center;
     gap: 6px;
 }
@@ -297,130 +290,116 @@ select.form-control option, select.prefix-select option {
 .btn-eval-current:hover {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
 }
 
-/* Custom Digit Input Box Section */
+/* ==========================================================================
+   DIGIT SELECTOR (10 Ô VUÔNG ĐIỀN CHỮ SỐ SĐT CHUẨN VN)
+   ========================================================================== */
 .digit-section {
-    background: linear-gradient(135deg, #6b1a1a 0%, #8b2525 50%, #6b1a1a 100%);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    border-radius: 14px;
-    padding: 18px 15px;
-    text-align: center;
-    margin: 18px 0;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    width: 100%;
-    overflow: hidden;
+    background: #0c1222;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 20px;
 }
 
 .digit-section-title {
-    color: #ffffff;
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    color: var(--gold-primary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .prefix-selector-group {
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 10px;
     margin-bottom: 14px;
 }
 
 .prefix-selector-group label {
-    color: #ffd700;
-    font-weight: 600;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
 }
 
 .prefix-select {
-    background: rgba(12, 18, 34, 0.8);
-    color: #ffd700;
-    border: 1px solid #d97706;
+    padding: 6px 12px;
+    background: #151d30;
+    border: 1px solid var(--border-color);
+    color: #ffffff;
     border-radius: 8px;
-    padding: 6px 10px;
-    font-weight: bold;
-    font-size: 0.95rem;
-    cursor: pointer;
+    outline: none;
+    font-weight: 600;
 }
 
-/* Dãy 10 Ô Vuông Chữ Số */
 .digit-boxes-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
+    gap: 6px;
+    justify-content: space-between;
     margin-bottom: 10px;
     width: 100%;
-    padding: 4px 0;
-    box-sizing: border-box;
 }
 
 .digit-box {
-    width: 42px;
+    width: 44px;
     height: 48px;
-    flex: 1;
-    max-width: 42px;
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    color: #1e293b;
+    background: #151d30;
+    border: 1.5px solid var(--border-color);
+    color: var(--gold-glow);
     font-size: 1.35rem;
-    font-weight: 700;
+    font-weight: 800;
     text-align: center;
+    border-radius: 10px;
     outline: none;
-    padding: 0;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease;
-}
-
-.digit-box.fixed-zero {
-    background: #f1f5f9;
-    color: #b91c1c;
-    border-color: #fca5a5;
-    cursor: not-allowed;
+    font-family: monospace;
 }
 
 .digit-box:focus {
-    border-color: #d97706;
-    transform: scale(1.06);
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+    border-color: var(--gold-glow);
+    background: #1a2438;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.digit-box.fixed-zero {
+    background: rgba(217, 119, 6, 0.2);
+    border-color: var(--gold-dark);
+    color: #ffffff;
 }
 
 .digit-help-text {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.85rem;
-    margin-top: 2px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.4;
 }
 
-/* Submit Button */
+/* NÚT SUBMIT CHÍNH */
 .btn-submit {
     width: 100%;
+    padding: 16px;
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
+    font-weight: 800;
     font-size: 1.1rem;
-    font-weight: 700;
-    padding: 14px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
-    transition: all 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
 }
 
 .btn-submit:hover {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.5);
+    box-shadow: 0 8px 25px rgba(217, 119, 6, 0.6);
 }
 
-/* Results Section */
+/* ==========================================================================
+   DANH SÁCH SIM KẾT QUẢ & THẺ SIM
+   ========================================================================== */
 .results-header {
     display: flex;
     justify-content: space-between;
@@ -434,75 +413,76 @@ select.form-control option, select.prefix-select option {
     gap: 16px;
 }
 
-/* SIM Card Item */
 .sim-card {
-    background: #151d30;
+    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 18px 20px;
-    transition: all 0.3s ease;
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 16px;
     align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
 }
 
 .sim-card:hover {
-    border-color: var(--gold-dark);
-    background: #1a2438;
+    border-color: var(--border-gold);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
 }
 
 .sim-number-display {
-    font-size: 1.7rem;
-    font-weight: 800;
+    font-size: 1.6rem;
+    font-weight: 900;
     color: #ffffff;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     margin-bottom: 6px;
 }
 
-.sim-number-display span.highlight {
-    color: var(--gold-primary);
+.sim-number-display .highlight {
+    color: var(--gold-glow);
 }
 
 .sim-badge-group {
     display: flex;
     gap: 8px;
-    align-items: center;
-    margin-bottom: 8px;
     flex-wrap: wrap;
+    margin-bottom: 10px;
 }
 
 .badge {
-    padding: 4px 10px;
-    border-radius: 16px;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .badge-score {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    color: #ffffff;
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid #16a34a;
 }
 
 .badge-hex {
-    background: rgba(217, 119, 6, 0.15);
-    border: 1px solid var(--gold-dark);
+    background: rgba(217, 119, 6, 0.2);
     color: var(--gold-primary);
+    border: 1px solid var(--gold-dark);
 }
 
 .sim-reasons-list {
     list-style: none;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     color: #cbd5e1;
 }
 
 .sim-reasons-list li {
     position: relative;
-    padding-left: 18px;
+    padding-left: 16px;
     margin-bottom: 4px;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 .sim-reasons-list li::before {
@@ -516,86 +496,59 @@ select.form-control option, select.prefix-select option {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-width: 130px;
 }
 
 .btn-action {
-    padding: 8px 12px;
+    padding: 10px 16px;
     border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.88rem;
     border: none;
+    cursor: pointer;
+    white-space: nowrap;
     transition: all 0.2s ease;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
 }
 
 .btn-view-hex {
-    background: rgba(217, 119, 6, 0.2);
-    color: var(--gold-primary);
-    border: 1px solid var(--gold-dark);
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
 }
 
 .btn-view-hex:hover {
-    background: var(--gold-dark);
-    color: #ffffff;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
 .btn-copy-info {
-    background: rgba(255, 255, 255, 0.1);
-    color: #e2e8f0;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid var(--border-color);
 }
 
 .btn-copy-info:hover {
-    background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
 }
 
-/* Toast Notification */
-.toast-notification {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #22c55e;
-    color: #ffffff;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 10000;
-    pointer-events: none;
-}
-
-.toast-notification.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-}
-
-/* Modal Overlay & Content */
+/* ==========================================================================
+   MODALS POPUP (TỐI ƯU CỰC NÉT TRÊN ĐIỆN THOẠI)
+   ========================================================================== */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
-    z-index: 999;
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    padding: 10px;
+    padding: 12px;
 }
 
 .modal-overlay.active {
@@ -604,99 +557,91 @@ select.form-control option, select.prefix-select option {
 }
 
 .modal-content {
-    background: #fefee5;
-    color: #000000;
-    border: 2px solid #888;
-    border-radius: 12px;
-    max-width: 940px;
+    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
+    border: 1px solid var(--border-gold);
+    border-radius: 18px;
+    padding: 24px 20px;
+    max-width: 520px;
     width: 100%;
-    max-height: 95vh;
-    overflow-y: auto;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
     position: relative;
-    font-family: 'Inter', sans-serif;
+    max-height: 86vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: auto;
 }
 
+/* Nút Đóng Modal To Rõ Chống Bị Che Trên Mobile */
 .modal-close {
     position: absolute;
     top: 10px;
-    right: 15px;
-    font-size: 2rem;
-    color: #333;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 1.5rem;
     cursor: pointer;
-    font-weight: bold;
-    line-height: 1;
-    z-index: 10;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.modal-close:hover {
-    color: #e60000;
+.modal-close:hover, .modal-close:active {
+    background: rgba(239, 68, 68, 0.3);
+    color: #f87171;
 }
 
-/* STYLES CHO CÁC MODAL THƯƠNG MẠI HÓA (AUTH, DONATE, REF, COIN HISTORY) */
-.auth-modal-box, .confirm-modal-box, .donate-modal-box, .ref-modal-box {
-    background: linear-gradient(145deg, #151d30 0%, #1a2438 100%) !important;
-    color: #ffffff !important;
-    border: 1px solid var(--border-gold) !important;
-    max-width: 480px !important;
-}
-
-.auth-modal-box .modal-close,
-.confirm-modal-box .modal-close,
-.donate-modal-box .modal-close,
-.ref-modal-box .modal-close {
-    color: #94a3b8 !important;
-}
-
-.ref-single-line-title {
-    color: var(--gold-glow);
-    font-size: 1.15rem;
-    font-weight: 700;
-    white-space: nowrap;
-    letter-spacing: 0.3px;
-}
-
+/* AUTH MODAL TABS */
 .auth-tabs {
     display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 18px;
+    padding-bottom: 10px;
 }
 
 .auth-tab-btn {
     flex: 1;
-    padding: 12px;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: #cbd5e1;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    border-radius: 8px;
     cursor: pointer;
-    border-bottom: 3px solid transparent;
     transition: all 0.2s ease;
 }
 
-.auth-tab-btn.active {
-    color: var(--gold-glow);
-    border-bottom-color: var(--gold-glow);
+.auth-tab-btn.active, .auth-tab-btn:hover {
+    background: var(--gold-dark);
+    color: #ffffff;
+    border-color: var(--gold-glow);
 }
 
+/* DONATE TIER GRID */
 .donate-tier-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 16px;
 }
 
 .donate-card {
     background: #0c1222;
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 12px 8px;
+    border-radius: 12px;
+    padding: 10px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
 }
 
 .donate-card.active, .donate-card:hover {
@@ -1042,13 +987,49 @@ select.form-control option, select.prefix-select option {
     word-break: break-word;
 }
 
-/* MOBILE FIRST OPTIMIZATIONS */
+/* TOAST NOTIFICATION */
+.toast-notification {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--gold-glow);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    text-align: center;
+    max-width: 90vw;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* ==========================================================================
+   MOBILE FIRST RESPONSIVE BREAKPOINTS (KHÓA LỆCH MÀN HÌNH & TỐI ƯU BUTTONS)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Đảm bảo Font 16px cho tất cả Input để không bị iOS Safari Auto-Zoom */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+
 @media (max-width: 640px) {
-    body { padding-top: 10px; }
+    body { padding-top: 10px; padding-bottom: 40px; }
     .container { padding: 0 10px; }
 
     .top-user-bar {
-        padding: 10px 14px;
+        padding: 10px 12px;
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
@@ -1130,8 +1111,11 @@ select.form-control option, select.prefix-select option {
         font-size: 0.88rem;
     }
 
+    /* Modal Responsive Mobile */
     .modal-content {
-        padding: 14px;
+        padding: 24px 14px 18px 14px !important;
+        max-width: 95% !important;
+        margin: auto !important;
     }
 
     .donate-tier-grid {

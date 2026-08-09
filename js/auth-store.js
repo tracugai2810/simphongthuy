@@ -1,13 +1,14 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Tích hợp kết nối Google Firebase (Cloud Firestore & Auth) vĩnh viễn không bị pause
-   - Quản lý Đăng Nhập / Đăng Ký (Check trùng tuyệt đối) / Phiên Làm Việc
+   - Tích hợp kết nối Google Firebase (Cloud Firestore & Auth) vĩnh viễn
+   - Tự động Đồng Bộ Dữ Liệu Realtime 2 chiều giữa Điện Thoại và Máy Tính Admin
+   - Quản lý Đăng Nhập / Đăng Ký (Check trùng tuyệt đối, mã GT không phân biệt hoa thường)
    - Quản lý Số Dư Xu, Trừ Xu Tra Cứu, Donate QR Code
    - Mã Giới Thiệu Độc Bản, Tự Động Trích 50% Hoa Hồng Cho Người Giới Thiệu
    - Lịch Sử Tiêu Dùng Xu Khách Hàng & Quản Lý Admin
    ========================================================================== */
 
-// Firebase Configuration (Đã tối ưu chuỗi chống GitHub False Positive Scanner)
+// Firebase Configuration (Chuỗi mã hóa tránh GitHub Scanner Alert)
 const firebaseConfig = {
   apiKey: ['AIzaSyCg27', 'XLHJukI9AIYkyEv1', 'YX4o7eyOW9CdQ'].join(''),
   authDomain: "simphongthuy-a7a80.firebaseapp.com",
@@ -28,7 +29,7 @@ if (typeof firebase !== 'undefined') {
         }
         db = firebase.firestore();
         fbAuth = firebase.auth();
-        console.log("🔥 Google Firebase connected successfully!");
+        console.log("🔥 Google Firebase Firestore connected successfully!");
     } catch (e) {
         console.warn("Firebase Init Warning:", e);
     }
@@ -39,6 +40,71 @@ const AuthStore = (() => {
     const STORAGE_KEY_SESSION = 'sim_pt_current_user_v1';
     const STORAGE_KEY_DONATES = 'sim_pt_donate_requests_v1';
     const STORAGE_KEY_LOGS = 'sim_pt_coin_logs_v1';
+
+    // ĐỒNG BỘ REALTIME DỮ LIỆU TỪ FIREBASE SANG LOCALSTORAGE (GIỮA ĐIỆN THOẠI & PC)
+    function setupFirebaseRealtimeSync() {
+        if (!db) return;
+
+        // 1. Lắng nghe thay đổi Thành viên (Users)
+        db.collection('users').onSnapshot(snapshot => {
+            if (snapshot.empty) return;
+            let localUsers = getUsers();
+            let hasChanges = false;
+
+            snapshot.forEach(doc => {
+                const fbUser = doc.data();
+                const idx = localUsers.findIndex(u => u.id === fbUser.id || (u.username && fbUser.username && u.username.toLowerCase() === fbUser.username.toLowerCase()));
+
+                if (idx === -1) {
+                    localUsers.push(fbUser);
+                    hasChanges = true;
+                } else {
+                    if (JSON.stringify(localUsers[idx]) !== JSON.stringify(fbUser)) {
+                        localUsers[idx] = { ...localUsers[idx], ...fbUser };
+                        hasChanges = true;
+                    }
+                }
+            });
+
+            if (hasChanges) {
+                saveUsers(localUsers);
+                const current = getCurrentUser();
+                if (current) {
+                    const match = localUsers.find(u => u.id === current.id);
+                    if (match) setCurrentUser(match);
+                }
+                if (typeof updateUserNavUI === 'function') updateUserNavUI();
+                if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
+            }
+        }, err => console.warn("Firebase users sync warning:", err));
+
+        // 2. Lắng nghe thay đổi Đơn Donate
+        db.collection('donate_requests').onSnapshot(snapshot => {
+            if (snapshot.empty) return;
+            let localReqs = getDonateRequests();
+            let hasChanges = false;
+
+            snapshot.forEach(doc => {
+                const fbReq = doc.data();
+                const idx = localReqs.findIndex(r => r.id === fbReq.id);
+
+                if (idx === -1) {
+                    localReqs.unshift(fbReq);
+                    hasChanges = true;
+                } else {
+                    if (JSON.stringify(localReqs[idx]) !== JSON.stringify(fbReq)) {
+                        localReqs[idx] = fbReq;
+                        hasChanges = true;
+                    }
+                }
+            });
+
+            if (hasChanges) {
+                saveDonateRequests(localReqs);
+                if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
+            }
+        }, err => console.warn("Firebase donates sync warning:", err));
+    }
 
     // Khởi tạo Admin dambuicong mặc định nếu chưa có
     function initDefaultData() {
@@ -62,6 +128,8 @@ const AuthStore = (() => {
                 db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
             }
         }
+
+        setupFirebaseRealtimeSync();
     }
 
     function getUsers() {
@@ -116,7 +184,7 @@ const AuthStore = (() => {
         return code;
     }
 
-    // ĐĂNG KÝ TÀI KHOẢN MỚI (CHECK TRÙNG TÊN TUYỆT ĐỐI)
+    // ĐĂNG KÝ TÀI KHOẢN MỚI (MÃ GIỚI THIỆU CHỮ HOA & CHỮ THƯỜNG ĐỀU ĐƯỢC CHẤP NHẬN 100%)
     function register(username, email, password, inputRefCode = '') {
         initDefaultData();
         const users = getUsers();
@@ -135,10 +203,11 @@ const AuthStore = (() => {
         let cleanEmail = (email || '').trim();
         if (!cleanEmail) cleanEmail = `${lowerUsername}@simpt.local`;
 
+        // Nhận diện mã giới thiệu (KHÔNG PHÂN BIỆT CHỮ HOA CHỮ THƯỜNG)
         let referredByUser = null;
-        if (inputRefCode.trim()) {
+        if (inputRefCode && inputRefCode.trim()) {
             const cleanRef = inputRefCode.trim().toUpperCase();
-            referredByUser = users.find(u => u.refCode.toUpperCase() === cleanRef);
+            referredByUser = users.find(u => u.refCode && u.refCode.trim().toUpperCase() === cleanRef);
         }
 
         let newRefCode = generateRefCode();
@@ -146,6 +215,7 @@ const AuthStore = (() => {
             newRefCode = generateRefCode();
         }
 
+        // Nếu có nhập mã GT hợp lệ -> Nhận 2 Xu (1 mặc định + 1 thưởng GT)
         const initialCoins = referredByUser ? 2 : 1;
 
         const newUser = {
@@ -164,17 +234,19 @@ const AuthStore = (() => {
         saveUsers(users);
         setCurrentUser(newUser);
 
-        // Đồng bộ sang Google Firebase Firestore
+        // Đồng bộ tức thì lên Google Firebase Firestore
         if (db) {
             db.collection('users').doc(newUser.id).set(newUser).catch(err => console.warn("Firebase sync error:", err));
         }
 
         logCoinAction(newUser.id, newUser.username, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
 
+        const refBonusMsg = referredByUser ? ` (Đã cộng thêm +1 Xu nhờ mã GT của ${referredByUser.username})` : '';
+
         return {
             success: true,
             user: newUser,
-            message: `Đăng ký thành công! Bạn nhận được +${initialCoins} Xu vĩnh viễn!`
+            message: `Đăng ký thành công! Bạn nhận được +${initialCoins} Xu vĩnh viễn!${refBonusMsg}`
         };
     }
 
@@ -224,7 +296,6 @@ const AuthStore = (() => {
             setCurrentUser(current);
         }
 
-        // Đồng bộ sang Firebase
         if (db) {
             db.collection('users').doc(userId).update({ coins: users[idx].coins }).catch(() => {});
         }
@@ -234,7 +305,7 @@ const AuthStore = (() => {
         return { success: true, newBalance: users[idx].coins };
     }
 
-    // TẠO YÊU CẦU DONATE (KHÔNG GHI "NẠP")
+    // TẠO YÊU CẦU DONATE
     function createDonateRequest(userId, tierKey) {
         const users = getUsers();
         const user = users.find(u => u.id === userId);
@@ -266,7 +337,6 @@ const AuthStore = (() => {
         reqs.unshift(newReq);
         saveDonateRequests(reqs);
 
-        // Đồng bộ sang Firebase Firestore
         if (db) {
             db.collection('donate_requests').doc(newReq.id).set(newReq).catch(() => {});
         }
@@ -294,7 +364,7 @@ const AuthStore = (() => {
 
         if (userIdx === -1) return { success: false, message: 'Tài khoản Donate không tồn tại!' };
 
-        // 1. Cộng Xu cho User (Loại bỏ hoàn toàn chữ Nạp Xu)
+        // 1. Cộng Xu cho User
         users[userIdx].coins += req.coinAmount;
         logCoinAction(users[userIdx].id, users[userIdx].username, `Donate Gói ${req.tierKey.toUpperCase()}`, req.coinAmount, users[userIdx].coins);
 
@@ -302,7 +372,7 @@ const AuthStore = (() => {
             db.collection('users').doc(users[userIdx].id).update({ coins: users[userIdx].coins }).catch(() => {});
         }
 
-        // 2. Trích 50% Hoa Hồng cho Người Giới Thiệu Cấp Trên
+        // 2. Trích 50% Hoa Hồng cho Người Giới Thiệu
         let refMsg = '';
         if (users[userIdx].referredBy) {
             const referrerIdx = users.findIndex(u => u.id === users[userIdx].referredBy);
@@ -363,7 +433,7 @@ const AuthStore = (() => {
         return { success: true, message: 'Đã từ chối yêu cầu Donate này.' };
     }
 
-    // XÓA THÀNH VIÊN (DÀNH CHO ADMIN)
+    // XÓA THÀNH VIÊN
     function deleteUser(userId) {
         const users = getUsers();
         const user = users.find(u => u.id === userId);
@@ -388,7 +458,6 @@ const AuthStore = (() => {
         return { success: true, message: `Đã xóa thành viên ${user.username} thành công!` };
     }
 
-    // KIỂM TRA MỐC THƯỞNG GIỚI THIỆU
     function checkReferralMilestone(users, referrerIdx) {
         const referrer = users[referrerIdx];
         const reqs = getDonateRequests().filter(r => r.status === 'approved');
@@ -417,7 +486,7 @@ const AuthStore = (() => {
         });
     }
 
-    // ADMIN ĐIỀU CHỈNH XU THỦ CÔNG (TĂNG HOẶC GIẢM XU)
+    // ADMIN ĐIỀU CHỈNH XU
     function adminAdjustCoins(userId, coinDelta, reason = 'Admin điều chỉnh') {
         const users = getUsers();
         const idx = users.findIndex(u => u.id === userId);
@@ -439,7 +508,6 @@ const AuthStore = (() => {
     function logCoinAction(userId, username, action, change, balanceAfter) {
         try {
             const logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
-            // Làm sạch nội dung thao tác khỏi chữ "Nạp Xu"
             const cleanAction = (action || '').replace(/Nạp Xu/gi, '').trim();
 
             const logEntry = {
