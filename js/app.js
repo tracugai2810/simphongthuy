@@ -2,7 +2,7 @@
    MAIN UI CONTROLLER - Website Sim Phong Thủy Lục Hào Pro
    - Tự động nhảy focus 10 ô vuông điền SĐT (Chuẩn 10 chữ số VN)
    - Tích hợp Thương Mại Hóa: Phân quyền Auth, Quản Lý Xu, Trừ Xu Tra Cứu
-   - Modal Xác Nhận Trừ Xu, Modal Donate QR Code, Modal Mã Giới Thiệu
+   - Modal Lịch Sử Tiêu Dùng Xu, Modal Donate QR Code, Modal Mã Giới Thiệu
    - Nút "Xem Chi Tiết":
      + Máy Tính: Mở Modal hiển thị ảnh lá quẻ, hỗ trợ chuột phải Sao chép / Lưu ảnh
      + Điện Thoại: Mở Modal hiển thị lá quẻ + Nút "📤 Chia Sẻ / Lưu Ảnh Về iPhone"
@@ -64,11 +64,13 @@ function setupAuthAndCommerce() {
     const btnOpenAuth = document.getElementById('btnOpenAuth');
     if (btnOpenAuth) btnOpenAuth.addEventListener('click', () => openModal('authModal'));
 
-    // Nút mở Donate
-    const btnShowDonate = document.getElementById('btnShowDonate');
+    // Nút mở Donate & Kiếm Xu
     const btnEarnCoins = document.getElementById('btnEarnCoins');
-    if (btnShowDonate) btnShowDonate.addEventListener('click', () => openDonateModal());
     if (btnEarnCoins) btnEarnCoins.addEventListener('click', () => openDonateModal());
+
+    // Nút xem Lịch sử Xu khi bấm vào số Xu (Theo Ảnh 3)
+    const btnShowCoinHistory = document.getElementById('btnShowCoinHistory');
+    if (btnShowCoinHistory) btnShowCoinHistory.addEventListener('click', () => openUserCoinHistoryModal());
 
     // Nút mở Referral Modal
     const btnShowRefModal = document.getElementById('btnShowRefModal');
@@ -220,6 +222,44 @@ function updateUserNavUI() {
     }
 }
 
+// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Theo Ảnh 3)
+function openUserCoinHistoryModal() {
+    const user = AuthStore.getCurrentUser();
+    if (!user) {
+        openModal('authModal');
+        return;
+    }
+
+    document.getElementById('histCurrentBalance').textContent = `${user.coins} Xu`;
+
+    const logs = AuthStore.getUserLogs(user.id);
+    const tbody = document.getElementById('userCoinHistoryTableBody');
+
+    if (!tbody) return;
+
+    if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có lịch sử tiêu dùng Xu.</td></tr>`;
+    } else {
+        let html = '';
+        logs.forEach(l => {
+            const timeStr = new Date(l.timestamp).toLocaleString('vi-VN');
+            const changeStr = l.change >= 0 ? `<span style="color:#4ade80; font-weight:bold;">+${l.change} Xu</span>` : `<span style="color:#f87171; font-weight:bold;">${l.change} Xu</span>`;
+
+            html += `
+                <tr>
+                    <td>${timeStr}</td>
+                    <td>${l.action}</td>
+                    <td>${changeStr}</td>
+                    <td><strong>${l.balanceAfter} Xu</strong></td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    openModal('userCoinHistoryModal');
+}
+
 // BẮT MÃ GIỚI THIỆU TỪ URL (?ref=CODE)
 function detectRefQuery() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -233,7 +273,7 @@ function detectRefQuery() {
 function openDonateModal() {
     const user = AuthStore.getCurrentUser();
     if (!user) {
-        showToast("Vui lòng đăng nhập trước khi nạp Xu!");
+        showToast("Vui lòng đăng nhập trước khi Donate!");
         openModal('authModal');
         return;
     }
@@ -257,8 +297,9 @@ function selectDonateTier(tierKey, coins, amountVnd, elem) {
         qrImg.alt = `QR Code Donate ${tierKey}`;
     }
 
+    // Nội dung chuyển khoản theo Ảnh 2 (Loại bỏ CK và số tiền, chỉ giữ DONATE [USERNAME])
     if (memoText) {
-        memoText.textContent = `DONATE ${username.toUpperCase()} ${tierKey.toUpperCase()}`;
+        memoText.textContent = `DONATE ${username.toUpperCase()}`;
     }
 }
 

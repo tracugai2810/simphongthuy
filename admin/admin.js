@@ -2,13 +2,20 @@
    ADMIN CONTROL PANEL LOGIC PRO
    - Xử lý đăng nhập Admin dambuicong / 281097
    - Giao diện Obsidian Gold chuẩn phong cách Luxury
-   - Xử lý Duyệt nạp xu Donate (Tự động cộng Xu & Tự động trích 50% hoa hồng)
-   - Xử lý Quản lý thành viên & Nhật ký giao dịch
+   - Custom Modals thông báo & xác nhận sang trọng (Không dùng alert/confirm trình duyệt)
+   - Xử lý Duyệt đơn Donate (Tự động cộng Xu & Tự động trích 50% hoa hồng)
+   - Quản lý Thành Viên: Popup Tùy Chỉnh Xu (Tab Tăng / Tab Giảm) & Nút Xóa Thành Viên
+   - Lịch sử giao dịch hiển thị Tên Khách Hàng thay vì ID
    ========================================================================== */
+
+let pendingAdminConfirmCallback = null;
+let currentAdjustUserId = null;
+let currentAdjustMode = 'add'; // 'add' hoặc 'sub'
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAdminSession();
     setupLoginForm();
+    setupAdminModalEvents();
 });
 
 function checkAdminSession() {
@@ -36,7 +43,7 @@ function setupLoginForm() {
         const p = document.getElementById('adminPass').value.trim();
 
         if (!u || !p) {
-            alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+            showAdminAlert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
             return;
         }
 
@@ -55,21 +62,69 @@ function setupLoginForm() {
 
         if (isDefaultAdmin || isStoreAdmin) {
             localStorage.setItem('sim_pt_admin_logged_in', 'true');
-            showAdminToast("Đăng nhập Admin thành công!");
-            checkAdminSession();
+            showAdminAlert("Đăng nhập Quản Trị Viên thành công!", () => {
+                checkAdminSession();
+            });
         } else {
-            alert("Tên đăng nhập hoặc mật khẩu Admin không đúng!");
+            showAdminAlert("Tên đăng nhập hoặc mật khẩu Admin không chính xác!");
         }
     });
 }
 
-function showAdminToast(msg) {
-    alert(msg);
+function adminLogout() {
+    showAdminConfirm("Bạn có chắc chắn muốn thoát khỏi trang Quản trị?", () => {
+        localStorage.removeItem('sim_pt_admin_logged_in');
+        checkAdminSession();
+    });
 }
 
-function adminLogout() {
-    localStorage.removeItem('sim_pt_admin_logged_in');
-    checkAdminSession();
+// CUSTOM OBSIDIAN GOLD MODAL SYSTEM FOR ADMIN
+function showAdminAlert(message, onOk = null) {
+    const modal = document.getElementById('adminAlertModal');
+    const msgElem = document.getElementById('adminAlertMsg');
+    const okBtn = document.getElementById('btnAdminAlertOk');
+
+    if (msgElem) msgElem.textContent = message;
+    if (modal) modal.classList.add('active');
+
+    if (okBtn) {
+        okBtn.onclick = () => {
+            if (modal) modal.classList.remove('active');
+            if (onOk) onOk();
+        };
+    }
+}
+
+function showAdminConfirm(message, onConfirm) {
+    const modal = document.getElementById('adminConfirmModal');
+    const msgElem = document.getElementById('adminConfirmMsg');
+    const yesBtn = document.getElementById('btnAdminConfirmYes');
+    const noBtn = document.getElementById('btnAdminConfirmNo');
+
+    if (msgElem) msgElem.textContent = message;
+    if (modal) modal.classList.add('active');
+
+    if (yesBtn) {
+        yesBtn.onclick = () => {
+            if (modal) modal.classList.remove('active');
+            if (onConfirm) onConfirm();
+        };
+    }
+
+    if (noBtn) {
+        noBtn.onclick = () => {
+            if (modal) modal.classList.remove('active');
+        };
+    }
+}
+
+function setupAdminModalEvents() {
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(m => {
+        m.addEventListener('click', (e) => {
+            if (e.target === m) m.classList.remove('active');
+        });
+    });
 }
 
 function switchAdminTab(tabName) {
@@ -109,7 +164,7 @@ function renderDonateRequests() {
     if (!tbody) return;
 
     if (reqs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có yêu cầu donate nào.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có yêu cầu Donate nào.</td></tr>`;
         return;
     }
 
@@ -126,7 +181,7 @@ function renderDonateRequests() {
         if (r.status === 'pending') {
             actionBtns = `
                 <div style="display:flex; gap:6px;">
-                    <button class="btn-admin-approve" onclick="handleApprove('${r.id}')">✅ Duyệt Nạp</button>
+                    <button class="btn-admin-approve" onclick="handleApprove('${r.id}')">✅ Duyệt Donate</button>
                     <button class="btn-admin-reject" onclick="handleReject('${r.id}')">❌ Từ Chối</button>
                 </div>
             `;
@@ -148,21 +203,24 @@ function renderDonateRequests() {
 }
 
 function handleApprove(reqId) {
-    if (!confirm("Xác nhận DUYỆT yêu cầu nạp này? Hệ thống sẽ tự động cộng Xu cho khách và trích 50% hoa hồng cho người giới thiệu.")) return;
-
-    const res = AuthStore.approveDonateRequest(reqId);
-    alert(res.message);
-    loadAdminDashboardData();
+    showAdminConfirm("Xác nhận DUYỆT yêu cầu Donate này? Hệ thống sẽ tự động cộng Xu cho khách và trích 50% hoa hồng cho người giới thiệu.", () => {
+        const res = AuthStore.approveDonateRequest(reqId);
+        showAdminAlert(res.message, () => {
+            loadAdminDashboardData();
+        });
+    });
 }
 
 function handleReject(reqId) {
-    if (!confirm("Xác nhận TỪ CHỐI yêu cầu này?")) return;
-
-    const res = AuthStore.rejectDonateRequest(reqId);
-    alert(res.message);
-    loadAdminDashboardData();
+    showAdminConfirm("Xác nhận TỪ CHỐI yêu cầu Donate này?", () => {
+        const res = AuthStore.rejectDonateRequest(reqId);
+        showAdminAlert(res.message, () => {
+            loadAdminDashboardData();
+        });
+    });
 }
 
+// BẢNG QUẢN LÝ THÀNH VIÊN (KÈM NÚT XÓA THÀNH VIÊN VÀ ĐIỀU CHỈNH XU CÓ TAB TĂNG/GIẢM)
 function renderUsersList() {
     if (typeof AuthStore === 'undefined') return;
 
@@ -172,18 +230,20 @@ function renderUsersList() {
 
     let html = '';
     users.forEach(u => {
+        const isAdmin = u.isAdmin || u.username.toLowerCase() === 'dambuicong';
+        const deleteBtnHtml = isAdmin ? '' : `
+            <button class="btn-admin-reject" style="margin-left:6px;" onclick="handleDeleteUser('${u.id}', '${u.username}')">🗑️ Xóa</button>
+        `;
+
         html += `
             <tr>
-                <td><strong>${u.username}</strong> ${u.isAdmin ? '<span class="badge-status status-approved">ADMIN</span>' : ''}</td>
+                <td><strong>${u.username}</strong> ${isAdmin ? '<span class="badge-status status-approved">ADMIN</span>' : ''}</td>
                 <td>${u.email}</td>
                 <td><code style="color:#ffd700;">${u.refCode}</code></td>
                 <td><strong style="color:#ffd700; font-size:1.1rem;">${u.coins} Xu</strong></td>
                 <td>
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <button class="btn-admin-adjust" onclick="handleAdjustCoins('${u.id}', 5)">+5 Xu</button>
-                        <button class="btn-admin-adjust" onclick="handleAdjustCoins('${u.id}', 20)">+20 Xu</button>
-                        <button class="btn-admin-adjust" style="background:#dc2626;" onclick="handleAdjustCoins('${u.id}', -2)">-2 Xu</button>
-                    </div>
+                    <button class="btn-admin-adjust" onclick="openAdjustCoinsModal('${u.id}', '${u.username}', ${u.coins})">⚙️ Điều Chỉnh Xu</button>
+                    ${deleteBtnHtml}
                 </td>
             </tr>
         `;
@@ -192,12 +252,85 @@ function renderUsersList() {
     tbody.innerHTML = html;
 }
 
-function handleAdjustCoins(userId, delta) {
-    const res = AuthStore.adminAdjustCoins(userId, delta, `Admin thủ công ${delta > 0 ? '+' : ''}${delta} Xu`);
-    alert(res.message);
-    loadAdminDashboardData();
+// XÓA THÀNH VIÊN (CÓ POPUP XÁC NHẬN)
+function handleDeleteUser(userId, username) {
+    showAdminConfirm(`Bạn có chắc chắn muốn XÓA thành viên "${username}"? Thao tác này không thể hoàn tác!`, () => {
+        const res = AuthStore.deleteUser(userId);
+        showAdminAlert(res.message, () => {
+            loadAdminDashboardData();
+        });
+    });
 }
 
+// MỞ POPUP TÙY CHỈNH XU CÓ TAB TĂNG VÀ GIẢM RIÊNG (Theo Ảnh 5)
+function openAdjustCoinsModal(userId, username, currentCoins) {
+    currentAdjustUserId = userId;
+    currentAdjustMode = 'add';
+
+    document.getElementById('adjustTargetUsername').textContent = username;
+    document.getElementById('adjustCurrentCoins').textContent = `${currentCoins} Xu`;
+    document.getElementById('adjustCoinAmountInput').value = 5;
+
+    switchAdjustTab('add');
+
+    const modal = document.getElementById('adminAdjustCoinsModal');
+    if (modal) modal.classList.add('active');
+}
+
+function switchAdjustTab(mode) {
+    currentAdjustMode = mode;
+    const tabAddBtn = document.getElementById('tabAdjustAdd');
+    const tabSubBtn = document.getElementById('tabAdjustSub');
+    const presetBox = document.getElementById('adjustPresetButtons');
+
+    if (mode === 'add') {
+        tabAddBtn.classList.add('active');
+        tabSubBtn.classList.remove('active');
+        presetBox.innerHTML = `
+            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(5)">+5 Xu</button>
+            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(10)">+10 Xu</button>
+            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(20)">+20 Xu</button>
+            <button type="button" class="btn-admin-adjust" onclick="setAdjustValue(50)">+50 Xu</button>
+        `;
+    } else {
+        tabSubBtn.classList.add('active');
+        tabAddBtn.classList.remove('active');
+        presetBox.innerHTML = `
+            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(2)">-2 Xu</button>
+            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(5)">-5 Xu</button>
+            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(10)">-10 Xu</button>
+            <button type="button" class="btn-admin-adjust" style="background:#dc2626;" onclick="setAdjustValue(20)">-20 Xu</button>
+        `;
+    }
+}
+
+function setAdjustValue(val) {
+    document.getElementById('adjustCoinAmountInput').value = val;
+}
+
+function submitAdjustCoins() {
+    if (!currentAdjustUserId) return;
+
+    const val = parseInt(document.getElementById('adjustCoinAmountInput').value) || 0;
+    if (val <= 0) {
+        showAdminAlert("Vui lòng nhập số Xu hợp lệ lớn hơn 0!");
+        return;
+    }
+
+    const delta = currentAdjustMode === 'add' ? val : -val;
+    const actionText = currentAdjustMode === 'add' ? `Admin cộng thêm +${val} Xu` : `Admin trừ ${val} Xu`;
+
+    const res = AuthStore.adminAdjustCoins(currentAdjustUserId, delta, actionText);
+
+    const modal = document.getElementById('adminAdjustCoinsModal');
+    if (modal) modal.classList.remove('active');
+
+    showAdminAlert(res.message, () => {
+        loadAdminDashboardData();
+    });
+}
+
+// BẢNG NHẬT KÝ GIAO DỊCH (HIỂN THỊ TÊN KHÁCH HÀNG THAY VÌ ID)
 function renderLogsList() {
     const tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
@@ -215,14 +348,15 @@ function renderLogsList() {
     let html = '';
     logs.forEach(l => {
         const timeStr = new Date(l.timestamp).toLocaleString('vi-VN');
-        const changeStr = l.change >= 0 ? `<span style="color:#4ade80;">+${l.change} Xu</span>` : `<span style="color:#f87171;">${l.change} Xu</span>`;
+        const changeStr = l.change >= 0 ? `<span style="color:#4ade80; font-weight:bold;">+${l.change} Xu</span>` : `<span style="color:#f87171; font-weight:bold;">${l.change} Xu</span>`;
+        const displayName = l.username || l.userId || 'Khách';
 
         html += `
             <tr>
                 <td>${timeStr}</td>
-                <td><code>${l.userId}</code></td>
+                <td><strong style="color:var(--gold-glow);">${displayName}</strong></td>
                 <td>${l.action}</td>
-                <td><strong>${changeStr}</strong></td>
+                <td>${changeStr}</td>
                 <td><strong>${l.balanceAfter} Xu</strong></td>
             </tr>
         `;

@@ -261,6 +261,33 @@
             font-size: 0.82rem;
             cursor: pointer;
         }
+
+        /* Modal Overlay & Custom Boxes */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 15px;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .admin-modal-box {
+            background: linear-gradient(145deg, #151d30 0%, #1a2438 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -305,10 +332,10 @@
                 </div>
             </div>
 
-            <!-- Thanh Tabs Chức Năng -->
+            <!-- Thanh Tabs Chức Năng (Không có chữ Nạp) -->
             <div class="admin-nav-tabs">
                 <button type="button" class="admin-tab-btn active" id="tabDonateBtn" onclick="switchAdminTab('donate')">
-                    📋 Duyệt Đơn Nạp Donate (<span id="pendingCount">0</span>)
+                    📋 Duyệt Đơn Donate (<span id="pendingCount">0</span>)
                 </button>
                 <button type="button" class="admin-tab-btn" id="tabUsersBtn" onclick="switchAdminTab('users')">
                     👥 Quản Lý Thành Viên & Xu
@@ -320,7 +347,7 @@
 
             <!-- TAB 1: DUYỆT ĐƠN DONATE -->
             <div id="sectionDonate" class="admin-tab-content">
-                <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">📋 DANH SÁCH YÊU CẦU NẠP XU DONATE CẦN DUYỆT</h3>
+                <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">📋 DANH SÁCH YÊU CẦU DONATE CẦN DUYỆT</h3>
                 
                 <div class="admin-table-wrapper">
                     <table class="admin-table">
@@ -328,7 +355,7 @@
                             <tr>
                                 <th>Thời Gian</th>
                                 <th>Khách Hàng</th>
-                                <th>Gói Nạp (VNĐ)</th>
+                                <th>Gói Donate (VNĐ)</th>
                                 <th>Số Xu Cộng</th>
                                 <th>Trạng Thái</th>
                                 <th>Hành Động Duyệt</th>
@@ -341,7 +368,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: QUẢN LÝ THÀNH VIÊN -->
+            <!-- TAB 2: QUẢN LÝ THÀNH VIÊN (KÈM NÚT XÓA VÀ NÚT TÙY CHỈNH XU POPUP) -->
             <div id="sectionUsers" class="admin-tab-content" style="display: none;">
                 <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">👥 DANH SÁCH THÀNH VIÊN & ĐIỀU CHỈNH XU</h3>
                 
@@ -353,7 +380,7 @@
                                 <th>Email</th>
                                 <th>Mã Giới Thiệu</th>
                                 <th>Số Dư Xu</th>
-                                <th>Tùy Chỉnh Xu</th>
+                                <th>Hành Động</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
@@ -363,7 +390,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: LỊCH SỬ GIAO DỊCH -->
+            <!-- TAB 3: LỊCH SỬ GIAO DỊCH (HIỂN THỊ TÊN KHÁCH HÀNG THAY VÌ ID) -->
             <div id="sectionLogs" class="admin-tab-content" style="display: none;">
                 <h3 style="color: var(--gold-glow); font-size: 1.1rem; margin-bottom: 12px;">📊 NHẬT KÝ GIAO DỊCH HỆ THỐNG</h3>
                 
@@ -372,9 +399,9 @@
                         <thead>
                             <tr>
                                 <th>Thời Gian</th>
-                                <th>ID Thành Viên</th>
-                                <th>Hành Động</th>
-                                <th>Số Xu Biến Động</th>
+                                <th>Tên Khách Hàng</th>
+                                <th>Nội Dung Thao Tác</th>
+                                <th>Xu Biến Động</th>
                                 <th>Số Dư Sau Giao Dịch</th>
                             </tr>
                         </thead>
@@ -383,6 +410,74 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM POPUP 1: MODAL ALERT THÔNG BÁO ADMIN SANG TRỌNG -->
+    <div id="adminAlertModal" class="modal-overlay">
+        <div class="admin-modal-box">
+            <div style="text-align: center;">
+                <div style="font-size: 2.6rem; margin-bottom: 8px;">✨</div>
+                <h3 style="color: var(--gold-glow); font-size: 1.25rem; margin-bottom: 10px;">THÔNG BÁO QUẢN TRỊ</h3>
+                <p id="adminAlertMsg" style="font-size: 0.95rem; color: #e2e8f0; margin-bottom: 18px; line-height: 1.5;"></p>
+                <button type="button" id="btnAdminAlertOk" class="btn-admin-submit" style="margin-top: 0;">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM POPUP 2: MODAL CONFIRM XÁC NHẬN ADMIN SANG TRỌNG -->
+    <div id="adminConfirmModal" class="modal-overlay">
+        <div class="admin-modal-box">
+            <div style="text-align: center;">
+                <div style="font-size: 2.6rem; margin-bottom: 8px;">⚠️</div>
+                <h3 style="color: var(--gold-glow); font-size: 1.25rem; margin-bottom: 10px;">XÁC NHẬN THAO TÁC</h3>
+                <p id="adminConfirmMsg" style="font-size: 0.95rem; color: #e2e8f0; margin-bottom: 20px; line-height: 1.5;"></p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button type="button" id="btnAdminConfirmNo" class="admin-tab-btn" style="flex: 1; padding: 12px;">Hủy Bỏ</button>
+                    <button type="button" id="btnAdminConfirmYes" class="btn-admin-submit" style="flex: 1; padding: 12px; margin-top: 0;">✅ Đồng Ý</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM POPUP 3: MODAL ĐIỀU CHỈNH XU THÀNH VIÊN (CÓ TAB TĂNG VÀ GIẢM - Theo Ảnh 5) -->
+    <div id="adminAdjustCoinsModal" class="modal-overlay">
+        <div class="admin-modal-box" style="max-width: 460px;">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 2.4rem; margin-bottom: 4px;">⚙️</div>
+                <h3 style="color: var(--gold-glow); font-size: 1.25rem;">TÙY CHỈNH XU THÀNH VIÊN</h3>
+                <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
+                    Thành viên: <strong id="adjustTargetUsername" style="color: #ffd700;">---</strong> 
+                    (Số dư: <span id="adjustCurrentCoins">0 Xu</span>)
+                </p>
+            </div>
+
+            <!-- Tab Tăng / Tab Giảm -->
+            <div class="admin-nav-tabs" style="margin-bottom: 14px;">
+                <button type="button" class="admin-tab-btn active" id="tabAdjustAdd" style="flex: 1;" onclick="switchAdjustTab('add')">
+                    ➕ Tăng Xu
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabAdjustSub" style="flex: 1;" onclick="switchAdjustTab('sub')">
+                    ➖ Giảm Xu
+                </button>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom: 14px;">
+                <label class="admin-form-label">Nhập số Xu biến động:</label>
+                <input type="number" id="adjustCoinAmountInput" class="admin-form-input" min="1" value="5" placeholder="Nhập số Xu...">
+            </div>
+
+            <!-- Nút chọn nhanh -->
+            <div id="adjustPresetButtons" style="display: flex; gap: 6px; margin-bottom: 18px; justify-content: center;">
+                <!-- Render bằng JS -->
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="admin-tab-btn" style="flex: 1; padding: 12px;" onclick="document.getElementById('adminAdjustCoinsModal').classList.remove('active')">Hủy</button>
+                <button type="button" class="btn-admin-submit" style="flex: 1; padding: 12px; margin-top: 0;" onclick="submitAdjustCoins()">✅ Xác Nhận</button>
             </div>
         </div>
     </div>
@@ -397,40 +492,5 @@
     <script src="../js/auth-store.js"></script>
     <script src="/admin/admin.js"></script>
     <script src="admin.js"></script>
-
-    <!-- Inline Script Fallback (Chống 100% lỗi 404 khi Vercel rewrite /admin) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var form = document.getElementById('adminLoginForm');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    var u = (document.getElementById('adminUser').value || '').trim();
-                    var p = (document.getElementById('adminPass').value || '').trim();
-
-                    if (!u || !p) {
-                        alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
-                        return;
-                    }
-
-                    if (u.toLowerCase() === 'dambuicong' && p === '281097') {
-                        localStorage.setItem('sim_pt_admin_logged_in', 'true');
-                        alert("Đăng nhập Admin thành công!");
-                        location.reload();
-                    } else {
-                        alert("Tên đăng nhập hoặc mật khẩu Admin không đúng!");
-                    }
-                });
-            }
-
-            var isLoggedIn = localStorage.getItem('sim_pt_admin_logged_in') === 'true';
-            if (isLoggedIn) {
-                var loginBox = document.getElementById('adminLoginBox');
-                var dashboard = document.getElementById('adminDashboard');
-                if (loginBox) loginBox.style.display = 'none';
-                if (dashboard) dashboard.style.display = 'block';
-            }
-        });
-    </script>
 </body>
 </html>

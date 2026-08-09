@@ -31,7 +31,8 @@
 
             <!-- Giao diện khi ĐÃ ĐĂNG NHẬP -->
             <div id="loggedInUserNav" class="user-nav-group" style="display: none;">
-                <div class="coin-badge" id="btnShowDonate">
+                <!-- Bấm vào số Xu hiện Popup Lịch sử Tiêu dùng (Theo Ảnh 3) -->
+                <div class="coin-badge" id="btnShowCoinHistory" title="Bấm để xem Lịch sử sử dụng Xu">
                     💰 <span id="userCoinBalance">0</span> Xu
                 </div>
 
@@ -92,7 +93,7 @@
                         </select>
                     </div>
 
-                    <!-- Số lượng SIM chọn mặc định Top 5 (2 Xu) theo ảnh 2 -->
+                    <!-- Số lượng SIM chọn mặc định Top 5 (2 Xu) -->
                     <div class="form-group">
                         <label for="limitSelect">🔢 Số lượng SIM cần tìm (Số Xu):</label>
                         <select id="limitSelect" class="form-control">
@@ -159,7 +160,7 @@
                     </div>
                 </div>
 
-                <!-- Nút Submit Tìm SIM Mới (Hiển thị số Xu tiêu tốn theo ảnh 3) -->
+                <!-- Nút Submit Tìm SIM Mới -->
                 <button type="submit" id="btnSubmitSearch" class="btn-submit">
                     🔮 GỢI Ý LIST SIM CÁT TƯỜNG DỊCH HỌC (2 Xu)
                 </button>
@@ -218,7 +219,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Email liên hệ (Không bắt buộc):</label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com (Dùng lấy lại MK)">
+                    <input type="email" id="regEmail" class="form-control" placeholder="nhapemail@gmail.com">
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>Mật khẩu:</label>
@@ -257,7 +258,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU -->
+    <!-- MODAL 3: NHIỆM VỤ DONATE / KIẾM XU (Tối ưu theo Ảnh 2) -->
     <div id="donateModal" class="modal-overlay">
         <div class="modal-content donate-modal-box">
             <span class="modal-close" onclick="closeModal('donateModal')">&times;</span>
@@ -265,7 +266,7 @@
             <div style="text-align: center; margin-bottom: 16px;">
                 <h3 style="color: var(--gold-glow); font-size: 1.35rem;">💎 NHIỆM VỤ DONATE KIẾM XU</h3>
                 <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
-                    Ủng hộ phát triển hệ thống & nhận Xu tra cứu không giới hạn!
+                    Ủng hộ phát triển hệ thống & nhận Xu tra cứu vĩnh viễn!
                 </p>
             </div>
 
@@ -290,7 +291,7 @@
                 </div>
             </div>
 
-            <!-- Khung Ảnh QR Code Thanh Toán -->
+            <!-- Khung Ảnh QR Code Thanh Toán (Nội dung: DONATE [USERNAME], không có CK hay 50K) -->
             <div class="qr-display-box">
                 <div style="font-size: 0.92rem; font-weight: bold; color: var(--gold-primary); margin-bottom: 10px;">
                     Quét Mã QR Chuyển Khoản Ngân Hàng:
@@ -298,27 +299,30 @@
                 
                 <img id="donateQrImg" src="50k.jfif" alt="QR Code Donate 50k" class="qr-code-img" />
 
-                <div style="margin-top: 10px; font-size: 0.88rem; color: #e2e8f0;">
-                    Nội dung CK: <strong id="donateMemoText" style="color: #ffd700;">DONATE [Username] 50K</strong>
+                <div style="margin-top: 12px; font-size: 0.95rem; color: #e2e8f0;">
+                    Nội dung: <strong id="donateMemoText" style="color: #ffd700; font-size: 1.05rem;">DONATE KHACH</strong>
                 </div>
             </div>
 
+            <!-- Nút Đã Donate gọn gàng (Theo Ảnh 2) -->
             <button type="button" id="btnSubmitDonateReq" class="btn-mobile-share-ios" style="margin-top: 16px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
-                ✅ TÔI ĐÃ DONATE - GỬI XÁC NHẬN NẠP XU
+                ✅ TÔI ĐÃ DONATE
             </button>
         </div>
     </div>
 
-    <!-- MODAL 4: MÃ GIỚI THIỆU & PHẦN THƯỞNG HOA HỒNG -->
+    <!-- MODAL 4: MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG (Tối ưu theo Ảnh 1) -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content ref-modal-box">
             <span class="modal-close" onclick="closeModal('refModal')">&times;</span>
             
             <div style="text-align: center; margin-bottom: 16px;">
-                <div style="font-size: 2.4rem;">🎁</div>
-                <h3 style="color: var(--gold-glow); font-size: 1.3rem;">MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG 50%</h3>
-                <p style="font-size: 0.88rem; color: #cbd5e1; margin-top: 4px;">
-                    Chia sẻ đường dẫn cho bạn bè để nhận **50% số Xu** mỗi khi bạn bè Donate!
+                <div style="font-size: 2.2rem; margin-bottom: 4px;">🎁</div>
+                <!-- Tiêu đề 1 dòng gọn gàng không rớt dòng -->
+                <h3 class="ref-single-line-title">MÃ GIỚI THIỆU & THƯỞNG HOA HỒNG 50%</h3>
+                <!-- Text sạch không có dấu ** -->
+                <p style="font-size: 0.88rem; color: #cbd5e1; margin-top: 6px;">
+                    Chia sẻ đường dẫn cho bạn bè để nhận 50% số Xu mỗi khi bạn bè Donate!
                 </p>
             </div>
 
@@ -338,7 +342,7 @@
                 </div>
                 <div class="ref-stat-card">
                     <div id="statQualRefs" class="stat-num" style="color: #22c55e;">0</div>
-                    <div class="stat-label">Bạn Đã Nạp Tiền</div>
+                    <div class="stat-label">Bạn Đã Donate</div>
                 </div>
                 <div class="ref-stat-card">
                     <div id="statTotalEarned" class="stat-num" style="color: #ffd700;">0</div>
@@ -352,11 +356,42 @@
                     🏆 Cột Mốc Thưởng Thêm Xu Giới Thiệu:
                 </div>
                 <ul style="list-style: none; font-size: 0.88rem; color: #cbd5e1; line-height: 1.6;">
-                    <li>✦ <strong>5 bạn nạp 1st</strong>: Thưởng <strong>+5 Xu</strong></li>
-                    <li>✦ <strong>10 bạn nạp 1st</strong>: Thưởng <strong>+10 Xu</strong></li>
-                    <li>✦ <strong>20 bạn nạp 1st</strong>: Thưởng <strong>+20 Xu</strong></li>
-                    <li>✦ <strong>50 bạn nạp 1st</strong>: Thưởng <strong>+50 Xu</strong></li>
+                    <li>✦ <strong>5 bạn Donate 1st</strong>: Thưởng <strong>+5 Xu</strong></li>
+                    <li>✦ <strong>10 bạn Donate 1st</strong>: Thưởng <strong>+10 Xu</strong></li>
+                    <li>✦ <strong>20 bạn Donate 1st</strong>: Thưởng <strong>+20 Xu</strong></li>
+                    <li>✦ <strong>50 bạn Donate 1st</strong>: Thưởng <strong>+50 Xu</strong></li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (Theo Ảnh 3) -->
+    <div id="userCoinHistoryModal" class="modal-overlay">
+        <div class="modal-content ref-modal-box" style="max-width: 600px !important;">
+            <span class="modal-close" onclick="closeModal('userCoinHistoryModal')">&times;</span>
+            
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 2.2rem; margin-bottom: 4px;">📊</div>
+                <h3 style="color: var(--gold-glow); font-size: 1.25rem;">LỊCH SỬ TIÊU DÙNG XU CỦA BẠN</h3>
+                <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
+                    Số dư hiện tại: <strong id="histCurrentBalance" style="color: #ffd700; font-size: 1.1rem;">0 Xu</strong>
+                </p>
+            </div>
+
+            <div class="admin-table-wrapper" style="max-height: 320px; overflow-y: auto;">
+                <table class="admin-table" style="min-width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Thời Gian</th>
+                            <th>Nội Dung Thao Tác</th>
+                            <th>Xu Biến Động</th>
+                            <th>Số Dư</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userCoinHistoryTableBody">
+                        <!-- Render bằng JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -112,7 +112,7 @@ body {
 
 .coin-badge:hover {
     background: rgba(217, 119, 6, 0.3);
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
 .btn-earn-coins {
@@ -346,7 +346,7 @@ select.form-control option, select.prefix-select option {
     cursor: pointer;
 }
 
-/* Dãy 10 Ô Vuông Chữ Số - Co Giãn Linh Hoạt Không Bị Tràn Màn Hình Mobile */
+/* Dãy 10 Ô Vuông Chữ Số */
 .digit-boxes-container {
     display: flex;
     justify-content: center;
@@ -634,9 +634,7 @@ select.form-control option, select.prefix-select option {
     color: #e60000;
 }
 
-/* ==========================================================================
-   STYLES CHO CÁC MODAL THƯƠNG MẠI HÓA (AUTH, DONATE, REF)
-   ========================================================================== */
+/* STYLES CHO CÁC MODAL THƯƠNG MẠI HÓA (AUTH, DONATE, REF, COIN HISTORY) */
 .auth-modal-box, .confirm-modal-box, .donate-modal-box, .ref-modal-box {
     background: linear-gradient(145deg, #151d30 0%, #1a2438 100%) !important;
     color: #ffffff !important;
@@ -649,6 +647,14 @@ select.form-control option, select.prefix-select option {
 .donate-modal-box .modal-close,
 .ref-modal-box .modal-close {
     color: #94a3b8 !important;
+}
+
+.ref-single-line-title {
+    color: var(--gold-glow);
+    font-size: 1.15rem;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
 }
 
 .auth-tabs {
@@ -1036,10 +1042,7 @@ select.form-control option, select.prefix-select option {
     word-break: break-word;
 }
 
-/* ==========================================================================
-   MOBILE FIRST OPTIMIZATIONS (Cho Điện Thoại)
-   ========================================================================== */
-
+/* MOBILE FIRST OPTIMIZATIONS */
 @media (max-width: 640px) {
     body { padding-top: 10px; }
     .container { padding: 0 10px; }
@@ -1133,5 +1136,10 @@ select.form-control option, select.prefix-select option {
 
     .donate-tier-grid {
         grid-template-columns: 1fr;
+    }
+
+    .ref-single-line-title {
+        font-size: 0.95rem;
+        white-space: normal;
     }
 }

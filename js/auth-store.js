@@ -1,10 +1,10 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
    - Tích hợp kết nối Google Firebase (Cloud Firestore & Auth) vĩnh viễn không bị pause
-   - Quản lý Đăng Nhập / Đăng Ký / Phiên Làm Việc
-   - Quản lý Số Dư Xu, Trừ Xu Tra Cứu, Nạp Xu Donate QR
+   - Quản lý Đăng Nhập / Đăng Ký (Check trùng tuyệt đối) / Phiên Làm Việc
+   - Quản lý Số Dư Xu, Trừ Xu Tra Cứu, Donate QR Code
    - Mã Giới Thiệu Độc Bản, Tự Động Trích 50% Hoa Hồng Cho Người Giới Thiệu
-   - Tối Ưu Mobile First & Bảo Mật Dữ Liệu
+   - Lịch Sử Tiêu Dùng Xu Khách Hàng & Quản Lý Admin
    ========================================================================== */
 
 // Firebase Configuration (Đã tối ưu chuỗi chống GitHub False Positive Scanner)
@@ -116,15 +116,24 @@ const AuthStore = (() => {
         return code;
     }
 
-    // ĐĂNG KÝ TÀI KHOẢN MỚI
+    // ĐĂNG KÝ TÀI KHOẢN MỚI (CHECK TRÙNG TÊN TUYỆT ĐỐI)
     function register(username, email, password, inputRefCode = '') {
         initDefaultData();
         const users = getUsers();
 
-        const cleanUsername = username.trim().toLowerCase();
-        if (users.some(u => u.username.toLowerCase() === cleanUsername)) {
-            return { success: false, message: 'Tên đăng nhập này đã được sử dụng!' };
+        const cleanUsername = username.trim();
+        const lowerUsername = cleanUsername.toLowerCase();
+
+        if (!cleanUsername) {
+            return { success: false, message: 'Tên đăng nhập không được bỏ trống!' };
         }
+
+        if (users.some(u => u.username.toLowerCase() === lowerUsername)) {
+            return { success: false, message: 'Tên đăng nhập này đã được sử dụng! Vui lòng chọn tên khác.' };
+        }
+
+        let cleanEmail = (email || '').trim();
+        if (!cleanEmail) cleanEmail = `${lowerUsername}@simpt.local`;
 
         let referredByUser = null;
         if (inputRefCode.trim()) {
@@ -141,8 +150,8 @@ const AuthStore = (() => {
 
         const newUser = {
             id: 'usr_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-            username: username.trim(),
-            email: email.trim(),
+            username: cleanUsername,
+            email: cleanEmail,
             passwordHash: password,
             coins: initialCoins,
             refCode: newRefCode,
@@ -160,12 +169,12 @@ const AuthStore = (() => {
             db.collection('users').doc(newUser.id).set(newUser).catch(err => console.warn("Firebase sync error:", err));
         }
 
-        logCoinAction(newUser.id, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
+        logCoinAction(newUser.id, newUser.username, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
 
         return {
             success: true,
             user: newUser,
-            message: `Đăng ký thành công! Bạn nhận được +${initialCoins} Xu miễn phí!`
+            message: `Đăng ký thành công! Bạn nhận được +${initialCoins} Xu vĩnh viễn!`
         };
     }
 
@@ -220,12 +229,12 @@ const AuthStore = (() => {
             db.collection('users').doc(userId).update({ coins: users[idx].coins }).catch(() => {});
         }
 
-        logCoinAction(userId, actionName, -coinAmount, users[idx].coins);
+        logCoinAction(userId, users[idx].username, actionName, -coinAmount, users[idx].coins);
 
         return { success: true, newBalance: users[idx].coins };
     }
 
-    // TẠO YÊU CẦU DONATE (NẠP XU)
+    // TẠO YÊU CẦU DONATE (KHÔNG GHI "NẠP")
     function createDonateRequest(userId, tierKey) {
         const users = getUsers();
         const user = users.find(u => u.id === userId);
@@ -265,7 +274,7 @@ const AuthStore = (() => {
         return {
             success: true,
             request: newReq,
-            message: `Đã gửi yêu cầu nạp ${coinAmount} Xu. Admin sẽ duyệt và cộng Xu cho bạn nhanh nhất!`
+            message: `Đã gửi yêu cầu Donate thành công! Admin sẽ duyệt và cộng ${coinAmount} Xu cho bạn nhanh nhất!`
         };
     }
 
@@ -283,11 +292,11 @@ const AuthStore = (() => {
         const users = getUsers();
         const userIdx = users.findIndex(u => u.id === req.userId);
 
-        if (userIdx === -1) return { success: false, message: 'Tài khoản nạp không tồn tại!' };
+        if (userIdx === -1) return { success: false, message: 'Tài khoản Donate không tồn tại!' };
 
-        // 1. Cộng Xu cho User nạp tiền
+        // 1. Cộng Xu cho User
         users[userIdx].coins += req.coinAmount;
-        logCoinAction(users[userIdx].id, `Donate Nạp Xu Gói ${req.tierKey.toUpperCase()}`, req.coinAmount, users[userIdx].coins);
+        logCoinAction(users[userIdx].id, users[userIdx].username, `Donate Gói ${req.tierKey.toUpperCase()}`, req.coinAmount, users[userIdx].coins);
 
         if (db) {
             db.collection('users').doc(users[userIdx].id).update({ coins: users[userIdx].coins }).catch(() => {});
@@ -301,7 +310,7 @@ const AuthStore = (() => {
                 const bonusCoins = Math.floor(req.coinAmount * 0.5);
                 if (bonusCoins > 0) {
                     users[referrerIdx].coins += bonusCoins;
-                    logCoinAction(users[referrerIdx].id, `Hoa Hồng 50% từ cấp dưới (${users[userIdx].username} donate)`, bonusCoins, users[referrerIdx].coins);
+                    logCoinAction(users[referrerIdx].id, users[referrerIdx].username, `Hoa Hồng 50% từ cấp dưới (${users[userIdx].username} Donate)`, bonusCoins, users[referrerIdx].coins);
                     refMsg = ` & Đã cộng 50% (${bonusCoins} Xu) hoa hồng cho ${users[referrerIdx].username}`;
 
                     if (db) {
@@ -331,7 +340,7 @@ const AuthStore = (() => {
 
         return {
             success: true,
-            message: `Đã duyệt thành công! Cộng ${req.coinAmount} Xu cho ${users[userIdx].username}${refMsg}.`
+            message: `Đã duyệt Donate thành công! Cộng ${req.coinAmount} Xu cho ${users[userIdx].username}${refMsg}.`
         };
     }
 
@@ -351,7 +360,32 @@ const AuthStore = (() => {
             db.collection('donate_requests').doc(requestId).update({ status: 'rejected' }).catch(() => {});
         }
 
-        return { success: true, message: 'Đã từ chối yêu cầu donate này.' };
+        return { success: true, message: 'Đã từ chối yêu cầu Donate này.' };
+    }
+
+    // XÓA THÀNH VIÊN (DÀNH CHO ADMIN)
+    function deleteUser(userId) {
+        const users = getUsers();
+        const user = users.find(u => u.id === userId);
+
+        if (!user) return { success: false, message: 'Không tìm thấy thành viên!' };
+        if (user.isAdmin || user.username.toLowerCase() === 'dambuicong') {
+            return { success: false, message: 'Không thể xóa tài khoản Quản Trị Viên (Admin)!' };
+        }
+
+        const newUsers = users.filter(u => u.id !== userId);
+        saveUsers(newUsers);
+
+        if (db) {
+            db.collection('users').doc(userId).delete().catch(() => {});
+        }
+
+        const current = getCurrentUser();
+        if (current && current.id === userId) {
+            setCurrentUser(null);
+        }
+
+        return { success: true, message: `Đã xóa thành viên ${user.username} thành công!` };
     }
 
     // KIỂM TRA MỐC THƯỞNG GIỚI THIỆU
@@ -375,7 +409,7 @@ const AuthStore = (() => {
             if (qualifiedReferrals >= m.count && !referrer.milestonesClaimed.includes(m.count)) {
                 referrer.coins += m.reward;
                 referrer.milestonesClaimed.push(m.count);
-                logCoinAction(referrer.id, `Thưởng Cột Mốc ${m.count} Người Nạp Tiền`, m.reward, referrer.coins);
+                logCoinAction(referrer.id, referrer.username, `Thưởng Cột Mốc ${m.count} Người Donate`, m.reward, referrer.coins);
                 if (db) {
                     db.collection('users').doc(referrer.id).update({ coins: referrer.coins, milestonesClaimed: referrer.milestonesClaimed }).catch(() => {});
                 }
@@ -383,7 +417,7 @@ const AuthStore = (() => {
         });
     }
 
-    // ADMIN ĐIỀU CHỈNH XU THỦ CÔNG
+    // ADMIN ĐIỀU CHỈNH XU THỦ CÔNG (TĂNG HOẶC GIẢM XU)
     function adminAdjustCoins(userId, coinDelta, reason = 'Admin điều chỉnh') {
         const users = getUsers();
         const idx = users.findIndex(u => u.id === userId);
@@ -397,29 +431,39 @@ const AuthStore = (() => {
             db.collection('users').doc(userId).update({ coins: users[idx].coins }).catch(() => {});
         }
 
-        logCoinAction(userId, reason, coinDelta, users[idx].coins);
+        logCoinAction(userId, users[idx].username, reason, coinDelta, users[idx].coins);
 
-        return { success: true, newBalance: users[idx].coins, message: `Đã điều chỉnh số dư thành ${users[idx].coins} Xu.` };
+        return { success: true, newBalance: users[idx].coins, message: `Đã điều chỉnh số dư thành công! Số dư mới: ${users[idx].coins} Xu.` };
     }
 
-    function logCoinAction(userId, action, change, balanceAfter) {
+    function logCoinAction(userId, username, action, change, balanceAfter) {
         try {
             const logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
             const logEntry = {
                 id: 'log_' + Date.now(),
                 userId,
+                username: username || 'Khách',
                 action,
                 change,
                 balanceAfter,
                 timestamp: new Date().toISOString()
             };
             logs.unshift(logEntry);
-            localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs.slice(0, 200)));
+            localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs.slice(0, 300)));
 
             if (db) {
                 db.collection('coin_logs').doc(logEntry.id).set(logEntry).catch(() => {});
             }
         } catch (e) {}
+    }
+
+    function getUserLogs(userId) {
+        try {
+            const logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
+            return logs.filter(l => l.userId === userId);
+        } catch (e) {
+            return [];
+        }
     }
 
     function getReferralStats(userId) {
@@ -457,7 +501,9 @@ const AuthStore = (() => {
         getDonateRequests,
         approveDonateRequest,
         rejectDonateRequest,
+        deleteUser,
         adminAdjustCoins,
+        getUserLogs,
         getReferralStats
     };
 })();
