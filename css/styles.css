@@ -1,7 +1,8 @@
 /* ==========================================================================
    SIM PHONG THỦY LỤC HÀO - EXACT DEVTOOLS CSS MATCH FROM ORIGINAL WEBSITE
-   - Nút Đóng X Trên Tất Cả Modal Z-Index 10010 Hoạt Động 100%
-   - Modal Donate Thu Gọn Nằm Gọn 1 Màn Hình Không Có Thanh Cuộn
+   - Nút Đóng X Trên Tất Cả Modal Z-Index 100100 Hoạt Động 100%
+   - Phóng To Mã QR Donate (215px) Vừa Vặn 1 Màn Hình Chuẩn Không Thanh Cuộn
+   - Nút Zalo Admin Tích Hợp Trên Popup Quên Mật Khẩu & Popup Donate
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -554,12 +555,12 @@ body {
 }
 
 /* ==========================================================================
-   MODALS POPUP (NÚT X TẮT 100% TẤT CẢ POPUP & POPUP DONATE GỌN 1 MÀN HÌNH)
+   MODALS POPUP (TỐI ƯU CỰC NHẠY NÚT ĐÓNG X VÀ KHOẢNG CÁCH TÁCH BIỆT VỚI TAB)
    ========================================================================== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.82);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(6px);
     z-index: 99999 !important;
     display: flex;
@@ -580,7 +581,7 @@ body {
     background: #151d30;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 16px;
-    padding: 46px 18px 20px 18px !important;
+    padding: 54px 18px 20px 18px !important;
     max-width: 500px;
     width: 100%;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
@@ -592,9 +593,13 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* KHUNG POPUP DONATE THU GỌN VỪA VẶN 1 MÀN HÌNH KHÔNG CÓ THANH CUỘN DỌC */
+.auth-modal-box {
+    padding-top: 56px !important;
+}
+
+/* KHUNG POPUP DONATE THU GỌN VỪA VẶN 1 MÀN HÌNH KHÔNG CÓ THANH CUỘN */
 .compact-donate-modal {
-    padding: 38px 14px 14px 14px !important;
+    padding: 38px 14px 12px 14px !important;
     max-height: 94vh;
     overflow-y: hidden !important;
 }
@@ -612,34 +617,48 @@ body {
     }
 }
 
-/* NÚT X ĐÓNG POPUP SIÊU NHẠY - NỔI LÊN ĐẦU VỚI Z-INDEX 100100 */
+/* NÚT X ĐÓNG POPUP SIÊU NHẠY VỚI BÁN KÍNH BẤM MỞ RỘNG (HITBOX) */
 .modal-close {
     position: absolute !important;
-    top: 10px !important;
-    right: 10px !important;
-    width: 34px !important;
-    height: 34px !important;
-    line-height: 32px !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 38px !important;
+    height: 38px !important;
+    line-height: 36px !important;
     text-align: center !important;
-    background: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.22) !important;
     border-radius: 50% !important;
     color: #ffffff !important;
-    font-size: 1.3rem !important;
+    font-size: 1.35rem !important;
+    font-weight: bold !important;
     cursor: pointer !important;
     z-index: 100100 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     transition: all 0.2s ease !important;
-    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
     pointer-events: auto !important;
     user-select: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Mở rộng vùng cảm ứng chạm ngón tay trên điện thoại (+12px Hitbox) */
+.modal-close::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -12px !important;
+    bottom: -12px !important;
+    left: -12px !important;
+    right: -12px !important;
+    border-radius: 50% !important;
 }
 
 .modal-close:hover, .modal-close:active {
     background: #ef4444 !important;
     color: #ffffff !important;
     border-color: #f87171 !important;
+    transform: scale(1.05);
 }
 
 /* AUTH MODAL TABS */
@@ -647,19 +666,19 @@ body {
     display: flex;
     gap: 8px;
     margin-bottom: 14px;
-    margin-top: 4px;
+    margin-top: 8px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
 }
 
 .auth-tab-btn {
     flex: 1;
-    padding: 8px 10px;
+    padding: 10px 14px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: #cbd5e1;
     font-weight: 700;
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -677,14 +696,14 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .donate-card {
     background: rgb(17, 18, 34);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 8px 4px;
+    padding: 6px 4px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -722,15 +741,15 @@ body {
     background: rgb(17, 18, 34);
     border: 1px dashed var(--gold-dark);
     border-radius: 10px;
-    padding: 8px 10px;
+    padding: 6px 8px;
     text-align: center;
-    margin-top: 4px;
+    margin-top: 2px;
 }
 
-/* Phóng to Mã QR vừa vặn 180px không tràn màn hình */
+/* Phóng to Mã QR vừa vặn 210px rõ đẹp */
 .qr-code-img {
-    max-height: 180px;
-    max-width: 195px;
+    max-height: 210px;
+    max-width: 220px;
     width: auto;
     height: auto;
     border-radius: 8px;
@@ -1168,7 +1187,7 @@ body {
     }
 
     .modal-content {
-        padding: 42px 12px 16px 12px !important;
+        padding: 48px 12px 14px 12px !important;
         max-width: 95% !important;
         margin: auto !important;
     }

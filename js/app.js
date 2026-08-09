@@ -49,7 +49,7 @@ function initFormDefaults() {
             if (val === 30) cost = 12;
             if (val === 50) cost = 20;
 
-            btnSubmitSearch.innerHTML = `🔮 Gợi ý list SIM cát tường dịch học (${cost} Xu)`;
+            btnSubmitSearch.innerHTML = `🔮 Gợi Ý List SIM Cát Tường Dịch Học (${cost} Xu)`;
         });
     }
 }
@@ -1069,5 +1069,13 @@ function setupModalEvents() {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) modal.classList.remove('active');
         });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
     });
 }
