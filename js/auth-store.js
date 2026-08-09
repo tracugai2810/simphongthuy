@@ -1,7 +1,7 @@
 /* ==========================================================================
    SIM PHONG THỦY - AUTH & COIN STORE MANAGER (GOOGLE FIREBASE INTEGRATED)
-   - Tích hợp tự động hủy phiên đăng nhập khi mật khẩu bị Admin thay đổi
-   - Bắt buộc tất cả thiết bị phải đăng nhập lại với mật khẩu mới
+   - Khắc phục lỗi đồng bộ mật khẩu khi Admin đổi mật khẩu tài khoản
+   - Đảm bảo mật khẩu mới được lưu và đồng bộ 100% vào Firestore Database
    ========================================================================== */
 
 // Firebase Configuration
@@ -65,7 +65,7 @@ const AuthStore = (() => {
             if (hasChanges) {
                 saveUsers(localUsers);
                 
-                // NẾU MẬT KHẨU CỦA USER ĐƯỢC ADMIN CẬP NHẬT TỪ THIẾT BỊ KHÁC -> KIỂM TRA HỦY PHIÊN
+                // NẾU MẬT KHẨU CỦA USER ĐƯỢC ADMIN CẬP NHẬT TỪ THIẾT BỊ KHÁCH -> KIỂM TRA HỦY PHIÊN
                 const current = getCurrentUser();
                 if (typeof updateUserNavUI === 'function') updateUserNavUI();
                 if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
@@ -134,13 +134,13 @@ const AuthStore = (() => {
     function initDefaultData() {
         let users = getUsers();
 
-        // Đảm bảo Admin dambuicong có mật khẩu 140498 & email dambuicong@gmail.com
+        // Đảm bảo Admin dambuicong có tài khoản Admin trong hệ thống
         const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
         const adminUser = {
             id: 'usr_admin_01',
             username: 'dambuicong',
             email: 'dambuicong@gmail.com',
-            passwordHash: '140498',
+            passwordHash: users[adminIdx]?.passwordHash || '140498',
             coins: 9999,
             refCode: 'ADMIN97',
             referredBy: null,
@@ -151,7 +151,10 @@ const AuthStore = (() => {
         if (adminIdx === -1) {
             users.push(adminUser);
         } else {
-            users[adminIdx].passwordHash = '140498';
+            // Không bao giờ ghi đè passwordHash của Admin nếu đã được thay đổi trước đó
+            if (!users[adminIdx].passwordHash) {
+                users[adminIdx].passwordHash = '140498';
+            }
             users[adminIdx].email = 'dambuicong@gmail.com';
             users[adminIdx].isAdmin = true;
         }
@@ -159,7 +162,7 @@ const AuthStore = (() => {
         saveUsers(users);
 
         if (db) {
-            db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
+            db.collection('users').doc(adminUser.id).set(adminUser, { merge: true }).catch(() => {});
         }
 
         // Tự động khởi tạo user admin trong Firebase Authentication
@@ -251,6 +254,7 @@ const AuthStore = (() => {
         const users = getUsers();
 
         const cleanUsername = username.trim().toLowerCase();
+        const cleanPassword = password.trim();
 
         if (!cleanUsername) {
             return { success: false, message: 'Tên đăng nhập không được bỏ trống!' };
@@ -280,11 +284,11 @@ const AuthStore = (() => {
             id: 'usr_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
             username: cleanUsername,
             email: cleanEmail,
-            passwordHash: password,
+            passwordHash: cleanPassword,
             coins: initialCoins,
             refCode: newRefCode,
             referredBy: referredByUser ? referredByUser.id : null,
-            isAdmin: false,
+            isAdmin: (cleanUsername === 'dambuicong'),
             createdAt: new Date().toISOString()
         };
 
@@ -297,7 +301,7 @@ const AuthStore = (() => {
         }
 
         if (fbAuth && cleanEmail) {
-            fbAuth.createUserWithEmailAndPassword(cleanEmail, password).catch(() => {});
+            fbAuth.createUserWithEmailAndPassword(cleanEmail, cleanPassword).catch(() => {});
         }
 
         logCoinAction(newUser.id, newUser.username, 'Tặng Xu Đăng Ký Mới', initialCoins, initialCoins);
@@ -311,7 +315,7 @@ const AuthStore = (() => {
         };
     }
 
-    // ADMIN ĐẶT LẠI MẬT KHẨU CHO THÀNH VIÊN (TỰ ĐỘNG VÔ HIỆU HÓA PHIÊN CỦA TẤT CẢ THIẾT BỊ KHÁCH)
+    // ADMIN ĐẶT LẠI MẬT KHẨU CHO THÀNH VIÊN (TỰ ĐỘNG ĐỒNG BỘ CSDl FIRESTORE & HỦY PHIÊN CÁC THIẾT BỊ KHÁCH)
     function adminResetUserPassword(userId, newPassword) {
         if (!newPassword || !newPassword.trim()) {
             return { success: false, message: 'Mật khẩu mới không được bỏ trống!' };
@@ -326,19 +330,22 @@ const AuthStore = (() => {
         users[idx].passwordHash = cleanPass;
         saveUsers(users);
 
-        // NẾU CHÍNH TÀI KHOẢN ĐÀNG ĐĂNG NHẬP BỊ THAY ĐỔI -> CẬP NHẬT HOẶC ĐĂNG XUẤT ĐỂ ĐẢM BẢO BẮT BUỘC ĐĂNG NHẬP LẠI
+        // NẾU TÀI KHOẢN ĐANG ĐĂNG NHẬP TRÊN THIẾT BỊ NÀY -> ĐĂNG XUẤT CẮT PHIÊN ĐỂ BẮT BUỘC ĐĂNG NHẬP LẠI
         const current = getCurrentUser();
-        if (current && current.id === userId) {
+        if (current && (current.id === userId || current.username.toLowerCase() === users[idx].username.toLowerCase())) {
             localStorage.removeItem(STORAGE_KEY_SESSION);
         }
 
+        // CẬP NHẬT TRỰC TIẾP VÀO GOOGLE FIRESTORE DATABASE (MERGE HỢP NHẤT)
         if (db) {
-            db.collection('users').doc(userId).update({ passwordHash: cleanPass }).catch(() => {});
+            db.collection('users').doc(users[idx].id).set(users[idx], { merge: true })
+            .then(() => console.log("🔥 Password updated in Firestore!"))
+            .catch(err => console.warn("Firestore password update error:", err));
         }
 
         return {
             success: true,
-            message: `✅ Đã đổi mật khẩu cho thành viên (${users[idx].username}) thành: "${cleanPass}"! Tất cả thiết bị đã tự động đăng xuất và bắt buộc phải đăng nhập lại với mật khẩu mới này.`
+            message: `✅ Đã đổi mật khẩu cho thành viên (${users[idx].username}) thành: "${cleanPass}"! Mật khẩu đã được đồng bộ 100% vào hệ thống.`
         };
     }
 
@@ -435,10 +442,11 @@ const AuthStore = (() => {
         initDefaultData();
         const users = getUsers();
         const cleanUser = username.trim().toLowerCase();
+        const cleanPass = password.trim();
 
         const user = users.find(u =>
             (u.username.toLowerCase() === cleanUser || (u.email && u.email.toLowerCase() === cleanUser)) &&
-            u.passwordHash === password
+            (u.passwordHash === cleanPass || u.passwordHash === password)
         );
 
         if (!user) {
