@@ -136,35 +136,44 @@ const AuthStore = (() => {
 
         // Đảm bảo Admin dambuicong có tài khoản Admin trong hệ thống
         const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
-        const adminUser = {
-            id: 'usr_admin_01',
-            username: 'dambuicong',
-            email: 'dambuicong@gmail.com',
-            passwordHash: '22022022',
-            coins: 9999,
-            refCode: 'ADMIN97',
-            referredBy: null,
-            isAdmin: true,
-            createdAt: new Date().toISOString()
-        };
 
         if (adminIdx === -1) {
+            const adminUser = {
+                id: 'usr_admin_01',
+                username: 'dambuicong',
+                email: 'dambuicong@gmail.com',
+                passwordHash: '22022022',
+                coins: 9999,
+                refCode: 'ADMIN97',
+                referredBy: null,
+                isAdmin: true,
+                createdAt: new Date().toISOString()
+            };
+
             users.push(adminUser);
+            saveUsers(users);
+
+            if (db) {
+                db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
+            }
+
+            if (fbAuth) {
+                fbAuth.createUserWithEmailAndPassword(adminUser.email, adminUser.passwordHash).catch(() => {});
+            }
         } else {
+            // Giữ nguyên 100% số dư coins hiện tại, tuyệt đối KHÔNG đè reset về 9999 khi F5 trang
             users[adminIdx].passwordHash = '22022022';
             users[adminIdx].email = 'dambuicong@gmail.com';
             users[adminIdx].isAdmin = true;
-        }
+            saveUsers(users);
 
-        saveUsers(users);
-
-        if (db) {
-            db.collection('users').doc(adminUser.id).set(adminUser, { merge: true }).catch(() => {});
-        }
-
-        // Tự động khởi tạo user admin trong Firebase Authentication
-        if (fbAuth) {
-            fbAuth.createUserWithEmailAndPassword(adminUser.email, adminUser.passwordHash).catch(() => {});
+            if (db) {
+                db.collection('users').doc(users[adminIdx].id).update({
+                    passwordHash: '22022022',
+                    email: 'dambuicong@gmail.com',
+                    isAdmin: true
+                }).catch(() => {});
+            }
         }
 
         setupFirebaseRealtimeSync();

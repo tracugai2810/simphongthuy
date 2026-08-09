@@ -41,8 +41,8 @@ function initFormDefaults() {
     const btnSubmitSearch = document.getElementById('btnSubmitSearch');
 
     if (limitSelect && btnSubmitSearch) {
-        limitSelect.addEventListener('change', (e) => {
-            const val = parseInt(e.target.value) || 5;
+        const updateSubmitBtnText = () => {
+            const val = parseInt(limitSelect.value) || 5;
             let cost = 2;
             if (val === 5) cost = 2;
             if (val === 15) cost = 6;
@@ -50,7 +50,10 @@ function initFormDefaults() {
             if (val === 50) cost = 20;
 
             btnSubmitSearch.innerHTML = `🔮 Gợi Ý SIM Số Đẹp (${cost} Xu)`;
-        });
+        };
+
+        limitSelect.addEventListener('change', updateSubmitBtnText);
+        updateSubmitBtnText(); // Tự động cập nhật ngay khi trang vừa load xong
     }
 }
 
@@ -1117,7 +1120,7 @@ function fallbackDownloadBlob(blob, filename) {
 let lastCloseTime = 0;
 
 function openModal(modalId) {
-    if (Date.now() - lastCloseTime < 350) return; // Chống ghost click trên di động mở lại popup vừa tắt
+    if (Date.now() - lastCloseTime < 450) return; // Chống ghost click trên di động mở lại popup vừa tắt
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.add('active');
 }
@@ -1139,7 +1142,7 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 
 function setupModalEvents() {
-    // 1. Gắn sự kiện chuẩn cho tất cả nút .modal-close (Chống nổ ghost click re-open)
+    // Gắn sự kiện siêu nhạy cho nút .modal-close nút X đóng popup
     document.querySelectorAll('.modal-close').forEach(btn => {
         const handleClose = (e) => {
             if (e) {
@@ -1151,13 +1154,14 @@ function setupModalEvents() {
             if (modal) {
                 modal.classList.remove('active');
             }
+            return false;
         };
 
         btn.onclick = handleClose;
-        btn.addEventListener('click', handleClose);
+        btn.ontouchstart = handleClose;
     });
 
-    // 2. Chạm vùng tối ngoài popup để tắt
+    // Chạm vùng tối ngoài popup để tắt
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
@@ -1168,7 +1172,7 @@ function setupModalEvents() {
         });
     });
 
-    // 3. Phím Escape để tắt
+    // Phím Escape để tắt
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             lastCloseTime = Date.now();

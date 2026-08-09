@@ -542,12 +542,12 @@ button, input, select, textarea, label, table, th, td {
     background: #151d30;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 16px;
-    padding: 54px 18px 20px 18px !important;
-    max-width: 500px;
+    padding: 50px 20px 22px 20px !important;
+    max-width: 560px;
     width: 100%;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
     position: relative;
-    max-height: 90vh;
+    max-height: 92vh;
     overflow-y: auto;
     overflow-x: hidden !important; /* CHỐNG THANH CUỘN NGANG KHI TRỎ CHUỘT */
     -webkit-overflow-scrolling: touch;
@@ -558,34 +558,57 @@ button, input, select, textarea, label, table, th, td {
     padding-top: 56px !important;
 }
 
-/* KHUNG POPUP DONATE THU GỌN VỪA VẶN 1 MÀN HÌNH KHÔNG CÓ THANH CUỘN */
+/* KHUNG POPUP DONATE PHÓNG TO RÕ ĐẸP VỪA MÀN HÌNH */
 .compact-donate-modal {
-    padding: 38px 14px 12px 14px !important;
+    padding: 44px 18px 16px 18px !important;
+    max-width: 560px !important;
     max-height: 94vh;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
 }
 
-/* KHUNG MÃ GIỚI THIỆU THU GỌN VỪA VẶN 1 MÀN HÌNH */
+/* KHUNG MÃ GIỚI THIỆU PHÓNG TO RÕ ĐẸP */
 .compact-ref-modal {
-    padding: 38px 14px 14px 14px !important;
+    padding: 44px 18px 16px 18px !important;
+    max-width: 540px !important;
     max-height: 94vh;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
 }
 
-@media (max-height: 680px) {
-    .compact-donate-modal, .compact-ref-modal {
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-    }
+/* NÚT TẢI MÃ QR DONATE TO ĐẸP MỌI MÀN HÌNH */
+.btn-download-qr-large {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 12px !important;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+    border: none !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
+    transition: all 0.2s ease !important;
+    margin-top: 10px !important;
+    margin-bottom: 8px !important;
+    touch-action: manipulation !important;
+}
+
+.btn-download-qr-large:hover {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(56, 189, 248, 0.5) !important;
 }
 
 /* NÚT X ĐÓNG POPUP SIÊU NHẠY THIẾT KẾ DẠNG BUTTON NATIVE (42px x 42px) */
 button.modal-close, .modal-close {
     position: absolute !important;
-    top: 12px !important;
-    right: 24px !important; /* Dịch vào 24px để KHÔNG BỊ THANH CUỘN SCROLLBAR CHE KHI TRỎ CHUỘT */
+    top: 10px !important;
+    right: 18px !important; /* Dịch vào 18px để KHÔNG BỊ THANH CUỘN SCROLLBAR CHE KHI TRỎ CHUỘT */
     width: 42px !important;
     height: 42px !important;
     line-height: 40px !important;
