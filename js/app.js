@@ -94,11 +94,22 @@ function setupAuthAndCommerce() {
     if (btnShowRefModal) btnShowRefModal.addEventListener('click', () => openRefModal());
 
     const btnLogout = document.getElementById('btnLogout');
-    if (btnLogout) btnLogout.addEventListener('click', () => {
-        AuthStore.logout();
-        updateUserNavUI();
-        showToast("Đã đăng xuất tài khoản!");
-    });
+    if (btnLogout) {
+        btnLogout.addEventListener('click', (e) => {
+            if (e) e.preventDefault();
+            AuthStore.logout();
+            updateUserNavUI();
+            showToast("Đã đăng xuất tài khoản!");
+        });
+    }
+
+    const adminLinkBtn = document.getElementById('adminLinkBtn');
+    if (adminLinkBtn) {
+        adminLinkBtn.addEventListener('click', (e) => {
+            if (e) e.preventDefault();
+            window.location.href = 'admin/index.html';
+        });
+    }
 
     // Form Đăng Nhập
     const loginForm = document.getElementById('loginForm');
