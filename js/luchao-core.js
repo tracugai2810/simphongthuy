@@ -4,7 +4,7 @@
    - Tính Can Chi Ngày, Tháng, Năm, Giờ (Nhật Thần, Nguyệt Lệnh)
    - Bảng 64 Quẻ, Mai Hoa, Nạp Giáp, Lục Thân, Lục Thú, Tuần Không, Trường Sinh
    - Lập quẻ Lục Hào từ dãy số điện thoại (9 hoặc 10 số)
-   - Quy tắc Hào Động Hóa Suy Bại / Vô Dụng & Kỵ Thần Vượng Hữu Dụng
+   - Quy tắc Hào Động Hóa Suy Bại (Bao gồm Hào Động bị Nhật Hợp ➔ Suy Bại)
    ========================================================================== */
 
 // 10 Thiên Can & 12 Địa Chi

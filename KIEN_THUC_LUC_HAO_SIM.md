@@ -9,7 +9,7 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
    - Hào Thế đại diện cho Bản Mệnh. Bản mệnh chưa vượng thì không tiếp nhận được vận lộc.
    - **Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%)**, không cần xét tiếp các yếu tố khác.
 2. **HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN**:
-   - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%)**.
+   - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Bị Nhật Hợp, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%)**.
 3. **HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT**:
    - Khi và chỉ khi **CẢ HÀO THẾ VƯỢNG VÀ DỤNG THẦN VƯỢNG** ➔ Mới đạt tiêu chuẩn SIM Cát Tường để gợi ý cho khách hàng!
 
@@ -27,10 +27,11 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
 6. **Bị Nhật / Nguyệt Xung**: Hào động chính bị Nhật Thần hoặc Nguyệt Lệnh xung phá.
 7. **Hóa Không Vong**: Hào biến rơi vào Tuần Không (Ví dụ: Ngọ Hóa Sửu mà Sửu là Tuần Không ➔ **Hóa Không Vong ➔ SUY BẠI / LOẠI BỎ 100%**).
 8. **Hào Động Không Vong**: Hào động chính rơi vào Tuần Không.
-9. **Hóa Hợp Với Nhật / Nguyệt**: Hào biến hợp với chi của Nhật Thần hoặc Nguyệt Lệnh.
-10. **Hóa Hợp Với Hào Động Khác**: Hào biến hợp với địa chi của một Hào Động khác trong quẻ.
-11. **Mộ Tại Nhật Thần**: Ngũ hành hào động bị nhập Mộ tại chi của Nhật Thần.
-12. **Bị Nguyệt Hợp Mà Hợp Tàng Khắc**: Hào động bị Nguyệt Lệnh hợp nhưng bản chất ngũ hành tương khắc (Ví dụ: Nguyệt Mão hợp Hào Tuất ➔ Mão Mộc khắc Tuất Thổ).
+9. **Hào Động Bị Nhật Hợp**: Hào động chính bị chi của Nhật Thần hợp (Trói chân hào động ➔ **SUY BẠI / LOẠI BỎ 100%**).
+10. **Hóa Hợp Với Nhật / Nguyệt**: Hào biến hợp với chi của Nhật Thần hoặc Nguyệt Lệnh.
+11. **Hóa Hợp Với Hào Động Khác**: Hào biến hợp với địa chi của một Hào Động khác trong quẻ.
+12. **Mộ Tại Nhật Thần**: Ngũ hành hào động bị nhập Mộ tại chi của Nhật Thần.
+13. **Bị Nguyệt Hợp Mà Hợp Tàng Khắc**: Hào động bị Nguyệt Lệnh hợp nhưng bản chất ngũ hành tương khắc (Ví dụ: Nguyệt Mão hợp Hào Tuất ➔ Mão Mộc khắc Tuất Thổ).
 
 > **Lưu ý**: Các trường hợp hào động **KHÔNG rơi vào các trường hợp suy bại trên** ➔ TỰ ĐỘNG TÍNH LÀ **VƯỢNG & HỮU DỤNG (CÁT)**.
 

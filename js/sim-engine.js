@@ -5,7 +5,7 @@
    1. XÉT HÀO THẾ ĐẦU TIÊN (Hào Thế vượng mới xét đến Dụng Thần):
       - Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%).
    2. HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN:
-      - Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%).
+      - Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Bị Nhật Hợp, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%).
    3. HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT (Thế Vượng Dụng Vượng đại cát tường).
    ========================================================================== */
 
@@ -140,16 +140,18 @@ function isDongLineSuyBai(line, cal, hexData = null) {
     if (line.changed && cal.tuanKhong.includes(chiChanged)) return true;
     // 8. Hào Động Không Vong
     if (cal.tuanKhong.includes(chiMain)) return true;
-    // 9. Hóa Hợp Với Nhật/Nguyệt
+    // 9. Hào Động Bị Nhật Hợp (Bị Nhật Thần Hợp - Trói Chân)
+    if (isBranchHarmonious(chiMain, cal.ngay.chi)) return true;
+    // 10. Hóa Hợp Với Nhật/Nguyệt
     if (line.changed && (isBranchHarmonious(chiChanged, cal.thang.chi) || isBranchHarmonious(chiChanged, cal.ngay.chi))) return true;
-    // 10. Hóa Hợp Với Hào Động Khác Trong Quẻ
+    // 11. Hóa Hợp Với Hào Động Khác Trong Quẻ
     if (line.changed && hexData && hexData.linesData) {
         const isHoaHopOtherDong = hexData.linesData.some(otherL => otherL !== line && otherL.isMoving && isBranchHarmonious(chiChanged, otherL.chi));
         if (isHoaHopOtherDong) return true;
     }
-    // 11. Mộ Tại Nhật Thần
+    // 12. Mộ Tại Nhật Thần
     if (cal.ngay.chi === getTombBranch(hanhMain)) return true;
-    // 12. Bị Nguyệt Hợp Mà Hợp Tàng Khắc (Ví dụ Nguyệt Mão hợp Hào Tuất)
+    // 13. Bị Nguyệt Hợp Mà Hợp Tàng Khắc (Ví dụ Nguyệt Mão hợp Hào Tuất)
     if (isHopTangKhac(cal.thang.chi, chiMain)) return true;
 
     return false;
@@ -460,7 +462,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                     isQualified: false,
                     score: 15,
                     grade: 'Hào Thế Động Suy Bại',
-                    reasons: [`Hào Thế (Bản mệnh) động Hóa Suy Bại ➔ Bỏ luôn (Loại bỏ 100%).`]
+                    reasons: [`Hào Thế (Bản mệnh) động Hóa Suy Bại (Bị Nhật Hợp / Không Vong / Hóa Phá...) ➔ Bỏ luôn (Loại bỏ 100%).`]
                 };
             }
         } else {
@@ -560,7 +562,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                     isQualified: false,
                     score: 15,
                     grade: 'Dụng Thần Động Suy Bại',
-                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) động Hóa Suy Bại (Hóa Không Vong / Bị Không Vong / Hóa Phá / Hồi Đầu Khắc...) ➔ Cũng bỏ (Loại bỏ 100%).`]
+                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) động Hóa Suy Bại (Bị Nhật Hợp / Hóa Không Vong / Bị Không Vong / Hóa Phá / Hồi Đầu Khắc...) ➔ Cũng bỏ (Loại bỏ 100%).`]
                 };
             }
             dungThanIsVung = true;
