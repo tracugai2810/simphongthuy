@@ -375,7 +375,7 @@
         </div>
     </div>
 
-    <!-- MODAL KHÔI PHỤC MẬT KHẨU (CUSTOM MODAL ĐÃ SỬA HOẠT ĐỘNG 100%) -->
+    <!-- MODAL KHÔI PHỤC MẬT KHẨU (HIỂN THỊ POPUP LIÊN HỆ ADMIN ZALO) -->
     <div id="forgotPasswordModal" class="modal-overlay">
         <div class="modal-content auth-modal-box" style="max-width: 460px !important; text-align: center;">
             <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('forgotPasswordModal')">&times;</button>
@@ -383,12 +383,12 @@
                 <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
                 <h3 style="color: var(--gold-glow); font-size: 1.25rem; margin-bottom: 8px;">Khôi Phục Mật Khẩu</h3>
                 <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 6px; line-height: 1.5;">
-                    Vui lòng liên hệ trực tiếp Admin qua Zalo để được hỗ trợ xác minh và cấp lại mật khẩu tài khoản nhanh chóng!
+                    Vui lòng liên hệ trực tiếp Quản Trị Viên (Admin) qua Zalo để được hỗ trợ xác minh và cấp lại mật khẩu tài khoản nhanh chóng!
                 </p>
             </div>
             
             <a href="https://zalo.me/0396154013" target="_blank" rel="noopener" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4); font-size: 0.95rem; padding: 12px; border-radius: 10px;">
-                💬 Chát Zalo Admin Hỗ Trợ
+                💬 Liên Hệ Admin qua Zalo
             </a>
         </div>
     </div>
@@ -413,7 +413,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: DONATE NẠP XU (ĐÃ SỬA CHỈ GIỮ LẠI DÒNG NỘI DUNG CK & NÚT ZALO ADMIN) -->
+    <!-- MODAL 3: DONATE NẠP XU (ĐÃ SỬA CHỈ GIỮ LẠI DÒNG NỘI DUNG CK & NÚT LIÊN HỆ ADMIN) -->
     <div id="donateModal" class="modal-overlay">
         <div class="modal-content compact-donate-modal">
             <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('donateModal')">&times;</button>
@@ -447,7 +447,7 @@
                 <img id="donateQrImg" src="50k.jfif" alt="QR Code Donate 50k" class="qr-code-img">
             </div>
 
-            <!-- Khung Thông Tin Nội Dung Chuyển Khoản (Chỉ Giữ Lại Dòng Nội Dung) -->
+            <!-- Khung Thông Tin Nội Dung Chuyển Khoản -->
             <div class="donate-info-box" style="text-align: center; padding: 10px;">
                 <div class="info-row-item highlight-memo" style="justify-content: center; font-size: 1.05rem;">
                     <span class="info-label" style="font-weight: 800; color: #ffd700;">Nội Dung:</span>
@@ -466,16 +466,16 @@
                 </button>
             </div>
 
-            <!-- Nút Chát Zalo Admin Hỗ Trợ Donate -->
+            <!-- Nút Liên Hệ Admin -->
             <div style="margin-top: 8px;">
                 <a href="https://zalo.me/0396154013" target="_blank" rel="noopener" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #0088FF 0%, #0055FF 100%); font-size: 0.95rem; padding: 10px; border-radius: 10px;">
-                    💬 Chát Zalo Admin Hỗ Trợ
+                    💬 Liên Hệ Admin
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 4: CHIA SẺ MÃ GIỚI THIỆU (ĐÃ TỐI ƯU CĂN GIỮA TO RÕ CHO MẠNG XÃ HỘI) -->
+    <!-- MODAL 4: CHIA SẺ MÃ GIỚI THIỆU (ĐÃ TỐI ƯU UX/UI & CLICK SAO CHÉP MÃ) -->
     <div id="refModal" class="modal-overlay">
         <div class="modal-content compact-ref-modal">
             <button type="button" class="modal-close" aria-label="Close" onclick="closeModal('refModal')">&times;</button>
@@ -488,11 +488,12 @@
                 </p>
             </div>
 
-            <!-- Khung Thẻ Hiện Mã Giới Thiệu Căn Giữa To Đẹp Cực Sang Trọng -->
-            <div class="ref-card-box" style="text-align: center; padding: 20px 16px;">
-                <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">MÃ GIỚI THIỆU CỦA BẠN:</div>
-                <div id="refCodeBig" class="ref-code-display" style="font-size: 2.5rem; font-weight: 900; color: #ffd700; letter-spacing: 4px; margin: 8px 0 16px 0; text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);">---</div>
-                <button type="button" id="btnCopyRefLink" class="btn-copy-ref" style="width: 100%; padding: 14px 20px; font-size: 1rem; font-weight: 800; border-radius: 12px;">
+            <!-- Khung Thẻ Hiện Mã Giới Thiệu Căn Giữa To Đẹp Sang Trọng -->
+            <div class="ref-card-box" style="text-align: center; padding: 18px 16px;">
+                <div style="font-size: 0.85rem; color: #cbd5e1; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">MÃ GIỚI THIỆU CỦA BẠN:</div>
+                <div id="refCodeBig" class="ref-code-display" title="Nhấp vào để sao chép mã">---</div>
+                <div style="font-size: 0.78rem; color: var(--gold-primary); margin-bottom: 12px; font-weight: 600;">(👆 Nhấp vào mã trên để sao chép nhanh)</div>
+                <button type="button" id="btnCopyRefLink" class="btn-copy-ref" style="width: 100%; padding: 12px 18px; font-size: 0.95rem; font-weight: 800; border-radius: 10px;">
                     📋 Sao Chép Link Giới Thiệu
                 </button>
             </div>

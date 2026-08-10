@@ -407,3 +407,10 @@ function setupAdminModalEvents() {
         });
     });
 }
+
+// LẮNG NGHE ĐỒNG BỘ REALTIME GIỮA CÁC TAB KHI XU HOẶC THÀNH VIÊN THAY ĐỔI
+window.addEventListener('storage', (e) => {
+    if (e.key === 'sim_pt_users_v1' || e.key === 'sim_pt_current_user_v1' || e.key === 'sim_pt_donate_requests_v1' || e.key === 'sim_pt_coin_logs_v1') {
+        if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
+    }
+});

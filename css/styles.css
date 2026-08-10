@@ -344,23 +344,29 @@ button, input, select, textarea, label, table, th, td {
 
 .digit-boxes-container {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     justify-content: center;
+    align-items: center;
     margin-bottom: 10px;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .digit-box {
-    width: 42px;
+    flex: 1 1 0%;
+    min-width: 0;
+    max-width: 42px;
     height: 46px;
     background: #ffffff !important;
     border: 1px solid #d97706 !important;
     color: #991b1b !important;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 900;
     text-align: center;
     border-radius: 8px;
     outline: none;
+    padding: 0;
     transition: all 0.2s ease;
     font-family: monospace, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -618,27 +624,27 @@ button, input, select, textarea, label, table, th, td {
     box-shadow: 0 6px 18px rgba(56, 189, 248, 0.5) !important;
 }
 
-/* NÚT X ĐÓNG POPUP SIÊU NHẠY THIẾT KẾ DẠNG BUTTON NATIVE (42px x 42px) */
+/* NÚT X ĐÓNG POPUP SIÊU NHẠY THIẾT KẾ DẠNG BUTTON NATIVE (38px x 38px) */
 button.modal-close, .modal-close {
     position: absolute !important;
-    top: 10px !important;
-    right: 18px !important; /* Dịch vào 18px để KHÔNG BỊ THANH CUỘN SCROLLBAR CHE KHI TRỎ CHUỘT */
-    width: 42px !important;
-    height: 42px !important;
-    line-height: 40px !important;
+    top: 12px !important;
+    right: 14px !important;
+    width: 38px !important;
+    height: 38px !important;
+    line-height: 1 !important;
     text-align: center !important;
-    background: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.2) !important;
     border-radius: 50% !important;
     color: #ffffff !important;
-    font-size: 1.6rem !important;
-    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
     cursor: pointer !important;
     z-index: 100100 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    transition: all 0.2s ease !important;
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
     pointer-events: auto !important;
     user-select: none !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
@@ -652,8 +658,8 @@ button.modal-close:hover, .modal-close:hover {
     background: #ef4444 !important;
     color: #ffffff !important;
     border-color: #f87171 !important;
-    transform: scale(1.15) rotate(90deg) !important;
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.9) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.8) !important;
     cursor: pointer !important;
 }
 
@@ -765,21 +771,41 @@ button.modal-close:active, .modal-close:active {
     display: none !important;
 }
 
-.ref-code-display-card {
-    background: rgb(17, 18, 34);
-    border: 1px solid var(--gold-dark);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
-    margin-bottom: 12px;
+.ref-card-box {
+    background: linear-gradient(145deg, #182238 0%, #111827 100%);
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    margin-bottom: 14px;
 }
 
-.ref-code-big {
-    font-size: 1.8rem;
+.ref-code-display {
+    font-size: 2.4rem;
     font-weight: 900;
     color: #ffd700;
-    letter-spacing: 2px;
-    margin: 2px 0;
+    letter-spacing: 4px;
+    margin: 6px auto 10px auto;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    display: inline-block;
+    padding: 10px 24px;
+    background: rgba(217, 119, 6, 0.12);
+    border: 1px dashed rgba(255, 215, 0, 0.5);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: all;
+    touch-action: manipulation;
+}
+
+.ref-code-display:hover {
+    background: rgba(217, 119, 6, 0.25);
+    border-color: #ffd700;
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+}
+
+.ref-code-display:active {
+    transform: scale(0.97);
 }
 
 .ref-stats-grid {
@@ -1134,17 +1160,18 @@ button.modal-close:active, .modal-close:active {
     }
 
     .digit-boxes-container {
-        gap: 3px;
-        justify-content: space-between;
+        gap: 2px;
+        justify-content: center;
         width: 100%;
-        padding: 2px 0;
+        padding: 0;
     }
 
     .digit-box {
-        width: calc((100% - 27px) / 10);
+        flex: 1 1 0%;
+        min-width: 0;
         max-width: 36px;
-        height: 42px;
-        font-size: 1.1rem;
+        height: 40px;
+        font-size: 1rem;
         border-radius: 6px;
         padding: 0;
     }

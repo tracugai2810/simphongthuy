@@ -136,7 +136,7 @@ function setupAuthAndCommerce() {
         });
     }
 
-    // Nút Mở Modal Quên Mật Khẩu Custom (Đã sửa hoạt động 100%)
+    // Nút Mở Modal Quên Mật Khẩu Custom (Hiển thị popup liên hệ Admin Zalo)
     const btnOpenForgotPasswordModal = document.getElementById('btnOpenForgotPasswordModal');
     if (btnOpenForgotPasswordModal) {
         btnOpenForgotPasswordModal.addEventListener('click', (e) => {
@@ -145,11 +145,7 @@ function setupAuthAndCommerce() {
                 e.stopPropagation();
             }
             closeModal('authModal');
-            setTimeout(() => {
-                const resultBox = document.getElementById('forgotResultBox');
-                if (resultBox) resultBox.style.display = 'none';
-                openModal('forgotPasswordModal');
-            }, 60);
+            openModal('forgotPasswordModal', true);
         });
     }
 
@@ -357,13 +353,7 @@ function updateUserNavUI() {
         if (guestNav) guestNav.style.display = 'none';
         if (loggedInNav) loggedInNav.style.display = 'flex';
 
-        let actualCoins = user.coins;
-        const logs = AuthStore.getUserLogs(user.id);
-        if (logs && logs.length > 0 && logs[0].balanceAfter !== undefined) {
-            actualCoins = logs[0].balanceAfter;
-        }
-
-        if (coinSpan) coinSpan.textContent = actualCoins;
+        if (coinSpan) coinSpan.textContent = user.coins;
         if (refCodeSpan) refCodeSpan.textContent = user.refCode || '---';
 
         if (adminLinkBtn) {
@@ -381,12 +371,7 @@ function openUserCoinHistoryModal() {
     }
 
     const logs = AuthStore.getUserLogs(user.id);
-
-    // Tự động lấy số dư chính xác 100% từ log mới nhất hoặc user.coins
-    let actualCoins = user.coins;
-    if (logs && logs.length > 0 && logs[0].balanceAfter !== undefined) {
-        actualCoins = logs[0].balanceAfter;
-    }
+    const actualCoins = user.coins;
 
     const histBalanceEl = document.getElementById('histCurrentBalance');
     if (histBalanceEl) {
@@ -491,7 +476,17 @@ function openRefModal() {
     }
 
     const refCodeBig = document.getElementById('refCodeBig');
-    if (refCodeBig) refCodeBig.textContent = user.refCode || '---';
+    if (refCodeBig) {
+        refCodeBig.textContent = user.refCode || '---';
+        refCodeBig.style.cursor = 'pointer';
+        refCodeBig.title = 'Bấm vào để sao chép mã';
+        refCodeBig.onclick = () => {
+            if (user.refCode) {
+                copySimNumberOnly(user.refCode);
+                showToast(`Đã sao chép mã giới thiệu: ${user.refCode}`);
+            }
+        };
+    }
 
     const stats = AuthStore.getReferralStats(user.id);
     document.getElementById('statTotalRefs').textContent = stats.totalRefs;
@@ -1125,8 +1120,8 @@ function fallbackDownloadBlob(blob, filename) {
 
 let lastCloseTime = 0;
 
-function openModal(modalId) {
-    if (Date.now() - lastCloseTime < 450) return; // Chống ghost click trên di động mở lại popup vừa tắt
+function openModal(modalId, force = false) {
+    if (!force && Date.now() - lastCloseTime < 250) return;
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.add('active');
 }
@@ -1148,7 +1143,7 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 
 function setupModalEvents() {
-    // Gắn sự kiện siêu nhạy cho nút .modal-close nút X đóng popup
+    // Gắn sự kiện 1-click siêu nhạy cho tất cả nút .modal-close đóng popup
     document.querySelectorAll('.modal-close').forEach(btn => {
         const handleClose = (e) => {
             if (e) {
@@ -1164,7 +1159,6 @@ function setupModalEvents() {
         };
 
         btn.onclick = handleClose;
-        btn.ontouchstart = handleClose;
     });
 
     // Chạm vùng tối ngoài popup để tắt
@@ -1188,3 +1182,10 @@ function setupModalEvents() {
         }
     });
 }
+
+// LẮNG NGHE ĐỒNG BỘ REALTIME GIỮA CÁC TAB / CỬA SỔ TRÌNH DUYỆT
+window.addEventListener('storage', (e) => {
+    if (e.key === 'sim_pt_users_v1' || e.key === 'sim_pt_current_user_v1' || e.key === 'sim_pt_donate_requests_v1') {
+        if (typeof updateUserNavUI === 'function') updateUserNavUI();
+    }
+});

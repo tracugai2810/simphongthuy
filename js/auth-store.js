@@ -198,7 +198,7 @@ const AuthStore = (() => {
             if (!sessionUser) return null;
 
             const users = getUsers();
-            const match = users.find(usr => usr.id === sessionUser.id);
+            const match = users.find(usr => usr.id === sessionUser.id || (usr.username && sessionUser.username && usr.username.toLowerCase() === sessionUser.username.toLowerCase()));
             if (!match) {
                 localStorage.removeItem(STORAGE_KEY_SESSION);
                 return null;
@@ -686,6 +686,12 @@ const AuthStore = (() => {
 
         users[idx].coins = Math.max(0, users[idx].coins + coinDelta);
         saveUsers(users);
+
+        const current = getCurrentUser();
+        if (current && (current.id === userId || (current.username && current.username.toLowerCase() === users[idx].username.toLowerCase()))) {
+            current.coins = users[idx].coins;
+            setCurrentUser(current);
+        }
 
         if (db) {
             db.collection('users').doc(userId).update({ coins: users[idx].coins }).catch(() => {});
