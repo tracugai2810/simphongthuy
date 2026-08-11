@@ -52,11 +52,34 @@ const AuthStore = (() => {
                 const idx = localUsers.findIndex(u => u.id === fbUser.id || (u.username && fbUser.username && u.username.toLowerCase() === fbUser.username.toLowerCase()));
 
                 if (idx === -1) {
+                    // Nếu tài khoản mới từ Firebase có coins == 9999 (bị lỗi cũ) -> Sửa thành 10
+                    if (fbUser.coins === 9999 && (fbUser.username === 'dambuicong' || fbUser.isAdmin)) {
+                        fbUser.coins = 10;
+                    }
                     localUsers.push(fbUser);
                     hasChanges = true;
                 } else {
-                    if (JSON.stringify(localUsers[idx]) !== JSON.stringify(fbUser)) {
-                        localUsers[idx] = { ...localUsers[idx], ...fbUser };
+                    const localU = localUsers[idx];
+                    const cleanFbUser = { ...fbUser };
+
+                    // Loại bỏ giá trị 9999 cũ nếu Firestore gửi về snapshot cũ cho tài khoản Admin
+                    if (cleanFbUser.coins === 9999 && (localU.username === 'dambuicong' || localU.isAdmin)) {
+                        delete cleanFbUser.coins;
+                    }
+
+                    // So sánh mốc thời gian updatedAt: Chỉ ghi đè từ Firebase nếu bản ghi Firebase MỚI HƠN bản ghi Local
+                    const fbTime = cleanFbUser.updatedAt ? new Date(cleanFbUser.updatedAt).getTime() : 0;
+                    const localTime = localU.updatedAt ? new Date(localU.updatedAt).getTime() : 0;
+
+                    let mergedUser;
+                    if (fbTime >= localTime) {
+                        mergedUser = { ...localU, ...cleanFbUser };
+                    } else {
+                        mergedUser = { ...cleanFbUser, ...localU };
+                    }
+
+                    if (JSON.stringify(localUsers[idx]) !== JSON.stringify(mergedUser)) {
+                        localUsers[idx] = mergedUser;
                         hasChanges = true;
                     }
                 }
@@ -65,7 +88,6 @@ const AuthStore = (() => {
             if (hasChanges) {
                 saveUsers(localUsers);
                 
-                // NẾU MẬT KHẨU CỦA USER ĐƯỢC ADMIN CẬP NHẬT TỪ THIẾT BỊ KHÁCH -> KIỂM TRA HỦY PHIÊN
                 const current = getCurrentUser();
                 if (typeof updateUserNavUI === 'function') updateUserNavUI();
                 if (typeof loadAdminDashboardData === 'function') loadAdminDashboardData();
@@ -136,6 +158,7 @@ const AuthStore = (() => {
 
         // Đảm bảo Admin dambuicong có tài khoản Admin trong hệ thống
         const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
+        const nowIso = new Date().toISOString();
 
         if (adminIdx === -1) {
             const adminUser = {
@@ -143,36 +166,44 @@ const AuthStore = (() => {
                 username: 'dambuicong',
                 email: 'dambuicong@gmail.com',
                 passwordHash: '22022022',
-                coins: 9999,
+                coins: 10,
                 refCode: 'ADMIN97',
                 referredBy: null,
                 isAdmin: true,
-                createdAt: new Date().toISOString()
+                createdAt: nowIso,
+                updatedAt: nowIso
             };
 
             users.push(adminUser);
             saveUsers(users);
 
             if (db) {
-                db.collection('users').doc(adminUser.id).set(adminUser).catch(() => {});
+                db.collection('users').doc(adminUser.id).set(adminUser, { merge: true }).catch(() => {});
             }
 
             if (fbAuth) {
                 fbAuth.createUserWithEmailAndPassword(adminUser.email, adminUser.passwordHash).catch(() => {});
             }
         } else {
-            // Giữ nguyên 100% số dư coins hiện tại, tuyệt đối KHÔNG đè reset về 9999 khi F5 trang
+            // NẾU TÀI KHOẢN ADMIN TRƯỚC ĐÂY BỊ VƯỚNG GIÁ TRỊ 9999 -> SỬA THÀNH 10 XU
+            if (users[adminIdx].coins === 9999) {
+                users[adminIdx].coins = 10;
+            }
+
             users[adminIdx].passwordHash = '22022022';
             users[adminIdx].email = 'dambuicong@gmail.com';
             users[adminIdx].isAdmin = true;
+            users[adminIdx].updatedAt = nowIso;
             saveUsers(users);
 
             if (db) {
-                db.collection('users').doc(users[adminIdx].id).update({
+                db.collection('users').doc(users[adminIdx].id).set({
                     passwordHash: '22022022',
                     email: 'dambuicong@gmail.com',
-                    isAdmin: true
-                }).catch(() => {});
+                    isAdmin: true,
+                    coins: users[adminIdx].coins,
+                    updatedAt: nowIso
+                }, { merge: true }).catch(() => {});
             }
         }
 
@@ -417,20 +448,23 @@ const AuthStore = (() => {
 
         users[userIdx].referredBy = referrer.id;
         users[userIdx].coins += 1;
+        users[userIdx].updatedAt = new Date().toISOString();
         saveUsers(users);
 
         const current = getCurrentUser();
-        if (current && current.id === userId) {
+        if (current && (current.id === userId || (current.username && current.username.toLowerCase() === user.username.toLowerCase()))) {
             current.referredBy = referrer.id;
             current.coins = users[userIdx].coins;
+            current.updatedAt = users[userIdx].updatedAt;
             setCurrentUser(current);
         }
 
         if (db) {
-            db.collection('users').doc(userId).update({
+            db.collection('users').doc(users[userIdx].id).set({
                 referredBy: referrer.id,
-                coins: users[userIdx].coins
-            }).catch(() => {});
+                coins: users[userIdx].coins,
+                updatedAt: users[userIdx].updatedAt
+            }, { merge: true }).catch(() => {});
         }
 
         logCoinAction(userId, user.username, `Bổ Sung Mã GT của ${referrer.username}`, 1, users[userIdx].coins);
@@ -482,16 +516,21 @@ const AuthStore = (() => {
         }
 
         users[idx].coins -= coinAmount;
+        users[idx].updatedAt = new Date().toISOString();
         saveUsers(users);
 
         const current = getCurrentUser();
-        if (current && current.id === userId) {
+        if (current && (current.id === userId || (current.username && current.username.toLowerCase() === users[idx].username.toLowerCase()))) {
             current.coins = users[idx].coins;
+            current.updatedAt = users[idx].updatedAt;
             setCurrentUser(current);
         }
 
         if (db) {
-            db.collection('users').doc(userId).update({ coins: users[idx].coins }).catch(() => {});
+            db.collection('users').doc(users[idx].id).set({
+                coins: users[idx].coins,
+                updatedAt: users[idx].updatedAt
+            }, { merge: true }).catch(() => {});
         }
 
         logCoinAction(userId, users[idx].username, actionName, -coinAmount, users[idx].coins);
@@ -560,10 +599,14 @@ const AuthStore = (() => {
 
         // 1. Cộng Xu cho User
         users[userIdx].coins += req.coinAmount;
+        users[userIdx].updatedAt = new Date().toISOString();
         logCoinAction(users[userIdx].id, users[userIdx].username, `Donate Gói ${req.tierKey.toUpperCase()}`, req.coinAmount, users[userIdx].coins);
 
         if (db) {
-            db.collection('users').doc(users[userIdx].id).update({ coins: users[userIdx].coins }).catch(() => {});
+            db.collection('users').doc(users[userIdx].id).set({
+                coins: users[userIdx].coins,
+                updatedAt: users[userIdx].updatedAt
+            }, { merge: true }).catch(() => {});
         }
 
         // 2. Trích 50% Hoa Hồng cho Người Giới Thiệu
@@ -574,11 +617,15 @@ const AuthStore = (() => {
                 const bonusCoins = Math.floor(req.coinAmount * 0.5);
                 if (bonusCoins > 0) {
                     users[referrerIdx].coins += bonusCoins;
+                    users[referrerIdx].updatedAt = new Date().toISOString();
                     logCoinAction(users[referrerIdx].id, users[referrerIdx].username, `Hoa Hồng 50% từ cấp dưới (${users[userIdx].username} Donate)`, bonusCoins, users[referrerIdx].coins);
                     refMsg = ` & Đã cộng 50% (${bonusCoins} Xu) hoa hồng cho ${users[referrerIdx].username}`;
 
                     if (db) {
-                        db.collection('users').doc(users[referrerIdx].id).update({ coins: users[referrerIdx].coins }).catch(() => {});
+                        db.collection('users').doc(users[referrerIdx].id).set({
+                            coins: users[referrerIdx].coins,
+                            updatedAt: users[referrerIdx].updatedAt
+                        }, { merge: true }).catch(() => {});
                     }
                 }
 
@@ -593,12 +640,13 @@ const AuthStore = (() => {
         saveDonateRequests(reqs);
 
         if (db) {
-            db.collection('donate_requests').doc(req.id).update({ status: 'approved', approvedAt: reqs[reqIdx].approvedAt }).catch(() => {});
+            db.collection('donate_requests').doc(req.id).set({ status: 'approved', approvedAt: reqs[reqIdx].approvedAt }, { merge: true }).catch(() => {});
         }
 
         const current = getCurrentUser();
-        if (current && current.id === users[userIdx].id) {
+        if (current && (current.id === users[userIdx].id || (current.username && current.username.toLowerCase() === users[userIdx].username.toLowerCase()))) {
             current.coins = users[userIdx].coins;
+            current.updatedAt = users[userIdx].updatedAt;
             setCurrentUser(current);
         }
 
@@ -620,7 +668,7 @@ const AuthStore = (() => {
         saveDonateRequests(reqs);
 
         if (db) {
-            db.collection('donate_requests').doc(requestId).update({ status: 'rejected' }).catch(() => {});
+            db.collection('donate_requests').doc(requestId).set({ status: 'rejected' }, { merge: true }).catch(() => {});
         }
 
         return { success: true, message: 'Đã từ chối yêu cầu Donate này.' };
@@ -670,9 +718,14 @@ const AuthStore = (() => {
             if (qualifiedReferrals >= m.count && !referrer.milestonesClaimed.includes(m.count)) {
                 referrer.coins += m.reward;
                 referrer.milestonesClaimed.push(m.count);
+                referrer.updatedAt = new Date().toISOString();
                 logCoinAction(referrer.id, referrer.username, `Thưởng Cột Mốc ${m.count} Người Donate`, m.reward, referrer.coins);
                 if (db) {
-                    db.collection('users').doc(referrer.id).update({ coins: referrer.coins, milestonesClaimed: referrer.milestonesClaimed }).catch(() => {});
+                    db.collection('users').doc(referrer.id).set({
+                        coins: referrer.coins,
+                        milestonesClaimed: referrer.milestonesClaimed,
+                        updatedAt: referrer.updatedAt
+                    }, { merge: true }).catch(() => {});
                 }
             }
         });
@@ -685,16 +738,21 @@ const AuthStore = (() => {
         if (idx === -1) return { success: false, message: 'Không tìm thấy tài khoản!' };
 
         users[idx].coins = Math.max(0, users[idx].coins + coinDelta);
+        users[idx].updatedAt = new Date().toISOString();
         saveUsers(users);
 
         const current = getCurrentUser();
         if (current && (current.id === userId || (current.username && current.username.toLowerCase() === users[idx].username.toLowerCase()))) {
             current.coins = users[idx].coins;
+            current.updatedAt = users[idx].updatedAt;
             setCurrentUser(current);
         }
 
         if (db) {
-            db.collection('users').doc(userId).update({ coins: users[idx].coins }).catch(() => {});
+            db.collection('users').doc(users[idx].id).set({
+                coins: users[idx].coins,
+                updatedAt: users[idx].updatedAt
+            }, { merge: true }).catch(() => {});
         }
 
         logCoinAction(userId, users[idx].username, reason, coinDelta, users[idx].coins);
