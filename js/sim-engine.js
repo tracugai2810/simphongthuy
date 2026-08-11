@@ -422,88 +422,69 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
 
     const targetRel = getTargetRelation(purpose, gender);
     const { nguyenThan, kyThan } = getNguyenAndKyThan(targetRel);
-    const dtRelPrefix = targetRel.split(' ')[0];
-    const kyRelPrefix = kyThan ? kyThan.split(' ')[0] : '';
-    const nguyenRelPrefix = nguyenThan ? nguyenThan.split(' ')[0] : '';
+
+    // 1. Tìm Dụng Thần tốt nhất trong quẻ
+    let bestCand = findBestDungThanCandidate(hexData, cal, targetRel);
+    if (!bestCand) {
+        return {
+            isQualified: false,
+            score: 15,
+            grade: 'Khuyết Dụng Thần',
+            reasons: [`Dụng Thần (${targetRel}) không xuất hiện trong quẻ ➔ Bỏ luôn (Loại bỏ 100%).`]
+        };
+    }
+
+    // Kiểm tra xem Dụng Thần có chính là Hào Thế hay không
+    const isTheIsDungThan = (targetRel === 'Thế' || (bestCand.source === 'main' && bestCand.line === haoThe));
 
     // =========================================================================
-    // BƯỚC 1: XÉT HÀO THẾ ĐẦU TIÊN (HÀO THẾ VƯỢNG MỚI XÉT ĐẾN DỤNG THẦN!)
-    // HÀO THẾ SUY ➔ BỎ LUÔN!
+    // TRƯỜNG HỢP 1: DỤNG THẦN CHÍNH LÀ HÀO THẾ ("Dụng thần là hào thế luôn thì k xét thế")
+    // ➔ Áp dụng 100% tiêu chuẩn Dụng Thần Vượng / Suy nghiêm ngặt!
     // =========================================================================
-    const isTheIsDungThan = (targetRel === 'Thế' || (hexData.linesData.findIndex(l => l === haoThe) === hexData.linesData.findIndex(l => l.relation.startsWith(dtRelPrefix))));
-
     if (isTheIsDungThan) {
         if (haoThe.isMoving) {
             if (isDongLineSuyBai(haoThe, cal, hexData)) {
                 return {
                     isQualified: false,
                     score: 15,
-                    grade: 'Thế Suy Bại',
-                    reasons: [`Hào Thế (Bản mệnh & Dụng Thần) động Hóa Suy Bại ➔ Bỏ luôn (Loại bỏ 100%).`]
+                    grade: 'Thế (Dụng Thần) Suy Bại',
+                    reasons: [`Hào Thế (chính là Dụng Thần) động Hóa Suy Bại ➔ Bỏ luôn (Loại bỏ 100%).`]
                 };
             }
-            reasons.push(`🔮 Hào Thế (Bản mệnh & Dụng Thần) động hữu dụng vượng khí Cát tường.`);
+            reasons.push(`🔮 Hào Thế (chính là Dụng Thần) động hữu dụng vượng khí Cát tường.`);
         } else {
             if (isTinhDungThanSuyBai(haoThe, cal, hexData)) {
                 return {
                     isQualified: false,
                     score: 15,
-                    grade: 'Thế Suy Bại',
-                    reasons: [`Hào Thế (Bản mệnh & Dụng Thần) tĩnh bị Suy Bại ➔ Bỏ luôn (Loại bỏ 100%).`]
+                    grade: 'Thế (Dụng Thần) Suy Bại',
+                    reasons: [`Hào Thế (chính là Dụng Thần) tĩnh bị Suy Bại (Không được Nguyệt Lệnh sinh phò / Tuần Không / Nhập Mộ...) ➔ Bỏ luôn (Loại bỏ 100%).`]
                 };
             }
-            reasons.push(`Hào Thế (Bản mệnh & Dụng Thần) tĩnh vượng khí Cát tường.`);
-        }
-    } else {
-        // KHI HÀO THẾ KHÔNG PHẢI LÀ DỤNG THẦN
-        if (haoThe.isMoving) {
-            if (isDongLineSuyBai(haoThe, cal, hexData)) {
-                return {
-                    isQualified: false,
-                    score: 15,
-                    grade: 'Hào Thế Động Suy Bại',
-                    reasons: [`Hào Thế (Bản mệnh) động Hóa Suy Bại (Bị Nhật Hợp / Không Vong / Hóa Phá...) ➔ Bỏ luôn (Loại bỏ 100%).`]
-                };
-            }
-        } else {
-            if (isHaoTheSuyBaiWhenDungVung(haoThe, cal, hexData, null)) {
-                return {
-                    isQualified: false,
-                    score: 15,
-                    grade: 'Hào Thế Suy Bại',
-                    reasons: [`Hào Thế (Bản mệnh) bị Suy Bại ➔ Bỏ luôn (Bản mệnh chưa vượng để gánh tài lộc, loại bỏ 100%).`]
-                };
-            }
+            reasons.push(`Hào Thế (chính là Dụng Thần) tĩnh vượng khí Cát tường.`);
         }
 
-        const isNhatSinhThe = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh));
-        const isNguyetSinhThe = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh));
-        const isDongSinhThe = hexData.linesData.some(dL => dL.isMoving && isGenerating(dL.hanh, theHanh) && !isDongLineSuyBai(dL, cal, hexData));
-
-        if (isNhatSinhThe || isNguyetSinhThe || isDongSinhThe) {
-            reasons.push(`🌟 Hào Thế (Bản mệnh) VƯỢNG KHÍ (Được Nhật/Nguyệt/Hào động sinh trợ - Đủ thế vượng để tiếp nhận Dụng Thần).`);
-        } else {
-            reasons.push(`Hào Thế (Bản mệnh) tránh được các trường hợp suy bại (Đạt thế vượng khí).`);
+        totalScore = 85;
+        const mainName = hexData.mainName;
+        if (mainName.includes('Thái') || mainName.includes('Trung Phu') || mainName.includes('Đại Hữu') || mainName.includes('Gia Nhân') || mainName.includes('Ích') || mainName.includes('Tụy')) {
+            totalScore += 10;
+            reasons.push(`Quẻ Chủ ${mainName} thuộc nhóm quẻ Đại Cát Tường.`);
         }
+        totalScore = Math.min(100, Math.max(75, totalScore));
+
+        let grade = 'Đại Cát';
+        if (totalScore >= 90) grade = 'Đại Cát (Ưu Tú)';
+        else if (totalScore >= 85) grade = 'Thượng Cát';
+        else grade = 'Cát Tường';
+
+        return { isQualified: true, score: totalScore, grade, reasons };
     }
 
-    // NẾU HÀO THẾ SUY ➔ BỎ LUÔN (Đã return ở trên)
-
     // =========================================================================
-    // BƯỚC 2: HÀO THẾ VƯỢNG RỒI ➔ XÉT TIẾP ĐẾN DỤNG THẦN!
-    // DỤNG THẦN SUY ➔ CŨNG BỎ!
+    // TRƯỜNG HỢP 2: DỤNG THẦN KHÁC HÀO THẾ
+    // 1. Đánh giá Dụng Thần chuẩn mực nghiêm ngặt trước
+    // 2. NẾU DỤNG THẦN VƯỢNG ➔ Mới xét Hào Thế (Hào Thế chỉ cần tối thiểu 1 cái sinh cho: Nhật, Nguyệt hoặc Hào Động)
     // =========================================================================
-    let bestCand = findBestDungThanCandidate(hexData, cal, targetRel);
-
-    if (!bestCand) {
-        return {
-            isQualified: false,
-            score: 15,
-            grade: 'Khuyết Dụng Thần',
-            reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) không xuất hiện trong quẻ ➔ Cũng bỏ (Loại bỏ 100%).`]
-        };
-    }
-
     let dungThanIsVung = false;
     let dungThanScore = 0;
 
@@ -518,7 +499,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                 isQualified: false,
                 score: 15,
                 grade: 'Dụng Thần Suy Bại',
-                reasons: [`Hào Thế đã vượng nhưng Dụng Thần Phục Thần bị Không Vong / Nguyệt Phá / Nhật Phá ➔ Cũng bỏ (Loại bỏ 100%).`]
+                reasons: [`Dụng Thần Phục Thần bị Không Vong / Nguyệt Phá / Nhật Phá ➔ Bỏ luôn (Loại bỏ 100%).`]
             };
         }
 
@@ -534,7 +515,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                 isQualified: false,
                 score: 15,
                 grade: 'Dụng Thần Suy Bại',
-                reasons: [`Hào Thế đã vượng nhưng Dụng Thần Phục Thần bị suy vi hoặc Phi Thần khắc phá ➔ Cũng bỏ (Loại bỏ 100%).`]
+                reasons: [`Dụng Thần Phục Thần bị suy vi hoặc Phi Thần khắc phá ➔ Bỏ luôn (Loại bỏ 100%).`]
             };
         }
     } else if (bestCand.source === 'changed') {
@@ -545,7 +526,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                 isQualified: false,
                 score: 15,
                 grade: 'Dụng Thần Suy Bại',
-                reasons: [`Hào Thế đã vượng nhưng Dụng Thần ở Hào Biến (${bestCand.chi}) bị Hóa Không Vong hoặc Hào Động sinh ra nó Suy Bại ➔ Cũng bỏ (Loại bỏ 100%).`]
+                reasons: [`Dụng Thần ở Hào Biến (${bestCand.chi}) bị Hóa Không Vong hoặc Hào Động sinh ra nó Suy Bại ➔ Bỏ luôn (Loại bỏ 100%).`]
             };
         }
 
@@ -562,46 +543,67 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
                     isQualified: false,
                     score: 15,
                     grade: 'Dụng Thần Động Suy Bại',
-                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) động Hóa Suy Bại (Bị Nhật Hợp / Hóa Không Vong / Bị Không Vong / Hóa Phá / Hồi Đầu Khắc...) ➔ Cũng bỏ (Loại bỏ 100%).`]
+                    reasons: [`Dụng Thần (${targetRel}) động Hóa Suy Bại ➔ Bỏ luôn (Loại bỏ 100%).`]
                 };
             }
             dungThanIsVung = true;
             dungThanScore = 45;
             reasons.push(`🔮 Dụng Thần (${targetRel}) là Hào Động hữu dụng vượng khí (Đại Cát Tường).`);
         } else {
-            // KHI DỤNG THẦN LÀ HÀO TĨNH
+            // KHI DỤNG THẦN LÀ HÀO TĨNH (Nghiêm ngặt: Phải được Nguyệt Lệnh sinh phò hoặc Nhật sinh + Nhật hợp)
             if (isTinhDungThanSuyBai(dtLine, cal, hexData)) {
                 return {
                     isQualified: false,
                     score: 15,
                     grade: 'Dụng Thần Tĩnh Suy Bại',
-                    reasons: [`Hào Thế đã vượng nhưng Dụng Thần (${targetRel}) tĩnh bị Suy Bại (Không Vong / Không được Nguyệt sinh phò / Nhập Mộ / Bị Hào động khắc, xung, hợp / Bị Hợp tàng khắc) ➔ Cũng bỏ (Loại bỏ 100%).`]
+                    reasons: [`Dụng Thần (${targetRel}) tĩnh bị Suy Bại (Không được Nguyệt Lệnh sinh phò / Tuần Không / Nhập Mộ...) ➔ Bỏ luôn (Loại bỏ 100%).`]
                 };
             }
             dungThanIsVung = true;
-            dungThanScore = 35;
-            reasons.push(`Dụng Thần (${targetRel}) là Hào Tĩnh vượng khí Cát tường.`);
+            dungThanScore = 40;
+            reasons.push(`Dụng Thần (${targetRel} - ${dtLine.chi}) là Hào Tĩnh vượng khí Cát tường.`);
         }
 
         // KIỂM TRA NGUYÊN THẦN (SINH DỤNG THẦN)
         hexData.linesData.forEach(dL => {
-            if (dL.isMoving && (isGenerating(dL.hanh, dtLine.hanh) || (nguyenRelPrefix && dL.relation.startsWith(nguyenRelPrefix)))) {
+            if (dL.isMoving && isGenerating(dL.hanh, dtLine.hanh)) {
                 if (isDongLineSuyBai(dL, cal, hexData)) {
-                    reasons.push(`⚠️ Nguyên Thần (${dL.relation} - ${dL.chi}) động Hóa Suy Bại (Không sinh trợ được Dụng Thần).`);
+                    reasons.push(`⚠️ Nguyên Thần (${dL.relation} - ${dL.chi}) động Hóa Suy Bại.`);
                 } else {
-                    dungThanScore += 25;
-                    reasons.push(`🔥 Quẻ có Hào Động Nguyên Thần sinh Dụng Thần (${targetRel}) - Lực sinh trợ đắc lực (Đại Cát).`);
+                    dungThanScore += 15;
+                    reasons.push(`🔥 Quẻ có Hào Động Nguyên Thần sinh Dụng Thần (${targetRel}) - Lực sinh trợ đắc lực.`);
                 }
             }
         });
     }
 
-    totalScore += dungThanScore;
+    // =========================================================================
+    // DỤNG THẦN ĐÃ VƯỢNG ➔ BÂY GIỜ MỚI XÉT HÀO THẾ (Hào Thế chỉ cần tối thiểu 1 cái sinh cho: Nhật, Nguyệt hoặc Hào Động)
+    // =========================================================================
+    const isNhatSinhThe = (theHanh === nhatHanh || isGenerating(nhatHanh, theHanh) || theChi === nhatChi);
+    const isNguyetSinhThe = (theHanh === nguyetHanh || isGenerating(nguyetHanh, theHanh) || theChi === nguyetChi);
+    const isDongSinhThe = hexData.linesData.some(dL => dL.isMoving && isGenerating(dL.hanh, theHanh) && !isDongLineSuyBai(dL, cal, hexData));
 
-    // =========================================================================
-    // BƯỚC 3: HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT!
-    // =========================================================================
-    totalScore += 25; // Điểm thưởng cơ bản cho quẻ Thế Vượng & Dụng Vượng
+    const hasTheSinhSupport = (isNhatSinhThe || isNguyetSinhThe || isDongSinhThe);
+
+    if (!hasTheSinhSupport || (haoThe.isMoving && isDongLineSuyBai(haoThe, cal, hexData))) {
+        return {
+            isQualified: false,
+            score: 15,
+            grade: 'Hào Thế Suy Bại',
+            reasons: [`Dụng Thần đã vượng nhưng Hào Thế (Bản mệnh) KHÔNG được yếu tố nào sinh trợ (không Nhật, Nguyệt, Hào động sinh) ➔ Bỏ luôn (Bản mệnh chưa vượng để gánh tài lộc, loại bỏ 100%).`]
+        };
+    }
+
+    if (isNhatSinhThe) {
+        reasons.push(`🌟 Hào Thế (Bản mệnh - ${theChi}) được Nhật Thần (${cal.ngay.chi}-${cal.ngay.hanh}) sinh phò (Đủ thế gánh vận lộc).`);
+    } else if (isNguyetSinhThe) {
+        reasons.push(`🌟 Hào Thế (Bản mệnh - ${theChi}) được Nguyệt Lệnh (${cal.thang.chi}-${cal.thang.hanh}) sinh phò (Đủ thế gánh vận lộc).`);
+    } else if (isDongSinhThe) {
+        reasons.push(`🌟 Hào Thế (Bản mệnh - ${theChi}) được Hào Động sinh phò (Đủ thế gánh vận lộc).`);
+    }
+
+    totalScore = 40 + dungThanScore;
 
     const mainName = hexData.mainName;
     if (mainName.includes('Thái') || mainName.includes('Trung Phu') || mainName.includes('Đại Hữu') || mainName.includes('Gia Nhân') || mainName.includes('Ích') || mainName.includes('Tụy')) {
@@ -609,7 +611,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
         reasons.push(`Quẻ Chủ ${mainName} thuộc nhóm quẻ Đại Cát Tường.`);
     }
 
-    totalScore = Math.min(100, Math.max(0, totalScore));
+    totalScore = Math.min(100, Math.max(75, totalScore));
 
     let grade = 'Đại Cát';
     if (totalScore >= 90) grade = 'Đại Cát (Ưu Tú)';
@@ -618,7 +620,7 @@ function evaluateSimFengShui(simNumber, hexData, cal, purpose, gender) {
     else grade = 'Cát Tường';
 
     return {
-        isQualified: true, // HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT!
+        isQualified: true,
         score: totalScore,
         grade,
         reasons

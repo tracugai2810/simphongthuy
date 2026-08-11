@@ -7,14 +7,15 @@ Tài liệu này hệ thống hóa toàn bộ các trường hợp **SUY BẠI**
 
 ---
 
-## 🛑 TRÌNH TỰ ĐÃI LỌC BẮT BUỘC (MỚI):
-1. **XÉT HÀO THẾ ĐẦU TIÊN (HÀO THẾ VƯỢNG MỚI XÉT ĐẾN DỤNG THẦN)**:
-   - Hào Thế đại diện cho Bản Mệnh. Bản mệnh chưa vượng thì không tiếp nhận được vận lộc.
-   - **Hào Thế SUY ➔ BỎ LUÔN (Loại bỏ 100%)**, không cần xét tiếp các yếu tố khác.
-2. **HÀO THẾ VƯỢNG ➔ XÉT TIẾP ĐẾN DỤNG THẦN**:
-   - Nếu Hào Thế vượng, nhưng **Dụng Thần SUY (Bao gồm Hào Động/Hào Biến Hóa Không Vong, Bị Không Vong, Bị Nhật Hợp, Hóa Phá, Hồi Đầu Khắc...) ➔ CŨNG BỎ (Loại bỏ 100%)**.
-3. **HÀO THẾ VƯỢNG + DỤNG THẦN VƯỢNG ➔ MỚI TÍNH CÁT**:
-   - Khi và chỉ khi **CẢ HÀO THẾ VƯỢNG VÀ DỤNG THẦN VƯỢNG** ➔ Mới đạt tiêu chuẩn SIM Cát Tường để gợi ý cho khách hàng tại [simphongthuy.io.vn](http://simphongthuy.io.vn)!
+## 🛑 TRÌNH TỰ ĐÃI LỌC BẮT BUỘC (CẬP NHẬT CHUẨN MỚI):
+
+1. **KHI DỤNG THẦN CHÍNH LÀ HÀO THẾ** (`Dụng Thần = Hào Thế`):
+   - Không xét riêng Hào Thế theo quy tắc nới lỏng. Đánh giá trực tiếp 100% theo tiêu chuẩn **Dụng Thần Vượng / Suy nghiêm ngặt** (Xem Phần I nếu Động, Phần II nếu Tĩnh).
+   - Nếu Dụng Thần (Hào Thế) bị Suy (ví dụ: Hào tĩnh không được Nguyệt Lệnh sinh phò, hoặc bị Tuần Không, Nhập Mộ...) ➔ **BỎ LUÔN (Loại bỏ 100%) / Thế Suy Bại**.
+
+2. **KHI DỤNG THẦN KHÁC HÀO THẾ**:
+   - **Bước A - Đánh Giá Dụng Thần Trước**: Dụng Thần bắt buộc phải đạt tiêu chuẩn **VƯỢNG CHUẨN MỰC** (Hào tĩnh phải được Nguyệt Lệnh sinh phò hoặc Nhật vừa sinh vừa Hợp; Hào động không dính 13 lỗi suy bại). Nếu Dụng Thần Suy ➔ **BỎ LUÔN (Loại bỏ 100%)**.
+   - **Bước B - Khi Dụng Thần Đã Vượng ➔ Mới Xét Hào Thế**: Hào Thế (Bản mệnh) chỉ cần được **tối thiểu 1 yếu tố sinh phò** (Nhật Thần sinh, Nguyệt Lệnh sinh, hoặc Hào Động sinh) ➔ Đạt thế đủ lực gánh tài lộc ➔ **TÍNH LÀ CÁT TƯỜNG (CÁT)**!
 
 ---
 
