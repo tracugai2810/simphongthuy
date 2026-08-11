@@ -689,6 +689,17 @@ function executePendingActionWithConfirm() {
     openModal('confirmDeductModal');
 }
 
+function getPurposeText(purposeKey) {
+    const map = {
+        'cautai': 'Cầu Tài Lộc (Thê Tài)',
+        'cauquan': 'Cầu Công Danh, Quan Lộc (Quan Quỷ)',
+        'suckhoe': 'Cầu Sức Khỏe, Bình An (Hào Thế)',
+        'concai': 'Cầu Con Cái, Gia Đạo (Tử Tôn)',
+        'honnhan': 'Cầu Hôn Nhân, Tình Duyên'
+    };
+    return map[purposeKey] || 'Cầu Tài Lộc (Thê Tài)';
+}
+
 function executeEvalCurrentSim() {
     const inputEl = document.getElementById('currentSimInput') || document.getElementById('evalCurrentSim');
     const inputSim = inputEl ? inputEl.value.trim() : '';
@@ -707,7 +718,7 @@ function executeEvalCurrentSim() {
 
     const currentSimArea = document.getElementById('currentSimResultArea') || document.getElementById('currentSimResultBox');
     const formattedSim = formatSimNumber(rawSim);
-    currentSimEvalItem = { sim: rawSim, hexData, evaluation };
+    currentSimEvalItem = { sim: rawSim, hexData, evaluation, purpose, purposeText: getPurposeText(purpose) };
 
     if (currentSimArea) {
         currentSimArea.style.display = 'block';
@@ -765,6 +776,12 @@ function executeSearchSims() {
 
     setTimeout(() => {
         currentResults = generateMatchingSims(pattern, birthDateVal, gender, purpose, limitVal);
+        if (Array.isArray(currentResults)) {
+            currentResults.forEach(r => {
+                r.purpose = purpose;
+                r.purposeText = getPurposeText(purpose);
+            });
+        }
         renderResults(currentResults);
     }, 150);
 }
@@ -933,8 +950,8 @@ function buildHexCardHTML(item) {
         `;
     }
 
-    const purposeSelect = document.getElementById('purposeSelect');
-    const purposeText = purposeSelect ? purposeSelect.options[purposeSelect.selectedIndex].text : '';
+    const { purpose, purposeText: pText } = getFormInputs();
+    const purposeDisplay = item.purposeText || getPurposeText(item.purpose || purpose) || pText;
 
     return `
         <div id="hexCardCapture" class="hex-card-view">
@@ -942,7 +959,7 @@ function buildHexCardHTML(item) {
             <div class="info-header">
                 <div class="info-content">
                     <div class="info-line"><strong>SIM Chọn:</strong> <span class="highlight" style="font-size:18px;">${formatSimNumber(sim)}</span></div>
-                    <div class="info-line"><strong>Mục đích cầu:</strong> ${purposeText}</div>
+                    <div class="info-line"><strong>Mục đích cầu:</strong> <span class="highlight">${purposeDisplay}</span></div>
                     <div class="info-line"><strong>Tuần Không:</strong> <span class="highlight">${hexData.dateInfo.tuanKhong}</span></div>
                     <div class="info-line">
                         <strong>Nhật Thần:</strong> <span class="highlight">${hexData.dateInfo.nhatThan}</span> &nbsp;&nbsp;&nbsp;&nbsp; 

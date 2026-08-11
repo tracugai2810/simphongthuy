@@ -170,38 +170,47 @@ function isTinhDungThanSuyBai(line, cal, hexData) {
     const nguyetChi = cal.thang.chi;
     const nguyetHanh = cal.thang.hanh;
 
-    // 1. Không được Nguyệt sinh phò (lúc này Nhật sinh không có tác dụng trừ khi Nhật Hợp)
-    const isNguyetSinhPho = (hanh === nguyetHanh || isGenerating(nguyetHanh, hanh));
-    const isNhatSinh = (hanh === nhatHanh || isGenerating(nhatHanh, hanh));
+    // 1. Kiểm tra Nguyệt sinh phò / Lâm Nguyệt (Cùng ngũ hành hoặc cùng Địa Chi với Nguyệt Lệnh)
+    const isNguyetLamChi = (chi === nguyetChi);
+    const isNguyetSinhPho = (hanh === nguyetHanh || isGenerating(nguyetHanh, hanh) || isNguyetLamChi);
+    const isNhatSinh = (hanh === nhatHanh || isGenerating(nhatHanh, hanh) || chi === nhatChi);
     const isNhatHop = isBranchHarmonious(chi, nhatChi);
 
     if (!isNguyetSinhPho) {
         if (!(isNhatSinh && isNhatHop)) {
-            return true; // Suy Bại!
+            return true; // Suy Bại nếu không được Nguyệt sinh/lâm và không được Nhật vừa sinh vừa hợp
         }
     }
 
     // 2. Nhập Mộ tại Nhật
     if (nhatChi === getTombBranch(hanh)) return true;
+
     // 3. Nhập Mộ tại Hào Động
     if (hexData && hexData.linesData) {
         const isMoTaiHaoDong = hexData.linesData.some(dL => dL.isMoving && dL.chi === getTombBranch(hanh));
         if (isMoTaiHaoDong) return true;
     }
+
     // 4. Dụng Thần Không Vong
     if (cal.tuanKhong.includes(chi)) return true;
+
     // 5. Dụng Thần bị Hào Động khắc
     if (hexData && hexData.linesData) {
         const isBiDongKhac = hexData.linesData.some(dL => dL.isMoving && isOvercoming(dL.hanh, hanh));
         if (isBiDongKhac) return true;
     }
-    // 6. Dụng Thần bị Hào Động xung hoặc hợp
+
+    // 6. Dụng Thần bị Hào Động xung phá hoặc hợp tàng khắc (Lưu ý: Lục Hợp Cát như Thìn-Dậu là Cát, không bị coi là suy)
     if (hexData && hexData.linesData) {
-        const isBiDongXungHop = hexData.linesData.some(dL => dL.isMoving && (isBranchXung(dL.chi, chi) || isBranchHarmonious(dL.chi, chi)));
-        if (isBiDongXungHop) return true;
+        const isBiDongXungHoacTangKhac = hexData.linesData.some(dL => dL.isMoving && (isBranchXung(dL.chi, chi) || isHopTangKhac(dL.chi, chi)));
+        if (isBiDongXungHoacTangKhac) return true;
     }
+
     // 7. Bị Nhật Hợp hoặc Nguyệt Hợp mà Hợp Tàng Khắc
     if (isHopTangKhac(nguyetChi, chi) || isHopTangKhac(nhatChi, chi)) return true;
+
+    // 8. Bị Nguyệt Phá hoặc Nhật Phá
+    if (isBranchXung(chi, nguyetChi) || isBranchXung(chi, nhatChi)) return true;
 
     return false;
 }
