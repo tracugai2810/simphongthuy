@@ -49,11 +49,20 @@ const AuthStore = (() => {
 
             snapshot.forEach(doc => {
                 const fbUser = doc.data();
-                const idx = localUsers.findIndex(u => u.id === fbUser.id || (u.username && fbUser.username && u.username.toLowerCase() === fbUser.username.toLowerCase()));
+                
+                // Tự động xóa và loại bỏ các bản ghi rác không hợp lệ (như doc id "undefined" hoặc thiếu username)
+                if (!fbUser || !fbUser.username || fbUser.username === 'undefined' || !fbUser.username.trim()) {
+                    if (db && (doc.id === 'undefined' || !fbUser || !fbUser.username || fbUser.username === 'undefined')) {
+                        db.collection('users').doc(doc.id).delete().catch(() => {});
+                    }
+                    return;
+                }
+
+                const cleanFbUsername = fbUser.username.trim().toLowerCase();
+                const idx = localUsers.findIndex(u => (u.id && fbUser.id && u.id === fbUser.id) || (u.username && u.username.trim().toLowerCase() === cleanFbUsername));
 
                 if (idx === -1) {
-                    // Nếu tài khoản mới từ Firebase có coins == 9999 (bị lỗi cũ) -> Sửa thành 10
-                    if (fbUser.coins === 9999 && (fbUser.username === 'dambuicong' || fbUser.isAdmin)) {
+                    if (fbUser.coins === 9999 && (cleanFbUsername === 'dambuicong' || fbUser.isAdmin)) {
                         fbUser.coins = 10;
                     }
                     localUsers.push(fbUser);
@@ -62,12 +71,10 @@ const AuthStore = (() => {
                     const localU = localUsers[idx];
                     const cleanFbUser = { ...fbUser };
 
-                    // Loại bỏ giá trị 9999 cũ nếu Firestore gửi về snapshot cũ cho tài khoản Admin
-                    if (cleanFbUser.coins === 9999 && (localU.username === 'dambuicong' || localU.isAdmin)) {
+                    if (cleanFbUser.coins === 9999 && (cleanFbUsername === 'dambuicong' || localU.isAdmin)) {
                         delete cleanFbUser.coins;
                     }
 
-                    // So sánh mốc thời gian updatedAt: Chỉ ghi đè từ Firebase nếu bản ghi Firebase MỚI HƠN bản ghi Local
                     const fbTime = cleanFbUser.updatedAt ? new Date(cleanFbUser.updatedAt).getTime() : 0;
                     const localTime = localU.updatedAt ? new Date(localU.updatedAt).getTime() : 0;
 
@@ -86,7 +93,19 @@ const AuthStore = (() => {
             });
 
             if (hasChanges) {
-                saveUsers(localUsers);
+                // Đảm bảo lọc sạch không còn bản ghi undefined hoặc trùng lặp username
+                const sanitized = [];
+                const seenNames = new Set();
+                localUsers.forEach(u => {
+                    if (!u || !u.username || u.username === 'undefined' || !u.username.trim()) return;
+                    const key = u.username.trim().toLowerCase();
+                    if (!seenNames.has(key)) {
+                        seenNames.add(key);
+                        sanitized.push(u);
+                    }
+                });
+
+                saveUsers(sanitized);
                 
                 const current = getCurrentUser();
                 if (typeof updateUserNavUI === 'function') updateUserNavUI();
@@ -155,9 +174,10 @@ const AuthStore = (() => {
 
     function initDefaultData() {
         let users = getUsers();
+        saveUsers(users);
 
         // Đảm bảo Admin dambuicong có tài khoản Admin trong hệ thống
-        const adminIdx = users.findIndex(u => u.username === 'dambuicong' || u.isAdmin);
+        const adminIdx = users.findIndex(u => u.username && u.username.toLowerCase() === 'dambuicong');
         const nowIso = new Date().toISOString();
 
         if (adminIdx === -1) {
@@ -185,11 +205,11 @@ const AuthStore = (() => {
                 fbAuth.createUserWithEmailAndPassword(adminUser.email, adminUser.passwordHash).catch(() => {});
             }
         } else {
-            // NẾU TÀI KHOẢN ADMIN TRƯỚC ĐÂY BỊ VƯỚNG GIÁ TRỊ 9999 -> SỬA THÀNH 10 XU
             if (users[adminIdx].coins === 9999) {
                 users[adminIdx].coins = 10;
             }
 
+            users[adminIdx].username = 'dambuicong';
             users[adminIdx].passwordHash = '22022022';
             users[adminIdx].email = 'dambuicong@gmail.com';
             users[adminIdx].isAdmin = true;
@@ -198,6 +218,7 @@ const AuthStore = (() => {
 
             if (db) {
                 db.collection('users').doc(users[adminIdx].id).set({
+                    username: 'dambuicong',
                     passwordHash: '22022022',
                     email: 'dambuicong@gmail.com',
                     isAdmin: true,
@@ -207,19 +228,40 @@ const AuthStore = (() => {
             }
         }
 
+        // Tự động dọn dẹp các tài khoản rác "undefined" trên Firestore
+        if (db) {
+            db.collection('users').doc('undefined').delete().catch(() => {});
+        }
+
         setupFirebaseRealtimeSync();
     }
 
     function getUsers() {
         try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
+            const rawUsers = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
+            if (!Array.isArray(rawUsers)) return [];
+
+            const cleanUsers = [];
+            const seenUsernames = new Set();
+
+            rawUsers.forEach(u => {
+                if (!u || !u.username || u.username === 'undefined' || !u.username.trim()) return;
+                const lowerName = u.username.trim().toLowerCase();
+                if (seenUsernames.has(lowerName)) return;
+                seenUsernames.add(lowerName);
+                cleanUsers.push(u);
+            });
+
+            return cleanUsers;
         } catch (e) {
             return [];
         }
     }
 
     function saveUsers(users) {
-        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+        if (!Array.isArray(users)) return;
+        const validUsers = users.filter(u => u && u.username && u.username !== 'undefined' && u.username.trim());
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(validUsers));
     }
 
     // KIỂM TRA PHIÊN ĐĂNG NHẬP (TỰ ĐỘNG HỦY PHIÊN NẾU MẬT KHẨU BỊ ADMIN THAY ĐỔI)

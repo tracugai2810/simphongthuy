@@ -184,6 +184,8 @@ function renderUsersList() {
 
     let html = '';
     users.forEach(u => {
+        if (!u || !u.username || u.username === 'undefined' || !u.username.trim()) return;
+
         const isAdmin = u.isAdmin || u.username.toLowerCase() === 'dambuicong';
         const deleteBtnHtml = isAdmin ? '' : `
             <button class="btn-admin-reject" style="margin-left:4px;" onclick="handleDeleteUser('${u.id}', '${u.username}')">🗑️ Xóa</button>
@@ -193,7 +195,7 @@ function renderUsersList() {
             <tr>
                 <td><strong>${u.username}</strong> ${isAdmin ? '<span class="badge-status status-approved">ADMIN</span>' : ''}</td>
                 <td>${u.email || u.username + '@gmail.com'}</td>
-                <td><code style="color:#ffd700;">${u.refCode}</code></td>
+                <td><code style="color:#ffd700;">${u.refCode || '---'}</code></td>
                 <td><strong style="color:#ffd700; font-size:1.05rem;">${u.coins} Xu</strong></td>
                 <td>
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -206,7 +208,7 @@ function renderUsersList() {
         `;
     });
 
-    tbody.innerHTML = html;
+    tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center; padding:20px; color:#94a3b8;">Chưa có thành viên nào.</td></tr>`;
 }
 
 function handleDeleteUser(userId, username) {
