@@ -1,16 +1,11 @@
 /* ==========================================================================
    MAIN UI CONTROLLER - Website Sim Phong Thủy Lục Hào Pro
-   - Tự động chuyển Chữ Hoa cho Mã Giới Thiệu & Chữ Thường cho Tên Đăng Nhập
-   - Custom Modal Quên Mật Khẩu Đẹp Sang Trọng (Không dùng prompt trình duyệt)
-   - Đổi Mật Khẩu Admin thành 140498 & hỗ trợ email dambuicong@gmail.com
-   - Nút X Popup Quẻ Lục Hào Hoạt Động 100%
-   - Nút Tải QR ẩn trên máy tính, chỉ hiển thị trên Điện Thoại (Mã QR to 240px)
+   - Mở hoàn toàn 100%: Tra cứu & Đánh giá SIM không cần đăng nhập hay Xu
+   - Tối ưu Mobile-First, mượt mà trên mọi thiết bị
    ========================================================================== */
 
 let currentResults = [];
 let currentSimEvalItem = null;
-let pendingAction = null;
-let selectedDonateTierKey = '50k';
 
 document.addEventListener('DOMContentLoaded', () => {
     initFormDefaults();
@@ -18,9 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormEvents();
     setupModalEvents();
     setupCurrentSimEval();
-    setupAuthAndCommerce();
-    setupInputTransforms();
-    detectRefQuery();
 });
 
 function isMobileDevice() {
@@ -35,499 +27,6 @@ function initFormDefaults() {
     const dateInput = document.getElementById('birthDate');
     if (dateInput) {
         dateInput.value = localISOTime;
-    }
-
-    const limitSelect = document.getElementById('limitSelect');
-    const btnSubmitSearch = document.getElementById('btnSubmitSearch');
-
-    if (limitSelect && btnSubmitSearch) {
-        const updateSubmitBtnText = () => {
-            const val = parseInt(limitSelect.value) || 5;
-            let cost = 2;
-            if (val === 5) cost = 2;
-            if (val === 15) cost = 6;
-            if (val === 30) cost = 12;
-            if (val === 50) cost = 20;
-
-            btnSubmitSearch.innerHTML = `🔮 Gợi Ý SIM Số Đẹp (${cost} Xu)`;
-        };
-
-        limitSelect.addEventListener('change', updateSubmitBtnText);
-        updateSubmitBtnText(); // Tự động cập nhật ngay khi trang vừa load xong
-    }
-}
-
-// TỰ ĐỘNG BIẾN ĐỔI CHỮ HOA MÃ GIỚI THIỆU & CHỮ THƯỜNG TÊN TÀI KHOẢN
-function setupInputTransforms() {
-    const uppercaseInputs = ['regRefCode', 'inputApplyRefCode'];
-    uppercaseInputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', function() {
-                this.value = this.value.toUpperCase();
-            });
-        }
-    });
-
-    const lowercaseInputs = ['loginUsername', 'regUsername', 'forgotInput'];
-    lowercaseInputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', function() {
-                this.value = this.value.toLowerCase();
-            });
-        }
-    });
-}
-
-// THƯƠNG MẠI HÓA & AUTH STORE UI SYNC
-function setupAuthAndCommerce() {
-    updateUserNavUI();
-
-    const btnOpenAuth = document.getElementById('btnOpenAuth');
-    if (btnOpenAuth) btnOpenAuth.addEventListener('click', () => openModal('authModal'));
-
-    const btnEarnCoins = document.getElementById('btnEarnCoins');
-    if (btnEarnCoins) btnEarnCoins.addEventListener('click', () => openDonateModal());
-
-    const btnShowCoinHistory = document.getElementById('btnShowCoinHistory');
-    if (btnShowCoinHistory) btnShowCoinHistory.addEventListener('click', () => openUserCoinHistoryModal());
-
-    const btnShowRefModal = document.getElementById('btnShowRefModal');
-    if (btnShowRefModal) btnShowRefModal.addEventListener('click', () => openRefModal());
-
-    const btnLogout = document.getElementById('btnLogout');
-    if (btnLogout) {
-        btnLogout.addEventListener('click', (e) => {
-            if (e) e.preventDefault();
-            AuthStore.logout();
-            updateUserNavUI();
-            showToast("Đã đăng xuất tài khoản!");
-        });
-    }
-
-    const adminLinkBtn = document.getElementById('adminLinkBtn');
-    if (adminLinkBtn) {
-        adminLinkBtn.addEventListener('click', (e) => {
-            if (e) e.preventDefault();
-            window.location.href = 'admin/index.html';
-        });
-    }
-
-    // Form Đăng Nhập
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const u = document.getElementById('loginUsername').value;
-            const p = document.getElementById('loginPassword').value;
-
-            const res = AuthStore.login(u, p);
-            if (res.success) {
-                closeModal('authModal');
-                updateUserNavUI();
-                showToast(res.message);
-                if (pendingAction) {
-                    executePendingActionWithConfirm();
-                }
-            } else {
-                showToast(res.message);
-            }
-        });
-    }
-
-    // Nút Mở Modal Quên Mật Khẩu Custom (Hiển thị popup liên hệ Admin Zalo)
-    const btnOpenForgotPasswordModal = document.getElementById('btnOpenForgotPasswordModal');
-    if (btnOpenForgotPasswordModal) {
-        btnOpenForgotPasswordModal.addEventListener('click', (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            closeModal('authModal');
-            openModal('forgotPasswordModal', true);
-        });
-    }
-
-    // Submit Form Quên Mật Khẩu
-    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-    if (forgotPasswordForm) {
-        forgotPasswordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const inputVal = document.getElementById('forgotInput').value.trim();
-            const resultBox = document.getElementById('forgotResultBox');
-
-            if (!inputVal) return;
-
-            const res = AuthStore.requestPasswordReset(inputVal);
-
-            if (resultBox) {
-                resultBox.style.display = 'block';
-                if (res.success) {
-                    resultBox.style.background = 'rgba(34, 197, 94, 0.15)';
-                    resultBox.style.border = '1px solid #16a34a';
-                    resultBox.style.color = '#4ade80';
-                } else {
-                    resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
-                    resultBox.style.border = '1px solid #ef4444';
-                    resultBox.style.color = '#f87171';
-                }
-                resultBox.textContent = res.message;
-            }
-
-            showToast(res.message);
-        });
-    }
-
-    // Form Đăng Ký
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const u = document.getElementById('regUsername').value;
-            const p = document.getElementById('regPassword').value;
-            const ref = document.getElementById('regRefCode').value;
-
-            const res = AuthStore.register(u, `${u}@gmail.com`, p, ref);
-            if (res.success) {
-                closeModal('authModal');
-                updateUserNavUI();
-                showToast(res.message);
-                if (pendingAction) {
-                    executePendingActionWithConfirm();
-                }
-            } else {
-                showToast(res.message);
-            }
-        });
-    }
-
-    // NÚT BẤM BỔ SUNG MÃ GIỚI THIỆU
-    const btnApplyRefCode = document.getElementById('btnApplyRefCode');
-    if (btnApplyRefCode) {
-        btnApplyRefCode.addEventListener('click', () => {
-            const user = AuthStore.getCurrentUser();
-            if (!user) {
-                openModal('authModal');
-                return;
-            }
-
-            const inputRef = document.getElementById('inputApplyRefCode').value;
-            const res = AuthStore.applyReferralCode(user.id, inputRef);
-
-            showToast(res.message);
-            if (res.success) {
-                updateUserNavUI();
-                openRefModal();
-            }
-        });
-    }
-
-    // Submit Donate Request
-    const btnSubmitDonateReq = document.getElementById('btnSubmitDonateReq');
-    if (btnSubmitDonateReq) {
-        btnSubmitDonateReq.addEventListener('click', () => {
-            const user = AuthStore.getCurrentUser();
-            if (!user) {
-                openModal('authModal');
-                return;
-            }
-
-            const res = AuthStore.createDonateRequest(user.id, selectedDonateTierKey);
-            showToast(res.message);
-            if (res.success) {
-                closeModal('donateModal');
-            }
-        });
-    }
-
-    // TẢI / CHIA SẺ MÃ QR DONATE THANH TOÁN NGÂN HÀNG (CHỈ CHẠY KHI BẤM Ở DI ĐỘNG)
-    const btnDownloadDonateQr = document.getElementById('btnDownloadDonateQr');
-    if (btnDownloadDonateQr) {
-        btnDownloadDonateQr.addEventListener('click', () => {
-            handleDownloadDonateQr();
-        });
-    }
-
-    // Confirm Deduct Coins Action
-    const btnConfirmDeductAction = document.getElementById('btnConfirmDeductAction');
-    if (btnConfirmDeductAction) {
-        btnConfirmDeductAction.addEventListener('click', () => {
-            if (!pendingAction) return;
-
-            const user = AuthStore.getCurrentUser();
-            if (!user) {
-                closeModal('confirmDeductModal');
-                openModal('authModal');
-                return;
-            }
-
-            const res = AuthStore.deductCoins(user.id, pendingAction.cost, pendingAction.actionName);
-            if (res.success) {
-                closeModal('confirmDeductModal');
-                updateUserNavUI();
-                showToast(`Đã trừ ${pendingAction.cost} Xu. Đang xử lý quẻ...`);
-
-                const act = pendingAction.type;
-                pendingAction = null;
-
-                if (act === 'evalCurrent') {
-                    executeEvalCurrentSim();
-                } else if (act === 'searchSims') {
-                    executeSearchSims();
-                }
-            } else {
-                closeModal('confirmDeductModal');
-                showToast(res.message);
-                openDonateModal();
-            }
-        });
-    }
-
-    // Copy Referral Link
-    const btnCopyRefLink = document.getElementById('btnCopyRefLink');
-    if (btnCopyRefLink) {
-        btnCopyRefLink.addEventListener('click', () => {
-            const user = AuthStore.getCurrentUser();
-            if (!user) return;
-            const origin = (window.location.origin && window.location.origin.includes('simphongthuy.io.vn')) 
-                ? 'http://simphongthuy.io.vn' 
-                : window.location.origin;
-            const url = `${origin}/?ref=${user.refCode}`;
-            copySimNumberOnly(url);
-        });
-    }
-}
-
-// XỬ LÝ TẢI / CHIA SẺ MÃ QR DONATE TRÊN ĐIỆN THOẠI
-function handleDownloadDonateQr() {
-    const qrImg = document.getElementById('donateQrImg');
-    if (!qrImg || !qrImg.src) return;
-
-    const imgSrc = qrImg.src;
-    const filename = `ma-qr-donate-${selectedDonateTierKey}-${Date.now()}.jpg`;
-
-    fetch(imgSrc)
-        .then(res => res.blob())
-        .then(blob => {
-            const file = new File([blob], filename, { type: 'image/jpeg' });
-
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    files: [file],
-                    title: `Mã QR Donate Ngân Hàng - Gói ${selectedDonateTierKey.toUpperCase()}`,
-                    text: `Mã QR Chuyển Khoản Ngân Hàng Donate Gói ${selectedDonateTierKey.toUpperCase()}`
-                }).then(() => {
-                    showToast("Đã chia sẻ / lưu ảnh mã QR thành công!");
-                }).catch(err => {
-                    if (err.name !== 'AbortError') {
-                        fallbackDownloadBlob(blob, filename);
-                    }
-                });
-            } else {
-                fallbackDownloadBlob(blob, filename);
-            }
-        })
-        .catch(() => {
-            const link = document.createElement('a');
-            link.href = imgSrc;
-            link.download = filename;
-            link.click();
-            showToast("Đã tải ảnh mã QR về thiết bị!");
-        });
-}
-
-// CẬP NHẬT GIAO DIỆN HEADER TÀI KHOẢN
-function updateUserNavUI() {
-    const user = AuthStore.getCurrentUser();
-    const guestNav = document.getElementById('guestUserNav');
-    const loggedInNav = document.getElementById('loggedInUserNav');
-    const coinSpan = document.getElementById('userCoinBalance');
-    const refCodeSpan = document.getElementById('userRefCode');
-    const adminLinkBtn = document.getElementById('adminLinkBtn');
-
-    if (!user) {
-        if (guestNav) guestNav.style.display = 'flex';
-        if (loggedInNav) loggedInNav.style.display = 'none';
-    } else {
-        if (guestNav) guestNav.style.display = 'none';
-        if (loggedInNav) loggedInNav.style.display = 'flex';
-
-        if (coinSpan) coinSpan.textContent = user.coins;
-        if (refCodeSpan) refCodeSpan.textContent = user.refCode || '---';
-
-        if (adminLinkBtn) {
-            adminLinkBtn.style.display = (user.username === 'dambuicong' || user.isAdmin) ? 'inline-block' : 'none';
-        }
-    }
-}
-
-// MỞ POPUP LỊCH SỬ TIÊU DÙNG XU KHÁCH HÀNG (CĂN GIỮA NỘI DUNG THAO TÁC CỰC CHUẨN)
-function openUserCoinHistoryModal() {
-    const user = AuthStore.getCurrentUser();
-    if (!user) {
-        openModal('authModal');
-        return;
-    }
-
-    const logs = AuthStore.getUserLogs(user.id);
-    const actualCoins = user.coins;
-
-    const histBalanceEl = document.getElementById('histCurrentBalance');
-    if (histBalanceEl) {
-        histBalanceEl.textContent = `${actualCoins} Xu`;
-    }
-
-    // Cập nhật cả số dư trên thanh Header Nav
-    const userCoinBalanceEl = document.getElementById('userCoinBalance');
-    if (userCoinBalanceEl) {
-        userCoinBalanceEl.textContent = actualCoins;
-    }
-
-    const tbody = document.getElementById('userCoinHistoryTableBody');
-    if (!tbody) return;
-
-    if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:24px; color:#94a3b8;">Chưa có lịch sử tiêu dùng Xu.</td></tr>`;
-    } else {
-        let html = '';
-        logs.forEach(l => {
-            const dt = new Date(l.timestamp);
-            const timeStr = dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-            const formattedTime = `<div style="font-weight:700; font-size:0.82rem; color:#f1f5f9; white-space:nowrap; text-align:center;">${timeStr}</div><div style="font-size:0.75rem; color:#94a3b8; white-space:nowrap; text-align:center;">${dateStr}</div>`;
-
-            const cleanAction = (l.action || '').replace(/Nạp Xu/gi, '').trim();
-
-            const changeBadge = l.change >= 0 
-                ? `<span style="color:#4ade80; font-weight:800; font-size:0.9rem; white-space:nowrap;">+${l.change} Xu</span>` 
-                : `<span style="color:#f87171; font-weight:800; font-size:0.9rem; white-space:nowrap;">${l.change} Xu</span>`;
-
-            const balanceStr = `<div style="font-size:0.75rem; color:#ffd700; font-weight:bold;">(Dư ${l.balanceAfter} Xu)</div>`;
-
-            html += `
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
-                    <td style="padding: 10px 6px; vertical-align: middle; text-align: center;">${formattedTime}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; text-align: center; color:#cbd5e1; font-size:0.86rem; line-height:1.4;">${cleanAction}</td>
-                    <td style="padding: 10px 6px; vertical-align: middle; text-align: center;">
-                        ${changeBadge}
-                        ${balanceStr}
-                    </td>
-                </tr>
-            `;
-        });
-        tbody.innerHTML = html;
-    }
-
-    openModal('userCoinHistoryModal');
-}
-
-// BẮT MÃ GIỚI THIỆU TỪ URL (?ref=CODE)
-function detectRefQuery() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refParam = urlParams.get('ref');
-    if (refParam) {
-        const regRefInput = document.getElementById('regRefCode');
-        if (regRefInput) regRefInput.value = refParam.toUpperCase();
-
-        const inputApplyRefCode = document.getElementById('inputApplyRefCode');
-        if (inputApplyRefCode) inputApplyRefCode.value = refParam.toUpperCase();
-    }
-}
-
-function openDonateModal() {
-    const user = AuthStore.getCurrentUser();
-    if (!user) {
-        showToast("Vui lòng đăng nhập trước khi Donate!");
-        openModal('authModal');
-        return;
-    }
-    selectDonateTier('50k', 2, 50000, document.querySelector('.donate-card'));
-    openModal('donateModal');
-}
-
-function selectDonateTier(tierKey, coins, amountVnd, elem) {
-    selectedDonateTierKey = tierKey;
-
-    document.querySelectorAll('.donate-card').forEach(c => c.classList.remove('active'));
-    if (elem) elem.classList.add('active');
-
-    const qrImg = document.getElementById('donateQrImg');
-    const memoText = document.getElementById('donateMemoText');
-    const user = AuthStore.getCurrentUser();
-    const username = user ? user.username : 'KHACH';
-
-    if (qrImg) {
-        qrImg.src = `${tierKey}.jfif`;
-        qrImg.alt = `QR Code Donate ${tierKey}`;
-    }
-
-    if (memoText) {
-        memoText.textContent = `DONATE ${username.toUpperCase()}`;
-    }
-}
-
-// MỞ MODAL MÃ GIỚI THIỆU
-function openRefModal() {
-    const user = AuthStore.getCurrentUser();
-    if (!user) {
-        openModal('authModal');
-        return;
-    }
-
-    const refCodeBig = document.getElementById('refCodeBig');
-    if (refCodeBig) {
-        refCodeBig.textContent = user.refCode || '---';
-        refCodeBig.style.cursor = 'pointer';
-        refCodeBig.title = 'Bấm vào để sao chép mã';
-        refCodeBig.onclick = () => {
-            if (user.refCode) {
-                copySimNumberOnly(user.refCode);
-                showToast(`Đã sao chép mã giới thiệu: ${user.refCode}`);
-            }
-        };
-    }
-
-    const stats = AuthStore.getReferralStats(user.id);
-    document.getElementById('statTotalRefs').textContent = stats.totalRefs;
-    document.getElementById('statQualRefs').textContent = stats.qualifiedRefs;
-    document.getElementById('statTotalEarned').textContent = stats.totalEarned;
-
-    // Kiểm tra đã áp dụng Mã GT chưa
-    const refApplySection = document.getElementById('refApplySection');
-    const refAppliedBadge = document.getElementById('refAppliedBadge');
-    const refAppliedName = document.getElementById('refAppliedName');
-
-    if (stats.referredBy || user.referredBy) {
-        if (refApplySection) refApplySection.style.display = 'none';
-        if (refAppliedBadge) {
-            refAppliedBadge.style.display = 'block';
-            if (refAppliedName) refAppliedName.textContent = stats.referrerName || 'Người Giới Thiệu';
-        }
-    } else {
-        if (refApplySection) refApplySection.style.display = 'block';
-        if (refAppliedBadge) refAppliedBadge.style.display = 'none';
-    }
-
-    openModal('refModal');
-}
-
-function switchAuthTab(tab) {
-    const tabLoginBtn = document.getElementById('tabLoginBtn');
-    const tabRegisterBtn = document.getElementById('tabRegisterBtn');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-
-    if (tab === 'login') {
-        tabLoginBtn.classList.add('active');
-        tabRegisterBtn.classList.remove('active');
-        loginForm.style.display = 'block';
-        registerForm.style.display = 'none';
-    } else {
-        tabRegisterBtn.classList.add('active');
-        tabLoginBtn.classList.remove('active');
-        registerForm.style.display = 'block';
-        loginForm.style.display = 'none';
     }
 }
 
@@ -593,33 +92,13 @@ function setupFormEvents() {
     const handleSearch = (e) => {
         if (e) e.preventDefault();
 
-        const user = AuthStore.getCurrentUser();
-        if (!user) {
-            showToast("Vui lòng đăng nhập để gợi ý SIM!");
-            openModal('authModal');
-            return;
-        }
-
         const { birthDateVal } = getFormInputs();
         if (!birthDateVal) {
             showToast("Vui lòng chọn ngày & giờ sinh!");
             return;
         }
 
-        const { limitVal } = getFormInputs();
-        let cost = 2;
-        if (limitVal === 5) cost = 2;
-        if (limitVal === 15) cost = 6;
-        if (limitVal === 30) cost = 12;
-        if (limitVal === 50) cost = 20;
-
-        pendingAction = {
-            type: 'searchSims',
-            cost,
-            actionName: `Gợi ý Top ${limitVal} SIM Đại Cát`
-        };
-
-        executePendingActionWithConfirm();
+        executeSearchSims();
     };
 
     if (btnSubmitSearch) btnSubmitSearch.addEventListener('click', handleSearch);
@@ -631,13 +110,6 @@ function setupCurrentSimEval() {
     if (!btn) return;
 
     btn.addEventListener('click', () => {
-        const user = AuthStore.getCurrentUser();
-        if (!user) {
-            showToast("Vui lòng đăng nhập để đánh giá SIM!");
-            openModal('authModal');
-            return;
-        }
-
         const { birthDateVal } = getFormInputs();
         if (!birthDateVal) {
             showToast("Vui lòng chọn ngày & giờ sinh trước!");
@@ -653,40 +125,8 @@ function setupCurrentSimEval() {
             return;
         }
 
-        pendingAction = {
-            type: 'evalCurrent',
-            cost: 2,
-            actionName: `Đánh Giá SIM Đang Dùng (${formatSimNumber(rawSim)})`
-        };
-
-        executePendingActionWithConfirm();
+        executeEvalCurrentSim();
     });
-}
-
-function executePendingActionWithConfirm() {
-    if (!pendingAction) return;
-
-    const user = AuthStore.getCurrentUser();
-    if (!user) {
-        openModal('authModal');
-        return;
-    }
-
-    if (user.coins < pendingAction.cost) {
-        showToast(`Số dư không đủ! Bạn cần ${pendingAction.cost} Xu.`);
-        openDonateModal();
-        return;
-    }
-
-    const confirmActionName = document.getElementById('confirmDeductActionName');
-    const confirmCost = document.getElementById('confirmDeductCost');
-    const confirmBalance = document.getElementById('confirmDeductBalance');
-
-    if (confirmActionName) confirmActionName.textContent = `Thao tác: ${pendingAction.actionName}`;
-    if (confirmCost) confirmCost.textContent = `${pendingAction.cost} Xu`;
-    if (confirmBalance) confirmBalance.textContent = `${user.coins} Xu`;
-
-    openModal('confirmDeductModal');
 }
 
 function getPurposeText(purposeKey) {
@@ -1160,7 +600,6 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 
 function setupModalEvents() {
-    // Gắn sự kiện 1-click siêu nhạy cho tất cả nút .modal-close đóng popup
     document.querySelectorAll('.modal-close').forEach(btn => {
         const handleClose = (e) => {
             if (e) {
@@ -1178,7 +617,6 @@ function setupModalEvents() {
         btn.onclick = handleClose;
     });
 
-    // Chạm vùng tối ngoài popup để tắt
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
@@ -1189,7 +627,6 @@ function setupModalEvents() {
         });
     });
 
-    // Phím Escape để tắt
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             lastCloseTime = Date.now();
@@ -1199,10 +636,3 @@ function setupModalEvents() {
         }
     });
 }
-
-// LẮNG NGHE ĐỒNG BỘ REALTIME GIỮA CÁC TAB / CỬA SỔ TRÌNH DUYỆT
-window.addEventListener('storage', (e) => {
-    if (e.key === 'sim_pt_users_v1' || e.key === 'sim_pt_current_user_v1' || e.key === 'sim_pt_donate_requests_v1') {
-        if (typeof updateUserNavUI === 'function') updateUserNavUI();
-    }
-});

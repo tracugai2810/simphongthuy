@@ -3,6 +3,7 @@
    - Nút Đóng X Trên Tất Cả Modal Z-Index 100100 Hoạt Động 100% 1-Tap
    - Chống 100% Thanh Cuộn Ngang (Horizontal Scrollbar) Khi Rê Chuột Vào Popup
    - Đồng Bộ Font Chữ Inter Toàn Bộ Web Không Lỗi Font
+   - MOBILE FIRST RESPONSIVE
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -43,8 +44,9 @@ body {
     color: var(--text-light);
     line-height: 1.5;
     min-height: 100vh;
-    padding-top: 15px;
-    padding-bottom: 60px;
+    /* BASE: Mobile */
+    padding-top: 10px;
+    padding-bottom: 40px;
 }
 
 /* ĐỒNG BỘ FONT INTER CHO TẤT CẢ NÚT BẤM, INPUT & THẺ CHỮ */
@@ -52,11 +54,17 @@ button, input, select, textarea, label, table, th, td {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
+/* BASE: Mobile sizes for inputs to prevent iOS zoom */
+input, select, textarea {
+    font-size: 16px !important;
+}
+
 /* Main Container */
 .container {
     max-width: 980px;
     margin: 0 auto;
-    padding: 0 15px;
+    /* BASE: Mobile */
+    padding: 0 10px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -68,41 +76,53 @@ button, input, select, textarea, label, table, th, td {
     background: #151d30;
     border: 1px solid var(--border-gold);
     border-radius: 12px;
-    padding: 10px 18px;
     margin-bottom: 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    gap: 12px;
-    flex-wrap: wrap;
+    
+    /* BASE: Mobile */
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
 }
 
 .brand-title {
-    font-size: 1.15rem;
     font-weight: 800;
     color: #ffd700;
     display: flex;
     align-items: center;
     gap: 8px;
     letter-spacing: 0.3px;
+    
+    /* BASE: Mobile */
+    font-size: 1.1rem;
+    width: 100%;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-bottom: 6px;
 }
 
 .user-nav-group {
+    /* BASE: Mobile */
+    width: 100%;
     display: flex;
-    align-items: center;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 8px;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.user-nav-group > * {
+    flex: 1 1 auto;
+    min-height: 40px !important;
+    font-size: 0.88rem !important;
+    padding: 8px 12px !important;
+    text-align: center !important;
+    justify-content: center !important;
 }
 
 /* TỐI ƯU CẢM ỨNG CỰC NHẠY 1-TAP CHO TẤT CẢ NÚT TRÊN HEADER */
-.btn-auth-trigger,
-.coin-badge,
-.btn-earn-coins,
-.ref-badge,
-.btn-zalo-admin,
-.admin-link-btn,
-.btn-logout {
+.btn-zalo-admin {
     min-height: 38px !important;
     padding: 7px 14px !important;
     border-radius: 8px !important;
@@ -126,68 +146,16 @@ button, input, select, textarea, label, table, th, td {
     transition: all 0.2s ease !important;
 }
 
-.btn-zalo-admin:hover {
-    background: linear-gradient(135deg, #3399FF 0%, #0066FF 100%) !important;
-    transform: translateY(-1px) !important;
-}
-
-.btn-auth-trigger {
-    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-    color: #ffffff;
-    border: none;
-    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
-}
-
-.coin-badge {
-    background: rgba(217, 119, 6, 0.15);
-    border: 1px solid #ffd700;
-    color: #ffd700;
-    font-weight: 800 !important;
-    border-radius: 20px !important;
-}
-
-.btn-earn-coins {
-    background: #059669;
-    color: #ffffff;
-    border: none;
-}
-
-.ref-badge {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(243, 198, 105, 0.3);
-    color: #cbd5e1;
-}
-
-.admin-link-btn {
-    background: rgba(217, 119, 6, 0.2);
-    border: 1px solid var(--gold-dark);
-    color: var(--gold-primary);
-    text-decoration: none;
-}
-
-.btn-logout {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    color: #f87171;
-}
-
 /* CHỈ ÁP DỤNG HOVER KHI DÙNG CHUỘT TRÊN MÁY TÍNH */
 @media (hover: hover) and (pointer: fine) {
-    .btn-auth-trigger:hover { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-    .coin-badge:hover { background: rgba(217, 119, 6, 0.3); }
-    .btn-earn-coins:hover { background: #10b981; }
-    .ref-badge:hover { background: rgba(243, 198, 105, 0.15); color: #ffffff; }
-    .admin-link-btn:hover { background: var(--gold-dark); color: #ffffff; }
-    .btn-logout:hover { background: #ef4444; color: #ffffff; }
+    .btn-zalo-admin:hover {
+        background: linear-gradient(135deg, #3399FF 0%, #0066FF 100%) !important;
+        transform: translateY(-1px) !important;
+    }
 }
 
 /* PHẢN HỒI CHẠM NHẠY TỨC THÌ TRÊN ĐIỆN THOẠI */
-.btn-auth-trigger:active,
-.coin-badge:active,
-.btn-earn-coins:active,
-.ref-badge:active,
-.admin-link-btn:active,
-.btn-logout:active,
+.btn-zalo-admin:active,
 .btn-action:active,
 .btn-submit:active {
     transform: scale(0.95) !important;
@@ -195,15 +163,17 @@ button, input, select, textarea, label, table, th, td {
 }
 
 /* ==========================================================================
-   FORM NHẬP THÔNG TIN (DEVTOOLS ACCURATE MATCH)
+   FORM NHẬP THÔNG TIN
    ========================================================================== */
 .form-card {
     background: #151d30;
     border: 1px solid var(--border-gold);
     border-radius: 14px;
-    padding: 20px;
     margin-bottom: 22px;
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    
+    /* BASE: Mobile */
+    padding: 14px;
 }
 
 .section-title {
@@ -220,9 +190,11 @@ button, input, select, textarea, label, table, th, td {
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 14px;
     margin-bottom: 18px;
+    
+    /* BASE: Mobile */
+    grid-template-columns: 1fr;
 }
 
 .form-group {
@@ -271,6 +243,9 @@ button, input, select, textarea, label, table, th, td {
     display: flex;
     gap: 10px;
     margin-top: 4px;
+    
+    /* BASE: Mobile */
+    flex-direction: column;
 }
 
 .btn-eval-current {
@@ -289,6 +264,11 @@ button, input, select, textarea, label, table, th, td {
     align-items: center;
     gap: 6px;
     touch-action: manipulation;
+    
+    /* BASE: Mobile */
+    padding: 11px;
+    width: 100%;
+    justify-content: center;
 }
 
 .btn-eval-current:hover {
@@ -296,16 +276,18 @@ button, input, select, textarea, label, table, th, td {
 }
 
 /* ==========================================================================
-   DIGIT SELECTOR (KHUNG ĐỎ ĐÔ ĐẶC TRƯNG VỚI 10 Ô VUÔNG NỀN TRẮNG CHỮ ĐỎ)
+   DIGIT SELECTOR
    ========================================================================== */
 .digit-section {
     background: #881b1b;
     border: 1px solid #b91c1c;
     border-radius: 12px;
-    padding: 20px 16px 16px 16px;
     margin-bottom: 18px;
     text-align: center;
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+    
+    /* BASE: Mobile */
+    padding: 16px 10px 14px 10px;
 }
 
 .digit-section-title {
@@ -321,7 +303,10 @@ button, input, select, textarea, label, table, th, td {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    
+    /* BASE: Mobile */
+    flex-direction: column;
+    gap: 6px;
     margin-bottom: 14px;
 }
 
@@ -344,31 +329,35 @@ button, input, select, textarea, label, table, th, td {
 
 .digit-boxes-container {
     display: flex;
-    gap: 4px;
-    justify-content: center;
     align-items: center;
     margin-bottom: 10px;
-    width: 100%;
-    max-width: 100%;
     box-sizing: border-box;
+    
+    /* BASE: Mobile */
+    gap: 2px;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
 }
 
 .digit-box {
     flex: 1 1 0%;
     min-width: 0;
-    max-width: 42px;
-    height: 46px;
     background: #ffffff !important;
     border: 1px solid #d97706 !important;
     color: #991b1b !important;
-    font-size: 1.2rem;
     font-weight: 900;
     text-align: center;
-    border-radius: 8px;
     outline: none;
-    padding: 0;
     transition: all 0.2s ease;
     font-family: monospace, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* BASE: Mobile */
+    max-width: 36px;
+    height: 40px;
+    font-size: 1rem;
+    border-radius: 6px;
+    padding: 0;
 }
 
 .digit-box:focus {
@@ -393,11 +382,9 @@ button, input, select, textarea, label, table, th, td {
 /* NÚT SUBMIT CHÍNH AMBER ORANGE */
 .btn-submit {
     width: 100%;
-    padding: 14px;
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     color: #ffffff;
     font-weight: 900;
-    font-size: 1.05rem;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -405,6 +392,10 @@ button, input, select, textarea, label, table, th, td {
     transition: all 0.2s ease;
     letter-spacing: 0.3px;
     touch-action: manipulation;
+    
+    /* BASE: Mobile */
+    font-size: 0.95rem;
+    padding: 13px;
 }
 
 /* ==========================================================================
@@ -427,13 +418,15 @@ button, input, select, textarea, label, table, th, td {
     background: #151d30;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 16px 18px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 14px;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease;
+    display: grid;
+    
+    /* BASE: Mobile */
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 14px;
 }
 
 .sim-card:hover {
@@ -442,11 +435,13 @@ button, input, select, textarea, label, table, th, td {
 }
 
 .sim-number-display {
-    font-size: 1.5rem;
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 1px;
     margin-bottom: 4px;
+    
+    /* BASE: Mobile */
+    font-size: 1.35rem;
 }
 
 .sim-number-display .highlight {
@@ -503,8 +498,11 @@ button, input, select, textarea, label, table, th, td {
 
 .sim-actions {
     display: flex;
-    flex-direction: column;
     gap: 8px;
+    
+    /* BASE: Mobile */
+    flex-direction: row;
+    width: 100%;
 }
 
 .btn-action {
@@ -521,6 +519,9 @@ button, input, select, textarea, label, table, th, td {
     justify-content: center;
     gap: 6px;
     touch-action: manipulation;
+    
+    /* BASE: Mobile */
+    flex: 1;
 }
 
 .btn-view-hex {
@@ -535,7 +536,7 @@ button, input, select, textarea, label, table, th, td {
 }
 
 /* ==========================================================================
-   MODALS POPUP (CHỐNG 100% LỖI THANH CUỘN NGANG KHI TRỎ CHUỘT VÀO POPUP)
+   MODALS POPUP
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -562,69 +563,20 @@ button, input, select, textarea, label, table, th, td {
     background: #151d30;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 16px;
-    padding: 50px 20px 22px 20px !important;
-    max-width: 560px;
     width: 100%;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
     position: relative;
     max-height: 92vh;
     overflow-y: auto;
-    overflow-x: hidden !important; /* CHỐNG THANH CUỘN NGANG KHI TRỎ CHUỘT */
+    overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
-    margin: auto;
+    
+    /* BASE: Mobile */
+    padding: 48px 12px 14px 12px !important;
+    max-width: 95% !important;
+    margin: auto !important;
 }
 
-.auth-modal-box {
-    padding-top: 56px !important;
-}
-
-/* KHUNG POPUP DONATE PHÓNG TO RÕ ĐẸP VỪA MÀN HÌNH */
-.compact-donate-modal {
-    padding: 44px 18px 16px 18px !important;
-    max-width: 560px !important;
-    max-height: 94vh;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-/* KHUNG MÃ GIỚI THIỆU PHÓNG TO RÕ ĐẸP */
-.compact-ref-modal {
-    padding: 44px 18px 16px 18px !important;
-    max-width: 540px !important;
-    max-height: 94vh;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-/* NÚT TẢI MÃ QR DONATE TO ĐẸP MỌI MÀN HÌNH */
-.btn-download-qr-large {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-    padding: 12px !important;
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-    color: #ffffff !important;
-    font-weight: 800 !important;
-    font-size: 0.95rem !important;
-    border: none !important;
-    border-radius: 10px !important;
-    cursor: pointer !important;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
-    transition: all 0.2s ease !important;
-    margin-top: 10px !important;
-    margin-bottom: 8px !important;
-    touch-action: manipulation !important;
-}
-
-.btn-download-qr-large:hover {
-    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 18px rgba(56, 189, 248, 0.5) !important;
-}
-
-/* NÚT X ĐÓNG POPUP SIÊU NHẠY THIẾT KẾ DẠNG BUTTON NATIVE (38px x 38px) */
 button.modal-close, .modal-close {
     position: absolute !important;
     top: 12px !important;
@@ -667,182 +619,9 @@ button.modal-close:active, .modal-close:active {
     transform: scale(0.95) !important;
 }
 
-/* AUTH MODAL TABS */
-.auth-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-    margin-top: 8px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-}
-
-.auth-tab-btn {
-    flex: 1;
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-    color: #cbd5e1;
-    font-weight: 700;
-    font-size: 0.92rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    touch-action: manipulation;
-}
-
-.auth-tab-btn.active {
-    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-    color: #ffffff;
-    border-color: #ffd700;
-}
-
-/* DONATE TIER GRID */
-.donate-tier-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-bottom: 6px;
-}
-
-.donate-card {
-    background: rgb(17, 18, 34);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 6px 4px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    touch-action: manipulation;
-}
-
-.donate-card.active {
-    border-color: #ffd700;
-    background: rgba(217, 119, 6, 0.15);
-}
-
-.donate-badge {
-    background: #059669;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.72rem;
-    padding: 2px 6px;
-    border-radius: 8px;
-    display: inline-block;
-    margin-bottom: 2px;
-}
-
-.donate-price {
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: #ffffff;
-}
-
-.donate-desc {
-    font-size: 0.68rem;
-    color: var(--text-muted);
-    margin-top: 1px;
-}
-
-.qr-display-box {
-    background: rgb(17, 18, 34);
-    border: 1px dashed var(--gold-dark);
-    border-radius: 10px;
-    padding: 6px 8px;
-    text-align: center;
-    margin-top: 2px;
-}
-
-/* Phóng to Mã QR vừa vặn 210px rõ đẹp */
-.qr-code-img {
-    max-height: 210px;
-    max-width: 220px;
-    width: auto;
-    height: auto;
-    border-radius: 8px;
-    border: 2px solid #ffffff;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);
-    margin: 0 auto;
-    display: block;
-}
-
-/* NÚT TẢI QR MẶC ĐỊNH ẨN TRÊN MÁY TÍNH */
-.mobile-only-qr-btn {
-    display: none !important;
-}
-
-.ref-card-box {
-    background: linear-gradient(145deg, #182238 0%, #111827 100%);
-    border: 1px solid var(--border-gold);
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    margin-bottom: 14px;
-}
-
-.ref-code-display {
-    font-size: 2.4rem;
-    font-weight: 900;
-    color: #ffd700;
-    letter-spacing: 4px;
-    margin: 6px auto 10px auto;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-    display: inline-block;
-    padding: 10px 24px;
-    background: rgba(217, 119, 6, 0.12);
-    border: 1px dashed rgba(255, 215, 0, 0.5);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: all;
-    touch-action: manipulation;
-}
-
-.ref-code-display:hover {
-    background: rgba(217, 119, 6, 0.25);
-    border-color: #ffd700;
-    transform: scale(1.03);
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
-}
-
-.ref-code-display:active {
-    transform: scale(0.97);
-}
-
-.ref-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.ref-stat-card {
-    background: rgb(17, 18, 34);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 8px 4px;
-    text-align: center;
-}
-
-.stat-num {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #ffffff;
-}
-
-.stat-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    line-height: 1.2;
-}
-
-.ref-milestone-box {
-    background: rgba(217, 119, 6, 0.08);
-    border: 1px dashed var(--gold-dark);
-    border-radius: 8px;
-    padding: 10px 12px;
-    overflow-x: hidden !important;
-}
-
+/* ==========================================================================
+   HEXAGRAM VIEWS
+   ========================================================================== */
 .hex-card-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -878,7 +657,6 @@ button.modal-close:active, .modal-close:active {
     touch-action: manipulation;
 }
 
-/* Layout Lá quẻ */
 .hex-card-view {
     background-color: #fefee5;
     color: #000000;
@@ -1045,12 +823,14 @@ button.modal-close:active, .modal-close:active {
 }
 
 .eval-box {
-    margin-top: 15px;
     background: #ffffff;
     border: 1.5px solid #c0392b;
     border-radius: 10px;
-    padding: 14px 18px;
     box-sizing: border-box;
+    margin-top: 15px;
+    
+    /* BASE: Mobile */
+    padding: 12px 14px;
 }
 
 .eval-box h4 {
@@ -1068,8 +848,10 @@ button.modal-close:active, .modal-close:active {
 .eval-box li {
     margin-bottom: 4px;
     line-height: 1.55;
-    font-size: 0.95rem;
     word-break: break-word;
+    
+    /* BASE: Mobile */
+    font-size: 0.88rem;
 }
 
 /* TOAST NOTIFICATION */
@@ -1097,183 +879,6 @@ button.modal-close:active, .modal-close:active {
 .toast-notification.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
-}
-
-/* ==========================================================================
-   MOBILE FIRST RESPONSIVE BREAKPOINTS (TỐI ƯU CỰC NHẠY 1-TAP CÁC NÚT TRÊN HEADER)
-   ========================================================================== */
-@media (max-width: 768px) {
-    input, select, textarea {
-        font-size: 16px !important;
-    }
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 640px) {
-    body { padding-top: 10px; padding-bottom: 40px; }
-    .container { padding: 0 10px; }
-
-    /* HIỂN THỊ NÚT TẢI QR TRÊN DI ĐỘNG */
-    .mobile-only-qr-btn {
-        display: block !important;
-    }
-
-    .top-user-bar {
-        padding: 10px 12px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .brand-title {
-        font-size: 1.1rem;
-        width: 100%;
-        border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-        padding-bottom: 6px;
-    }
-
-    /* BỐ CỤC NÚT HEADER TRÊN DI ĐỘNG: RỘNG RÃI, BẤM 1 PHÁT ĂN NGAY */
-    .user-nav-group {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
-    .user-nav-group > * {
-        flex: 1 1 auto;
-        min-height: 40px !important;
-        font-size: 0.88rem !important;
-        padding: 8px 12px !important;
-        text-align: center !important;
-        justify-content: center !important;
-    }
-
-    .form-card { padding: 14px; }
-
-    .digit-section {
-        padding: 16px 10px 14px 10px;
-    }
-
-    .digit-boxes-container {
-        gap: 2px;
-        justify-content: center;
-        width: 100%;
-        padding: 0;
-    }
-
-    .digit-box {
-        flex: 1 1 0%;
-        min-width: 0;
-        max-width: 36px;
-        height: 40px;
-        font-size: 1rem;
-        border-radius: 6px;
-        padding: 0;
-    }
-
-    .prefix-selector-group {
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .current-sim-input-wrapper {
-        flex-direction: column;
-    }
-
-    .btn-eval-current {
-        padding: 11px;
-        width: 100%;
-        justify-content: center;
-        font-size: 0.9rem;
-    }
-
-    .btn-submit {
-        font-size: 0.95rem;
-        padding: 13px;
-    }
-
-    .sim-card {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        padding: 14px;
-    }
-
-    .sim-number-display {
-        font-size: 1.35rem;
-    }
-
-    .sim-actions {
-        flex-direction: row;
-        width: 100%;
-    }
-
-    .btn-action {
-        flex: 1;
-    }
-
-    .eval-box {
-        padding: 12px 14px;
-    }
-
-    .eval-box li {
-        font-size: 0.88rem;
-    }
-
-    .modal-content {
-        padding: 48px 12px 14px 12px !important;
-        max-width: 95% !important;
-        margin: auto !important;
-    }
-
-    /* GIỮ 3 GÓI DONATE NẰM NGANG TRÊN 1 HÀNG TRÊN DI ĐỘNG KHÔNG BỊ XẾP CHỒNG CAO */
-    .donate-tier-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 4px !important;
-        margin-bottom: 4px !important;
-    }
-
-    .donate-card {
-        padding: 4px 2px !important;
-    }
-
-    .donate-badge {
-        font-size: 0.65rem !important;
-        padding: 1px 4px !important;
-    }
-
-    .donate-price {
-        font-size: 0.78rem !important;
-    }
-
-    .donate-desc {
-        font-size: 0.62rem !important;
-    }
-
-    .qr-display-box {
-        padding: 4px !important;
-        margin-top: 2px !important;
-    }
-
-    .qr-code-img {
-        max-height: 155px !important;
-        max-width: 165px !important;
-    }
-
-    .compact-donate-modal {
-        padding: 38px 10px 10px 10px !important;
-        max-height: 90vh !important;
-        overflow-y: auto !important;
-    }
-
-    .ref-single-line-title {
-        font-size: 0.9rem;
-        white-space: normal;
-    }
 }
 
 /* SEO KNOWLEDGE & FAQ SECTION FOR GEO / AI OVERVIEWS */
@@ -1344,4 +949,116 @@ button.modal-close:active, .modal-close:active {
 .main-site-footer a {
     color: var(--gold-primary);
     text-decoration: none;
+}
+
+/* ==========================================================================
+   TABLET & DESKTOP BREAKPOINTS (MOBILE FIRST)
+   ========================================================================== */
+@media (min-width: 641px) {
+    body { padding-top: 18px; }
+    .container { padding: 0 20px; }
+    
+    input, select, textarea {
+        font-size: unset !important;
+    }
+    
+    .top-user-bar {
+        flex-direction: row;
+        align-items: center;
+        padding: 10px 18px;
+        justify-content: space-between;
+    }
+    .brand-title {
+        font-size: 1.15rem;
+        width: auto;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .user-nav-group {
+        width: auto;
+        flex-wrap: nowrap;
+    }
+    .user-nav-group > * {
+        flex: 0 1 auto;
+        min-height: 38px !important;
+        padding: 7px 14px !important;
+    }
+
+    .form-card { padding: 20px; }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .current-sim-input-wrapper {
+        flex-direction: row;
+    }
+    
+    .btn-eval-current {
+        padding: 10px 18px;
+        width: auto;
+    }
+    
+    .digit-section {
+        padding: 20px 16px 16px 16px;
+    }
+    
+    .prefix-selector-group {
+        flex-direction: row;
+        gap: 8px;
+    }
+    
+    .digit-boxes-container {
+        gap: 4px;
+    }
+    
+    .digit-box {
+        max-width: 42px;
+        height: 46px;
+        font-size: 1.2rem;
+        border-radius: 8px;
+    }
+    
+    .btn-submit {
+        padding: 14px;
+        font-size: 1.05rem;
+    }
+
+    .sim-card {
+        grid-template-columns: 1fr auto;
+        padding: 16px 18px;
+        gap: 14px;
+    }
+    
+    .sim-number-display {
+        font-size: 1.5rem;
+    }
+    
+    .sim-actions {
+        flex-direction: column;
+        width: auto;
+    }
+    
+    .btn-action {
+        flex: 0 1 auto;
+    }
+    
+    .eval-box {
+        padding: 14px 18px;
+    }
+    
+    .eval-box li {
+        font-size: 0.95rem;
+    }
+
+    .modal-content {
+        max-width: 560px !important;
+        padding: 50px 20px 22px 20px !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
