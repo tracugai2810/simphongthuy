@@ -658,33 +658,25 @@ function generateMatchingSims(pattern, dateInput, gender, purpose, maxCount = 15
 
     const results = [];
     const testedSims = new Set();
-    const targetQualifiedCount = Math.max(maxCount, 15);
-    const maxAttempts = 35000;
+    const targetQualifiedCount = Math.min(maxCount, 50);
+    // Dynamic maxAttempts: maxCount 5 takes ~1200 attempts, finishing in milliseconds
+    const maxAttempts = Math.min(12000, Math.max(1500, maxCount * 250));
     let attempts = 0;
+    const needPrefixChoice = (fixedPattern[1] === '*' || fixedPattern[2] === '*');
 
     while (results.length < targetQualifiedCount && attempts < maxAttempts) {
         attempts++;
 
         let candidate = '';
-        const needPrefixChoice = (fixedPattern[1] === '*' || fixedPattern[2] === '*');
-
         if (needPrefixChoice && Math.random() < 0.85) {
             const randomPrefix = activePrefixes[Math.floor(Math.random() * activePrefixes.length)];
             candidate = randomPrefix;
             for (let i = 3; i < 10; i++) {
-                if (fixedPattern[i] !== '*') {
-                    candidate += fixedPattern[i];
-                } else {
-                    candidate += Math.floor(Math.random() * 10).toString();
-                }
+                candidate += (fixedPattern[i] !== '*') ? fixedPattern[i] : Math.floor(Math.random() * 10).toString();
             }
         } else {
             for (let i = 0; i < 10; i++) {
-                if (fixedPattern[i] !== '*') {
-                    candidate += fixedPattern[i];
-                } else {
-                    candidate += Math.floor(Math.random() * 10).toString();
-                }
+                candidate += (fixedPattern[i] !== '*') ? fixedPattern[i] : Math.floor(Math.random() * 10).toString();
             }
         }
 

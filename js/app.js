@@ -223,7 +223,7 @@ function executeSearchSims() {
             });
         }
         renderResults(currentResults);
-    }, 150);
+    }, 20);
 }
 
 function renderResults(results) {
